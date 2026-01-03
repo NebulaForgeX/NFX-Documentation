@@ -6,6 +6,8 @@
   <img src="image.png" alt="NFX-Policy Logo" width="200">
   
   **使用所有 NFX 仓库前必须阅读的指南文档**
+  
+  [English](README.en.md) | 中文
 </div>
 
 ---

@@ -277,11 +277,13 @@ For detailed deployment and configuration guides, please refer to the following 
 
 - **[Chapter 1: Router Configuration](books/zh/chapter-01-router-configuration.md)** - Router configuration and firewall setup
 - **[Chapter 2: NAS Initial Setup](books/zh/chapter-02-nas-setup.md)** - NAS initialization and environment configuration
+- **[Chapter 3: NFX Stack Core Resource Stack Deployment](books/zh/chapter-03-nfx-stack-deployment.md)** - NFX Stack infrastructure deployment and configuration
 
 ### English Version
 
 - **[Chapter 1: Router Configuration](books/en/chapter-01-router-configuration.md)** - Router configuration and firewall setup
 - **[Chapter 2: NAS Initial Setup](books/en/chapter-02-nas-setup.md)** - NAS initialization and environment configuration
+- **[Chapter 3: NFX Stack Core Resource Stack Deployment](books/en/chapter-03-nfx-stack-deployment.md)** - NFX Stack infrastructure deployment and configuration
 
 ---
 

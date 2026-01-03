@@ -277,11 +277,13 @@ NFX 生态系统使用多个 Docker 网络：
 
 - **[第一章节：路由器配置](books/zh/chapter-01-router-configuration.md)** - 路由器配置和防火墙设置
 - **[第二章节：NAS 启动配置](books/zh/chapter-02-nas-setup.md)** - NAS 初始化和环境配置
+- **[第三章节：NFX Stack 核心资源栈部署](books/zh/chapter-03-nfx-stack-deployment.md)** - NFX Stack 基础设施部署和配置
 
 ### English Version
 
 - **[Chapter 1: Router Configuration](books/en/chapter-01-router-configuration.md)** - Router configuration and firewall setup
 - **[Chapter 2: NAS Initial Setup](books/en/chapter-02-nas-setup.md)** - NAS initialization and environment configuration
+- **[Chapter 3: NFX Stack Core Resource Stack Deployment](books/en/chapter-03-nfx-stack-deployment.md)** - NFX Stack infrastructure deployment and configuration
 
 ---
 

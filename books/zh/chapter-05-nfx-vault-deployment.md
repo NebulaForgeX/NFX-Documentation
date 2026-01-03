@@ -1,0 +1,379 @@
+# 第五章节：NFX-Vault 证书管理系统部署
+
+[NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault) 是一个现代化的 SSL 证书管理和监控系统，提供统一的证书申请、检查、导出和管理功能。系统采用前后端分离架构，支持 Web 界面和命令行工具两种使用方式，帮助您轻松管理多个域名的 SSL 证书。本章节将指导您完成 NFX-Vault 的部署和配置。
+
+## 为什么需要 NFX-Vault？
+
+在 NFX 生态系统中，SSL/TLS 证书的管理是一项重要但繁琐的工作。传统的证书管理方式通常需要手动申请证书、定期检查证书状态、手动更新证书，这些工作不仅耗时费力，还容易出错。NFX-Vault 正是为了解决这些问题而设计的。
+
+NFX-Vault 提供了统一的证书管理平台。无论是网站证书还是 API 服务证书，都可以在同一个系统中进行管理。系统会自动扫描证书存储目录，识别所有证书文件，并将证书信息存储在数据库中，使得证书的管理和查询变得非常简单。
+
+实时监控功能是 NFX-Vault 的核心特性之一。系统会定期检查所有证书的状态，包括证书的有效期、剩余天数、域名信息等。当证书即将过期时，系统会通过界面提醒您，帮助您及时更新证书，避免因证书过期导致的服务中断。这种主动的监控机制大大提高了证书管理的可靠性。
+
+系统还提供了便捷的证书导出功能。当您需要使用证书时，可以通过 Web 界面一键导出证书文件到指定目录。这个功能特别适合与 NFX-Edge 等反向代理系统集成，导出的证书文件可以直接被 Traefik 等工具使用，实现了证书管理和证书使用之间的无缝衔接。
+
+现代化的 Web 界面使得证书管理变得直观和易用。基于 React 和 TypeScript 构建的响应式界面，可以在任何设备上访问和使用。清晰的数据展示、友好的交互设计，让即使是不熟悉命令行操作的用户也能轻松管理证书。
+
+从技术架构角度来看，NFX-Vault 采用前后端分离的设计，后端基于 FastAPI 构建，提供了高性能的 RESTful API 服务。这种设计不仅保证了系统的性能和可扩展性，还使得系统可以轻松集成到其他自动化流程中。如果您更喜欢命令行操作，系统还提供了交互式的命令行工具，满足不同用户的使用习惯。
+
+自动调度功能进一步简化了证书管理工作。系统支持定时任务，可以自动扫描证书目录、更新证书状态信息。这意味着您不需要手动触发这些操作，系统会在后台自动完成，大大减少了运维工作量。
+
+## 前置条件
+
+在开始部署 NFX-Vault 之前，需要确保您的环境已经完成了必要的基础配置和依赖服务的部署。这些准备工作对于 NFX-Vault 的正常运行至关重要。
+
+首先，您需要完成路由器的配置工作（参考第一章节）。虽然 NFX-Vault 主要运行在内网环境中，但正确的网络配置仍然是必要的。确保 NAS 设备能够正常访问互联网，这对于证书申请和更新非常重要。
+
+其次，NAS 系统的基础配置也需要完成（参考第二章节）。Docker Engine 是运行 NFX-Vault 的容器运行时环境，必须确保它已经正确安装并处于运行状态。SSH 服务应该已经启用，以便进行远程管理和配置操作。Bash 环境的配置对于运行脚本和命令行工具非常重要。
+
+最重要的是，NFX Stack 必须已经部署完成（参考第三章节）。NFX-Vault 依赖于 NFX Stack 提供的三个核心服务：MySQL 数据库、Redis 缓存和 Kafka 消息队列。MySQL 用于存储证书的元数据信息，包括证书路径、域名、有效期等。Redis 用于缓存证书信息，提高查询性能。Kafka 用于异步任务处理，例如证书申请、证书导出等耗时操作。在部署 NFX-Vault 之前，必须确保这三个服务都已经正常运行，并且 NFX-Vault 能够访问这些服务。
+
+关于 NFX-Edge 的部署（参考第四章节），虽然 NFX-Vault 可以在 NFX-Edge 之前部署，但按照推荐的部署顺序，通常是在 NFX-Edge 部署完成后再部署 NFX-Vault，或者两者可以并行部署。这是因为 NFX-Vault 的主要作用是为 NFX-Edge 等反向代理系统提供证书管理服务。当您需要在 NFX-Edge 中使用证书时，就可以通过 NFX-Vault 来申请和管理这些证书。
+
+最后，需要确保有足够的系统资源。NFX-Vault 包含前端、后端 API 和后台 Pipeline 三个服务，建议系统至少拥有 2GB 内存。磁盘空间方面，需要为证书文件预留足够的存储空间，具体取决于您需要管理的证书数量。
+
+## 1. 克隆项目仓库
+
+### 步骤 1：进入部署目录
+
+切换到您选择的部署目录。建议将 NFX-Vault 部署在与其他 NFX 项目相同的父目录下，这样可以保持项目结构的一致性，便于统一管理。
+
+```bash
+# 示例：如果您的部署目录是 /volume1
+cd /volume1
+
+# 或者您选择的其他目录
+```
+
+### 步骤 2：克隆 NFX-Vault 仓库
+
+使用 Git 克隆 NFX-Vault 仓库。如果您的部署目录是 `/volume1`，建议直接将仓库克隆为 `Certs` 目录，这样符合 NFX 生态系统的命名规范。
+
+```bash
+git clone https://github.com/NebulaForgeX/NFX-Vault.git Certs
+```
+
+克隆操作执行后，仓库会被下载到本地并创建 `Certs` 目录。假设您的部署目录是 `<YOUR_DEPLOYMENT_DIR>`，那么完整的项目路径就是 `<YOUR_DEPLOYMENT_DIR>/Certs`。例如，如果您选择在 `/volume1` 目录下部署，那么最终的路径将是 `/volume1/Certs`。
+
+如果您希望使用 Git 默认的目录名，也可以直接克隆，然后在后续步骤中重命名目录。但建议使用 `Certs` 作为目录名，这样可以与 NFX 生态系统的其他项目保持一致。
+
+### 步骤 3：进入项目目录
+
+克隆完成后，进入项目目录进行后续的配置工作。
+
+```bash
+cd Certs
+```
+
+## 2. 创建证书存储目录
+
+在配置环境变量之前，需要先创建证书存储目录结构。NFX-Vault 使用目录结构来组织证书文件，不同类型的证书（例如网站证书和 API 证书）存储在不同的目录中。
+
+NFX-Vault 支持两种类型的证书存储：Websites 和 Apis。Websites 目录用于存储网站相关的证书，这些证书通常由 NFX-Edge 等反向代理系统使用。Apis 目录用于存储 API 服务相关的证书。这种分类管理使得证书的组织更加清晰。
+
+为每种类型创建对应的目录结构。每个类型都需要一个 `exported` 子目录，用于存储导出的证书文件。此外，还需要创建一个 `acme.json` 文件，这个文件用于 Traefik 的证书存储（如果使用 Traefik 的自动证书功能）。
+
+```bash
+# 创建 Websites 证书目录
+mkdir -p Websites/exported
+touch Websites/acme.json
+chmod 600 Websites/acme.json
+
+# 创建 Apis 证书目录
+mkdir -p Apis/exported
+touch Apis/acme.json
+chmod 600 Apis/acme.json
+```
+
+这里需要注意文件权限的设置。`acme.json` 文件包含敏感的证书信息，应该设置严格的访问权限。使用 `chmod 600` 可以确保只有文件所有者能够读写该文件，其他用户无法访问，这对于保护证书安全非常重要。
+
+## 3. 配置环境变量
+
+### 步骤 1：复制环境变量模板
+
+NFX-Vault 提供了 `.example.env` 文件作为配置模板。我们需要复制它并创建实际的 `.env` 文件。
+
+```bash
+cp .example.env .env
+```
+
+环境变量文件包含了系统的所有配置信息，包括服务端口、数据库连接信息、缓存配置等。这个文件不应该提交到 Git 仓库中，因为它包含敏感信息如数据库密码等。
+
+### 步骤 2：编辑环境变量文件
+
+使用您喜欢的文本编辑器打开 `.env` 文件进行配置。
+
+```bash
+# 使用 nano（简单易用）
+nano .env
+
+# 或使用 vi/vim
+vi .env
+
+# 或使用其他编辑器
+```
+
+### 步骤 3：配置服务端口
+
+配置前端和后端服务的访问端口。这些端口应该选择未被其他服务占用的端口，避免端口冲突。
+
+```bash
+BACKEND_HOST=192.168.1.64
+BACKEND_PORT=10200
+FRONTEND_HOST=192.168.1.64
+FRONTEND_PORT=10199
+```
+
+`BACKEND_HOST` 和 `FRONTEND_HOST` 应该设置为您的 NAS IP 地址。`BACKEND_PORT` 是后端 API 服务的访问端口，默认使用 10200。`FRONTEND_PORT` 是前端 Web 界面的访问端口，默认使用 10199。这些端口通常不需要在路由器上进行端口转发，因为 NFX-Vault 主要在内网中使用。
+
+### 步骤 4：配置 MySQL 数据库连接
+
+配置 MySQL 数据库的连接信息。这些信息必须与 NFX Stack 中 MySQL 服务的配置一致。
+
+```bash
+MYSQL_HOST=192.168.1.64
+MYSQL_DATABASE_PORT=3306
+MYSQL_DATABASE=nfxvault
+MYSQL_ROOT_USERNAME=root
+MYSQL_ROOT_PASSWORD=your_mysql_password
+```
+
+`MYSQL_HOST` 应该设置为 NFX Stack 中 MySQL 服务所在的主机 IP 地址，通常就是您的 NAS IP 地址。`MYSQL_DATABASE_PORT` 是 MySQL 服务的端口，默认是 3306，但如果您的 NFX Stack 中配置了不同的端口，需要相应修改。`MYSQL_DATABASE` 是数据库名称，NFX-Vault 使用 `nfxvault` 作为默认数据库名。`MYSQL_ROOT_USERNAME` 和 `MYSQL_ROOT_PASSWORD` 是 MySQL 的 root 用户名和密码，这些应该与 NFX Stack 中的配置一致。
+
+在首次启动 NFX-Vault 时，系统会自动创建数据库和表结构，所以您不需要手动创建数据库。但需要确保 MySQL 服务正在运行，并且提供的用户名和密码具有创建数据库的权限。
+
+### 步骤 5：配置 Redis 缓存连接
+
+配置 Redis 缓存的连接信息。Redis 用于缓存证书信息，提高查询性能。
+
+```bash
+REDIS_HOST=192.168.1.64
+REDIS_DATABASE_PORT=6379
+REDIS_DB=0
+REDIS_PASSWORD=your_redis_password
+```
+
+`REDIS_HOST` 应该设置为 NFX Stack 中 Redis 服务所在的主机 IP 地址。`REDIS_DATABASE_PORT` 是 Redis 服务的端口，默认是 6379。`REDIS_DB` 指定使用哪个 Redis 数据库，默认使用 0 号数据库。`REDIS_PASSWORD` 是 Redis 的密码，应该与 NFX Stack 中的配置一致。如果您的 Redis 没有设置密码，可以将此选项留空或注释掉。
+
+### 步骤 6：配置 Kafka 消息队列连接
+
+配置 Kafka 消息队列的连接信息。Kafka 用于处理异步任务，如证书申请、证书导出等操作。
+
+```bash
+KAFKA_BOOTSTRAP_SERVERS=192.168.1.64:9092
+KAFKA_EVENT_TOPIC=nfxvault.cert_server
+KAFKA_EVENT_POISON_TOPIC=nfxvault.cert_server.poison
+KAFKA_CONSUMER_GROUP_ID=nfxvault-cert-server
+```
+
+`KAFKA_BOOTSTRAP_SERVERS` 指定 Kafka 服务器的地址和端口，格式为 `host:port`。如果您的 NFX Stack 中 Kafka 配置了不同的端口，需要相应修改。`KAFKA_EVENT_TOPIC` 是事件主题的名称，用于发布证书相关的事件。`KAFKA_EVENT_POISON_TOPIC` 是毒消息主题，用于存储处理失败的消息。`KAFKA_CONSUMER_GROUP_ID` 是消费者组 ID，用于标识消费者组。
+
+### 步骤 7：配置证书管理相关设置
+
+配置证书存储目录和 ACME 挑战目录等设置。
+
+```bash
+CERTS_DIR=/volume1/Certs
+ACME_CHALLENGE_DIR=/tmp/acme-challenges
+CERT_MAX_WAIT_TIME=360
+```
+
+`CERTS_DIR` 是证书存储的根目录，应该设置为 NFX-Vault 项目目录的绝对路径。例如，如果项目部署在 `/volume1/Certs`，则此值应该设置为 `/volume1/Certs`。`ACME_CHALLENGE_DIR` 是 ACME HTTP-01 挑战文件的存储目录，系统会在申请 Let's Encrypt 证书时使用此目录。`CERT_MAX_WAIT_TIME` 是证书申请的最大等待时间（秒），默认是 360 秒（6 分钟）。
+
+### 步骤 8：配置调度任务
+
+配置定时任务的执行时间和行为。
+
+```bash
+READ_ON_STARTUP=true
+SCHEDULE_ENABLED=true
+SCHEDULE_WEEKLY_DAY=mon
+SCHEDULE_WEEKLY_HOUR=2
+SCHEDULE_WEEKLY_MINUTE=0
+```
+
+`READ_ON_STARTUP` 设置为 `true` 时，系统在启动时会自动扫描证书目录并读取证书信息存储到数据库中。这对于首次启动或证书目录有变化时非常有用。`SCHEDULE_ENABLED` 设置为 `true` 时启用定时任务功能。`SCHEDULE_WEEKLY_DAY` 指定每周执行任务的星期几，可选值为 `mon`、`tue`、`wed`、`thu`、`fri`、`sat`、`sun`。`SCHEDULE_WEEKLY_HOUR` 和 `SCHEDULE_WEEKLY_MINUTE` 指定执行时间的小时和分钟。示例配置表示每周一凌晨 2 点执行任务。
+
+## 4. 配置 Docker 网络
+
+NFX-Vault 需要连接到两个 Docker 网络：`nfx-vault` 和 `nfx-edge`。`nfx-vault` 网络是 NFX-Vault 的内部网络，用于前端、后端 API 和后台 Pipeline 服务之间的通信。这个网络会在 Docker Compose 启动时自动创建。
+
+`nfx-edge` 网络是外部网络，用于与 NFX-Edge 等反向代理服务通信。如果 NFX-Edge 已经部署，这个网络应该已经存在。如果还没有部署 NFX-Edge，需要先创建这个网络。
+
+```bash
+# 如果 nfx-edge 网络不存在，需要先创建
+docker network create nfx-edge
+```
+
+在 `docker-compose.yml` 文件中，`nfx-edge` 网络被配置为外部网络（`external: true`），这意味着 Docker Compose 不会创建这个网络，而是使用已存在的网络。确保在启动 NFX-Vault 之前，`nfx-edge` 网络已经存在，或者先部署 NFX-Edge。
+
+## 5. 验证配置
+
+在启动服务之前，建议进行一次全面的配置检查，确保所有配置项都正确设置，避免启动后遇到问题。
+
+首先，检查环境变量文件的格式是否正确。`.env` 文件应该符合键值对的格式，每行一个配置项，使用等号分隔键和值。确保没有语法错误，例如缺少引号、多余的空格等。
+
+其次，验证所有依赖服务是否正常运行。检查 MySQL 服务是否正在运行，可以通过尝试连接数据库来验证。检查 Redis 服务是否可访问，可以使用 `redis-cli` 命令测试连接。检查 Kafka 服务是否正常运行，可以查看 Kafka 容器的状态。
+
+第三，确认网络配置正确。如果 NFX-Edge 已经部署，确保 `nfx-edge` 网络存在。可以通过 `docker network ls` 命令查看所有 Docker 网络。
+
+第四，检查证书目录的权限。确保 NFX-Vault 容器有权限访问证书存储目录。如果目录权限不正确，可能会导致证书读取失败。
+
+最后，验证端口是否被占用。检查前端端口（默认 10199）和后端端口（默认 10200）是否被其他服务占用。可以使用 `netstat` 或 `ss` 命令检查端口占用情况。
+
+## 6. 启动服务
+
+完成所有配置后，可以启动 NFX-Vault 服务。
+
+```bash
+# 确保在项目目录中
+cd /volume1/Certs
+
+# 启动所有服务
+sudo docker compose up -d
+```
+
+执行启动命令时，`-d` 参数表示在后台运行模式（detached mode），服务会在后台运行，不会占用当前的终端窗口。Docker Compose 会按照依赖关系依次启动各个服务：首先启动后端 API 服务，然后启动后台 Pipeline 服务，最后启动前端服务。
+
+首次启动时，Docker 需要构建镜像，这可能需要一些时间，特别是如果您的网络速度较慢的话。构建过程会下载必要的依赖包和基础镜像，请耐心等待。
+
+启动完成后，系统会自动创建数据库表结构（如果数据库还不存在的话）。后端 API 服务会连接到 MySQL 数据库，创建必要的表和索引。这个过程是自动完成的，无需手动干预。
+
+如果配置了 `READ_ON_STARTUP=true`，系统在启动完成后会自动扫描证书目录，读取所有证书文件的信息并存储到数据库中。这个过程可能需要一些时间，取决于证书目录中的文件数量。
+
+## 7. 验证部署
+
+### 步骤 1：检查服务状态
+
+启动后，首先检查所有服务的运行状态，确保所有容器都正常启动。
+
+```bash
+# 查看所有服务状态
+sudo docker compose ps
+
+# 应该看到所有服务状态为 "Up"
+```
+
+正常情况下，应该看到三个服务都在运行：`NFX-Vault-Backend-API`、`NFX-Vault-Backend-Pipeline` 和 `NFX-Vault-Frontend`。所有服务的状态应该显示为 "Up"。
+
+如果某个服务没有正常启动，状态可能显示为 "Exited" 或 "Restarting"。这种情况下，需要查看服务日志来排查问题。
+
+### 步骤 2：查看服务日志
+
+查看服务日志可以帮助您了解服务的启动过程和运行状态，及时发现潜在问题。
+
+```bash
+# 查看所有服务日志
+sudo docker compose logs -f
+
+# 或查看特定服务的日志
+sudo docker compose logs -f backend-api
+sudo docker compose logs -f backend-pipeline
+sudo docker compose logs -f frontend
+```
+
+在查看日志时，需要关注几个关键点。后端 API 服务应该能够成功连接到 MySQL 数据库，日志中不应该出现数据库连接错误。Redis 连接也应该正常，不应该有连接失败的错误。Kafka 连接同样需要正常，后台 Pipeline 服务需要能够连接到 Kafka 来消费消息。
+
+如果配置了 `READ_ON_STARTUP=true`，日志中应该能看到证书扫描的过程，包括扫描了哪些目录、读取了多少证书等信息。
+
+### 步骤 3：访问 Web 界面
+
+通过浏览器访问前端 Web 界面，验证服务是否正常工作。
+
+```bash
+# 访问前端 Web 界面
+# 将 IP 地址替换为您的实际 NAS IP
+http://192.168.1.64:10199
+```
+
+如果服务正常启动，浏览器应该能够打开 Web 界面。界面应该能够正常加载，显示证书列表（如果已经扫描到证书的话）。如果界面无法打开，需要检查防火墙设置和端口映射配置。
+
+### 步骤 4：访问 API 文档
+
+NFX-Vault 提供了完整的 API 文档，可以通过 Swagger UI 或 ReDoc 访问。
+
+```bash
+# Swagger UI
+http://192.168.1.64:10200/docs
+
+# ReDoc
+http://192.168.1.64:10200/redoc
+```
+
+API 文档提供了所有 API 接口的详细说明，包括请求参数、响应格式等。这对于集成 NFX-Vault 到其他系统非常有用。
+
+### 步骤 5：测试 API 连接
+
+可以通过命令行工具测试 API 是否正常工作。
+
+```bash
+# 测试健康检查接口
+curl http://192.168.1.64:10200/health
+
+# 查看 Websites 证书列表
+curl "http://192.168.1.64:10200/vault/tls/check/websites?offset=0&limit=20"
+```
+
+如果 API 正常工作，这些命令应该返回 JSON 格式的响应数据。如果返回错误信息，需要根据错误内容进行排查。
+
+## 8. 与 NFX-Edge 集成
+
+NFX-Vault 的主要用途之一是为 NFX-Edge 提供证书管理服务。完成 NFX-Vault 的部署后，可以通过以下步骤与 NFX-Edge 集成。
+
+首先，确保 NFX-Edge 和 NFX-Vault 在同一个 Docker 网络中。NFX-Vault 的 `backend-api` 服务已经配置为连接到 `nfx-edge` 网络，所以如果 NFX-Edge 已经部署，网络连接应该已经建立。
+
+其次，在 NFX-Edge 的配置中，`dynamic/acme-challenge.yml` 文件应该已经配置为将 ACME 挑战请求转发到 NFX-Vault 的 `backend-api` 服务。这样，当通过 NFX-Vault 申请 Let's Encrypt 证书时，ACME 挑战请求会被正确转发。
+
+第三，通过 NFX-Vault 的 Web 界面申请证书。在申请证书时，需要指定 `folder_name`，这个名称决定了证书文件在存储目录中的子文件夹名称。申请成功后，证书文件会自动存储在 `${CERTS_DIR}/{folder_name}/` 目录下。
+
+第四，更新 NFX-Edge 的证书配置。在 NFX-Edge 的 `dynamic/certs.yml` 文件中添加新证书的路径，然后重启 Traefik 服务以加载新证书。
+
+通过这种集成方式，您可以实现证书的自动申请和管理，大大简化了证书管理的工作流程。
+
+## 9. 常用操作
+
+### 查看证书列表
+
+通过 Web 界面可以查看所有证书的列表，包括证书状态、过期时间、剩余天数等信息。系统会自动更新证书的剩余天数，帮助您及时了解证书的有效期情况。
+
+### 申请新证书
+
+通过 Web 界面可以申请新的 Let's Encrypt 证书。申请时需要填写域名、邮箱地址、folder_name 等信息。系统会自动处理证书申请流程，包括 ACME 挑战验证、证书生成等步骤。
+
+### 导出证书
+
+通过 Web 界面可以一键导出证书文件到指定目录。导出的证书文件可以直接被 NFX-Edge 等反向代理系统使用。导出功能支持批量操作，可以一次导出多个证书。
+
+### 刷新证书信息
+
+如果证书目录中的文件发生了变化，可以通过刷新功能重新扫描目录并更新数据库中的证书信息。刷新操作可以通过 Web 界面触发，也可以通过 API 调用。
+
+### 命令行工具使用
+
+除了 Web 界面，NFX-Vault 还提供了命令行工具 `cmd.sh`，可以在不使用 Web 界面的情况下管理证书。命令行工具提供了交互式的界面，可以查看证书列表、验证证书信息等。
+
+```bash
+cd /volume1/Certs
+./cmd.sh
+```
+
+命令行工具会引导您选择证书类型（Websites 或 Apis），然后列出所有证书目录，您可以选择特定的目录进行验证，查看证书的详细信息。
+
+## 10. 查看详细文档
+
+在深入使用 NFX-Vault 之前，强烈建议您详细阅读 [NFX-Vault 官方文档](https://github.com/NebulaForgeX/NFX-Vault)。官方文档包含了比本章节更加详细和全面的内容，包括所有配置项的详细说明、API 接口的完整文档、高级功能的使用方法、故障排查指南等。
+
+特别是 API 文档，对于需要将 NFX-Vault 集成到自动化流程中的用户来说非常重要。通过 API，您可以实现证书申请的自动化、证书状态的监控、证书的自动导出等操作。
+
+官方文档还包含了项目结构的详细说明，这对于理解系统的工作原理、进行二次开发或定制都非常有帮助。
+
+## 下一步
+
+完成 NFX-Vault 的部署后，您可以开始使用证书管理功能。如果 NFX-Edge 已经部署，可以开始通过 NFX-Vault 为 NFX-Edge 申请和管理证书。如果还没有部署 NFX-Edge，可以继续部署 NFX-Edge，然后集成证书管理功能。
+
+您还可以探索 NFX-Vault 的其他功能，例如通过 API 实现证书管理的自动化、配置定时任务自动检查证书状态、使用命令行工具进行批量操作等。
+
+---
+
+**NFX-Vault 是 NFX 生态系统的证书管理核心，正确部署和配置它是实现自动化证书管理的基础。**
+

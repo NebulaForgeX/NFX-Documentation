@@ -278,12 +278,16 @@ For detailed deployment and configuration guides, please refer to the following 
 - **[Chapter 1: Router Configuration](books/zh/chapter-01-router-configuration.md)** - Router configuration and firewall setup
 - **[Chapter 2: NAS Initial Setup](books/zh/chapter-02-nas-setup.md)** - NAS initialization and environment configuration
 - **[Chapter 3: NFX Stack Core Resource Stack Deployment](books/zh/chapter-03-nfx-stack-deployment.md)** - NFX Stack infrastructure deployment and configuration
+- **[Chapter 4: NFX-Edge Reverse Proxy and Multi-Website Management Deployment](books/zh/chapter-04-nfx-edge-deployment.md)** - NFX-Edge reverse proxy system deployment and configuration
+- **[Chapter 5: NFX-Vault Certificate Management System Deployment](books/zh/chapter-05-nfx-vault-deployment.md)** - NFX-Vault certificate management system deployment and configuration
 
 ### English Version
 
 - **[Chapter 1: Router Configuration](books/en/chapter-01-router-configuration.md)** - Router configuration and firewall setup
 - **[Chapter 2: NAS Initial Setup](books/en/chapter-02-nas-setup.md)** - NAS initialization and environment configuration
 - **[Chapter 3: NFX Stack Core Resource Stack Deployment](books/en/chapter-03-nfx-stack-deployment.md)** - NFX Stack infrastructure deployment and configuration
+- **[Chapter 4: NFX-Edge Reverse Proxy and Multi-Website Management Deployment](books/en/chapter-04-nfx-edge-deployment.md)** - NFX-Edge reverse proxy system deployment and configuration
+- **[Chapter 5: NFX-Vault Certificate Management System Deployment](books/en/chapter-05-nfx-vault-deployment.md)** - NFX-Vault certificate management system deployment and configuration
 
 ---
 

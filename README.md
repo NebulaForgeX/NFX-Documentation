@@ -120,6 +120,8 @@ NFX 生态系统使用多个 Docker 网络：
 └── FrontEnd/           # 前端项目
 ```
 
+> 注：各目录对应项目链接：[NFX Stack](https://github.com/NebulaForgeX/NFX-Stack) | [NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault) | [NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge)
+
 ---
 
 ## 🔒 安全要求
@@ -141,7 +143,7 @@ NFX 生态系统使用多个 Docker 网络：
 1. **证书存储**
    - 证书文件权限设置为 `600`（仅所有者可读写）
    - 不要将证书文件提交到代码仓库
-   - 使用 NFX-Vault 自动管理证书（推荐）
+   - 使用 [NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault) 自动管理证书（推荐）
 
 2. **证书更新**
    - 定期检查证书过期时间
@@ -166,7 +168,7 @@ NFX 生态系统使用多个 Docker 网络：
 
 ### 数据库连接
 
-所有服务连接到 NFX Stack 提供的数据库时：
+所有服务连接到 [NFX Stack](https://github.com/NebulaForgeX/NFX-Stack) 提供的数据库时：
 
 **容器内访问（推荐）：**
 - 加入 `nfx-stack` 网络
@@ -189,9 +191,9 @@ NFX 生态系统使用多个 Docker 网络：
 
 ### 证书服务集成
 
-**使用 NFX-Vault 申请证书：**
-1. 确保 NFX-Vault 服务正常运行
-2. 确保 NFX-Vault 和 NFX-Edge 在同一 Docker 网络
+**使用 [NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault) 申请证书：**
+1. 确保 [NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault) 服务正常运行
+2. 确保 [NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault) 和 [NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) 在同一 Docker 网络
 3. 通过 Web 界面申请证书，指定正确的 `folder_name`
 4. 证书自动存储到指定目录
 5. 更新 Traefik 的 `certs.yml` 配置
@@ -218,7 +220,7 @@ NFX 生态系统使用多个 Docker 网络：
    ```
 
 4. **证书状态**
-   - 使用 NFX-Vault 监控证书过期时间
+   - 使用 [NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault) 监控证书过期时间
    - 或使用命令行工具检查
 
 ### 备份策略

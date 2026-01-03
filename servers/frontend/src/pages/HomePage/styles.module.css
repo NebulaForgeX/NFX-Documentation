@@ -1,0 +1,50 @@
+.home {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.chapters h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.chapters ul {
+  list-style: none;
+  padding: 0;
+}
+
+.chapters li {
+  margin-bottom: 0.5rem;
+}
+
+.chapters a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.chapters a:hover {
+  text-decoration: underline;
+}
+

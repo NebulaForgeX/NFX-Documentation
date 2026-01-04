@@ -3,7 +3,7 @@
     <div :class="styles.leftContainer">
       <router-link to="/" :class="styles.logoContainer">
         <img src="/logo.ico" alt="NFX" :class="styles.logo" />
-        <span :class="styles.logoText">NFX-Policy</span>
+        <span :class="styles.logoText">NFX-Documentation</span>
       </router-link>
     </div>
 

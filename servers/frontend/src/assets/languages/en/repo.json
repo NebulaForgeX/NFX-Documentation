@@ -2,7 +2,7 @@
   "title": "Repositories",
   "description": "The NFX ecosystem includes multiple open-source projects, each with its specific purpose and functionality.",
   "nfxStack": {
-    "description": "NFX Stack is the core resource stack of the NFX ecosystem, providing foundational services such as MySQL, Redis, and Kafka."
+    "description": "NFX-Stack is the core resource stack of the NFX ecosystem, providing foundational services such as MySQL, Redis, and Kafka."
   },
   "nfxEdge": {
     "description": "NFX-Edge is a multi-website reverse proxy solution based on Traefik, providing unified multi-website management and automatic HTTPS support."
@@ -10,7 +10,7 @@
   "nfxVault": {
     "description": "NFX-Vault is a modern SSL certificate management and monitoring system, providing unified certificate application, checking, export, and management functions."
   },
-  "nfxPolicy": {
-    "description": "NFX-Policy is the deployment and configuration strategy documentation for NFX projects, providing detailed deployment guides and best practices."
+  "nfxDocumentation": {
+    "description": "NFX-Documentation is the deployment and configuration strategy documentation for NFX projects, providing detailed deployment guides and best practices."
   }
 }

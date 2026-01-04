@@ -8,7 +8,7 @@
         <router-link to="/about" :class="styles.link">
           {{ $t('common.footer.about') }}
         </router-link>
-        <a href="https://github.com/NebulaForgeX/NFX-Policy" target="_blank" rel="noopener noreferrer" :class="styles.link">
+        <a href="https://github.com/NebulaForgeX/NFX-Documentation" target="_blank" rel="noopener noreferrer" :class="styles.link">
           {{ $t('common.footer.github') }}
         </a>
       </div>

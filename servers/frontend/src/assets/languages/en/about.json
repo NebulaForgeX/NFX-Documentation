@@ -1,9 +1,9 @@
 {
   "title": "About",
-  "subtitle": "Learn about the NFX ecosystem and the NFX-Policy project",
+  "subtitle": "Learn about the NFX ecosystem and the NFX-Documentation project",
   "what": {
-    "title": "What is NFX-Policy?",
-    "description": "NFX-Policy is the deployment and configuration strategy documentation for <a href='https://github.com/NebulaForgeX' target='_blank' rel='noopener noreferrer' class='link'>NebulaForgeX</a> projects. This project provides detailed deployment guides, configuration instructions, and best practices to help users quickly deploy and configure various components in the NFX ecosystem."
+    "title": "What is NFX-Documentation?",
+    "description": "NFX-Documentation is the deployment and configuration strategy documentation for <a href='https://github.com/NebulaForgeX' target='_blank' rel='noopener noreferrer' class='link'>NebulaForgeX</a> projects. This project provides detailed deployment guides, configuration instructions, and best practices to help users quickly deploy and configure various components in the NFX ecosystem."
   },
   "ecosystem": {
     "title": "NFX Ecosystem",
@@ -12,11 +12,11 @@
       "<strong>NFX-Stack</strong>: Core resource stack providing foundational services such as MySQL, Redis, and Kafka",
       "<strong>NFX-Edge</strong>: Multi-website reverse proxy solution based on Traefik",
       "<strong>NFX-Vault</strong>: SSL certificate management and monitoring system",
-      "<strong>NFX-Policy</strong>: Deployment and configuration strategy documentation (this project)"
+      "<strong>NFX-Documentation</strong>: Deployment and configuration strategy documentation (this project)"
     ]
   },
   "contribute": {
     "title": "Contribute",
-    "description": "NFX-Policy is an open-source project, and we welcome community contributions. If you find issues or have suggestions for improvements, please visit our <a href='https://github.com/NebulaForgeX/NFX-Policy' target='_blank' rel='noopener noreferrer' class='link'>GitHub repository</a> to submit Issues or Pull Requests."
+    "description": "NFX-Documentation is an open-source project, and we welcome community contributions. If you find issues or have suggestions for improvements, please visit our <a href='https://github.com/NebulaForgeX/NFX-Documentation' target='_blank' rel='noopener noreferrer' class='link'>GitHub repository</a> to submit Issues or Pull Requests."
   }
 }

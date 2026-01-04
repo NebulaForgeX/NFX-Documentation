@@ -10,7 +10,7 @@ export const LANGUAGE = {
 } as const
 
 // 从localStorage恢复语言设置，默认使用英文
-const savedLang = typeof localStorage !== 'undefined' ? localStorage.getItem('nfx-policy-language') : null
+const savedLang = typeof localStorage !== 'undefined' ? localStorage.getItem('nfx-documentation-language') : null
 const defaultLocale = (savedLang && (savedLang === 'zh' || savedLang === 'en')) ? savedLang : LANGUAGE.EN
 
 const i18n = createI18n({

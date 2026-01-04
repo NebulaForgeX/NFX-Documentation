@@ -1,9 +1,9 @@
-# NFX-Policy
+# NFX-Documentation
 
-**NebulaForgeX Project Deployment and Configuration Policy Documentation**
+**NebulaForgeX Project Deployment and Configuration Documentation Documentation**
 
 <div align="center">
-  <img src="image.png" alt="NFX-Policy Logo" width="200">
+  <img src="image.png" alt="NFX-Documentation Logo" width="200">
   
   **Essential reading guide before using any NFX repository**
   
@@ -27,7 +27,7 @@ This document contains important considerations, best practices, and rules that 
 
 ## 📖 About This Repository
 
-NFX-Policy is the strategy and guide documentation repository for the NebulaForgeX ecosystem, designed to provide unified standards for the use and maintenance of all NFX projects.
+NFX-Documentation is the strategy and guide documentation repository for the NebulaForgeX ecosystem, designed to provide unified standards for the use and maintenance of all NFX projects.
 
 This repository documents:
 
@@ -320,6 +320,6 @@ If you encounter problems when using NFX projects or have improvement suggestion
 ---
 
 <div align="center">
-  <strong>NFX-Policy</strong> - Ensuring consistent, secure, and reliable deployment practices
+  <strong>NFX-Documentation</strong> - Ensuring consistent, secure, and reliable deployment practices
 </div>
 

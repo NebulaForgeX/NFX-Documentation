@@ -2,7 +2,7 @@ import { ref } from 'vue'
 
 export type Theme = 'light' | 'dark'
 
-const themeKey = 'nfx-policy-theme'
+const themeKey = 'nfx-documentation-theme'
 const theme = ref<Theme>('light')
 
 // 初始化主题（在模块加载时执行）

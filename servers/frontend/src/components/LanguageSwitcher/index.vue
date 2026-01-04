@@ -38,7 +38,7 @@ const toggleDropdown = () => {
 
 const switchLanguage = (lang: string) => {
   locale.value = lang
-  localStorage.setItem('nfx-policy-language', lang)
+  localStorage.setItem('nfx-documentation-language', lang)
   isOpen.value = false
 }
 
@@ -51,7 +51,7 @@ const handleClickOutside = (event: MouseEvent) => {
 
 onMounted(() => {
   // 恢复保存的语言设置
-  const savedLang = localStorage.getItem('nfx-policy-language')
+  const savedLang = localStorage.getItem('nfx-documentation-language')
   if (savedLang && (savedLang === 'zh' || savedLang === 'en')) {
     locale.value = savedLang
   }

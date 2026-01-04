@@ -1,9 +1,9 @@
 {
   "title": "关于",
-  "subtitle": "了解 NFX 生态系统和 NFX-Policy 项目",
+  "subtitle": "了解 NFX 生态系统和 NFX-Documentation 项目",
   "what": {
-    "title": "什么是 NFX-Policy？",
-    "description": "NFX-Policy 是 <a href='https://github.com/NebulaForgeX' target='_blank' rel='noopener noreferrer' class='link'>NebulaForgeX</a> 项目的部署与配置策略文档。本项目提供了详细的部署指南、配置说明和最佳实践，帮助用户快速部署和配置 NFX 生态系统中的各个组件。"
+    "title": "什么是 NFX-Documentation？",
+    "description": "NFX-Documentation 是 <a href='https://github.com/NebulaForgeX' target='_blank' rel='noopener noreferrer' class='link'>NebulaForgeX</a> 项目的部署与配置策略文档。本项目提供了详细的部署指南、配置说明和最佳实践，帮助用户快速部署和配置 NFX 生态系统中的各个组件。"
   },
   "ecosystem": {
     "title": "NFX 生态系统",
@@ -12,11 +12,11 @@
       "<strong>NFX-Stack</strong>：核心资源栈，提供 MySQL、Redis、Kafka 等基础服务",
       "<strong>NFX-Edge</strong>：多网站反向代理解决方案，基于 Traefik 实现",
       "<strong>NFX-Vault</strong>：SSL 证书管理和监控系统",
-      "<strong>NFX-Policy</strong>：部署与配置策略文档（当前项目）"
+      "<strong>NFX-Documentation</strong>：部署与配置策略文档（当前项目）"
     ]
   },
   "contribute": {
     "title": "贡献",
-    "description": "NFX-Policy 是一个开源项目，欢迎社区贡献。如果您发现问题或有改进建议，请访问我们的 <a href='https://github.com/NebulaForgeX/NFX-Policy' target='_blank' rel='noopener noreferrer' class='link'>GitHub 仓库</a> 提交 Issue 或 Pull Request。"
+    "description": "NFX-Documentation 是一个开源项目，欢迎社区贡献。如果您发现问题或有改进建议，请访问我们的 <a href='https://github.com/NebulaForgeX/NFX-Documentation' target='_blank' rel='noopener noreferrer' class='link'>GitHub 仓库</a> 提交 Issue 或 Pull Request。"
   }
 }

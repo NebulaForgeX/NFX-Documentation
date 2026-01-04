@@ -56,9 +56,9 @@ const repos = computed(() => [
     language: 'Python / React',
   },
   {
-    name: 'NFX-Policy',
-    description: t('repo.nfxPolicy.description'),
-    url: 'https://github.com/NebulaForgeX/NFX-Policy',
+    name: 'NFX-Documentation',
+    description: t('repo.nfxDocumentation.description'),
+    url: 'https://github.com/NebulaForgeX/NFX-Documentation',
     language: 'Vue',
   },
 ])

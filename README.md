@@ -1,9 +1,9 @@
-# NFX-Policy
+# NFX-Documentation
 
 **NebulaForgeX 项目部署与配置策略文档**
 
 <div align="center">
-  <img src="image.png" alt="NFX-Policy Logo" width="200">
+  <img src="image.png" alt="NFX-Documentation Logo" width="200">
   
   **使用所有 NFX 仓库前必须阅读的指南文档**
   
@@ -27,7 +27,7 @@
 
 ## 📖 关于本仓库
 
-NFX-Policy 是 NebulaForgeX 生态系统的策略和指南文档仓库，旨在为所有 NFX 项目的使用和维护提供统一的规范。
+NFX-Documentation 是 NebulaForgeX 生态系统的策略和指南文档仓库，旨在为所有 NFX 项目的使用和维护提供统一的规范。
 
 本仓库记录了：
 
@@ -320,6 +320,6 @@ NFX 生态系统使用多个 Docker 网络：
 ---
 
 <div align="center">
-  <strong>NFX-Policy</strong> - 确保一致、安全、可靠的部署实践
+  <strong>NFX-Documentation</strong> - 确保一致、安全、可靠的部署实践
 </div>
 

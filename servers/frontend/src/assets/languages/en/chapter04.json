@@ -1,0 +1,327 @@
+{
+  "title": "Chapter 4: NFX-Edge Reverse Proxy and Multi-Website Management Deployment",
+  "intro": "[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) is a multi-website reverse proxy solution based on Traefik v3.4 and Docker Compose, providing unified multi-website management and automatic HTTPS support. This chapter will guide you through the deployment and configuration of NFX-Edge.",
+  "why": {
+    "title": "Why Do We Need NFX-Edge?",
+    "description": "NFX-Edge is the edge service layer of the NFX ecosystem, responsible for handling all HTTP/HTTPS traffic from the public internet. As the entry point of the entire system, it plays a crucial role in the architecture.",
+    "unifiedEntry": {
+      "title": "Unified Traffic Entry Point",
+      "description": "First, NFX-Edge provides a unified traffic entry point. In traditional deployment methods, each website requires a separate reverse proxy server configuration, which not only increases maintenance costs but also easily leads to configuration inconsistencies. NFX-Edge, through Traefik reverse proxy, centralizes all website traffic management in a single service, achieving unified traffic scheduling and routing."
+    },
+    "httpsSupport": {
+      "title": "Automatic HTTPS Support",
+      "description": "Second, the system provides automatic HTTPS support. In the modern internet environment, HTTPS has become a basic requirement for websites, not only protecting user data security but also improving search engine rankings. NFX-Edge provides unified HTTPS encrypted access for all websites by integrating SSL/TLS certificates, ensuring secure communication between users and servers."
+    },
+    "certificateUsage": {
+      "title": "Certificate Usage Explanation",
+      "description": "Regarding certificate usage, NFX-Edge uses SSL/TLS certificates to provide HTTPS services. It is important to note that certificate application and management are uniformly handled by the [NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault) certificate management system. NFX-Edge can integrate with NFX-Vault to obtain certificates, but certificate management itself is not a function of NFX-Edge. This separation of responsibilities makes the system more modular and easier to maintain."
+    },
+    "multiSiteManagement": {
+      "title": "Unified Multi-Website Management",
+      "description": "Additionally, NFX-Edge enables unified management of multiple websites. Whether it's a corporate website, admin panel, or personal blog, all can be managed in the same system. Each website has independent configuration and certificates, yet shares the same reverse proxy infrastructure, greatly simplifying the operations of multi-website environments."
+    },
+    "easyDeployment": {
+      "title": "Simple New Website Deployment",
+      "description": "From a deployment perspective, adding new websites has become very simple. You only need to add a few lines of configuration in the Docker Compose configuration file, create the corresponding website directory, and configure certificate paths to complete the deployment of a new website. There's no need to repeatedly set up reverse proxies, SSL certificates, and routing rules, as these are all handled uniformly by NFX-Edge."
+    },
+    "productionOptimization": {
+      "title": "Production Environment Optimization",
+      "description": "Finally, the system has been optimized for production environments. Built-in security headers, Gzip compression, static resource caching, and other features ensure websites can run efficiently and securely. These optimizations require no additional configuration and work out of the box, greatly reducing deployment and maintenance complexity."
+    }
+  },
+  "prerequisites": {
+    "title": "Prerequisites",
+    "description": "Before starting to deploy NFX-Edge, you need to ensure that your environment has completed the necessary foundational configuration work. These preparations are crucial for subsequent deployment and operation.",
+    "router": {
+      "title": "Router Configuration",
+      "description": "First, you need to complete the router configuration (refer to Chapter 1). The router is a key device connecting the internal network and the external network, and proper configuration is a prerequisite for NFX-Edge to work normally. Specifically, you need to configure port forwarding rules on the router to forward public network ports 80 (HTTP) and 443 (HTTPS) to the NAS device. At the same time, you must ensure that the DMZ function is disabled, as DMZ completely exposes the device to the public network, bypassing firewall protection and posing serious security risks. Additionally, you should check and correctly configure firewall rules to ensure only necessary ports are open to the public."
+    },
+    "nas": {
+      "title": "NAS System Configuration",
+      "description": "Second, the basic configuration of the NAS system also needs to be completed (refer to Chapter 2). Docker Engine is the container runtime environment for running NFX-Edge, and you must ensure it is properly installed and running. SSH service is a necessary tool for remote NAS management and command-line operations, and it should be enabled and access permissions configured. Bash environment configuration is very important for running scripts and development work. If your NAS system does not have Bash by default, you need to install and configure it according to the instructions in Chapter 2."
+    },
+    "stack": {
+      "title": "NFX Stack Deployment",
+      "description": "Regarding NFX Stack deployment (refer to Chapter 3), although NFX-Edge itself does not directly depend on the database and cache services in NFX Stack, following the recommended deployment order, it is recommended to deploy edge services after completing the core resource stack deployment. The benefit of doing this is to ensure that the infrastructure of the entire NFX ecosystem is ready, preparing for subsequent service deployment and integration."
+    },
+    "dns": {
+      "title": "Domain DNS Configuration",
+      "description": "Finally, domain DNS configuration is also an essential preparation work. All domains to be used should have DNS A records configured, pointing these domains to your NAS public IP address. DNS record propagation may take some time, and you can verify that DNS records are correctly propagated using the `nslookup` or `dig` commands. If DNS records have not propagated yet, NFX-Edge may not be able to route traffic correctly, or the certificate application process may fail."
+    }
+  },
+  "clone": {
+    "title": "Clone the Project Repository",
+    "step1": {
+      "title": "Step 1: Navigate to Deployment Directory",
+      "description": "Switch to your chosen deployment directory (should be under the same parent directory as NFX Stack for unified management):",
+      "command": "# Example: If your deployment directory is /volume1\ncd /volume1\n\n# Or your other chosen directory"
+    },
+    "step2": {
+      "title": "Step 2: Clone NFX-Edge Repository",
+      "description": "Use Git to clone the [NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) repository:",
+      "command": "git clone https://github.com/NebulaForgeX/NFX-Edge.git",
+      "description2": "After the clone operation is executed, the repository will be downloaded locally. By default, Git will create a directory named `NFX-Edge` to store the repository contents. Assuming your deployment directory is `<YOUR_DEPLOYMENT_DIR>`, the full project path will be `<YOUR_DEPLOYMENT_DIR>/NFX-Edge`. For example, if you choose to deploy under the `/volume1` directory, the final path will be `/volume1/NFX-Edge`.",
+      "optional": {
+        "title": "Optional: Rename Directory",
+        "description": "If you want to use a different directory name (e.g., `Websites`), you can rename it after cloning:",
+        "commands": [
+          "# First clone\ngit clone https://github.com/NebulaForgeX/NFX-Edge.git\n\n# Then rename (optional)\nmv NFX-Edge Websites",
+          "# Or specify the directory name directly during cloning:\ngit clone https://github.com/NebulaForgeX/NFX-Edge.git Websites"
+        ]
+      }
+    },
+    "step3": {
+      "title": "Step 3: Enter Project Directory",
+      "command": "# If using the default name\ncd NFX-Edge\n\n# Or if you renamed the directory (e.g., to Websites)\n# cd Websites"
+    }
+  },
+  "configFiles": {
+    "title": "Create Configuration Files",
+    "step1": {
+      "title": "Step 1: Copy Docker Compose Configuration Template",
+      "description": "NFX-Edge provides `docker-compose.example.yml` as a configuration template. We need to copy it and create the actual `docker-compose.yml` file:",
+      "command": "cp docker-compose.example.yml docker-compose.yml",
+      "important": "It is important to note that the `docker-compose.yml` file will contain your actual deployment configuration, including domain names, container names, and other personalized information. This file should not be committed to the Git repository, as each deployment environment has different configurations. The `.example.yml` file is a configuration template, mainly used for reference and documentation purposes, and can be safely committed to version control."
+    },
+    "step2": {
+      "title": "Step 2: Create Environment Variables File",
+      "description": "Create a `.env` file to configure environment variables:",
+      "command": "cat > .env << EOF\nCERTS_DIR=/volume1/certs/websites\nTRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml\nTRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic\nNGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf\nEOF",
+      "description2": "When creating the `.env` file, you need to configure it according to your actual deployment environment. Please replace `<YOUR_DEPLOYMENT_DIR>` in the template with your actual deployment directory path, for example `/volume1`. At the same time, replace `<PROJECT_DIR>` with the project directory name. By default, this is `NFX-Edge`, but if you renamed the directory after cloning the repository (for example, to `Websites`), you need to use the renamed name. Additionally, the `.env` file contains path and other configuration information and should also not be committed to the Git repository.",
+      "description3": "The environment variable file contains several key configuration items. `CERTS_DIR` specifies the path of the certificate storage directory, and all SSL/TLS certificate files for websites will be stored in this directory. `TRAEFIK_CONFIG_FILE` points to Traefik's static configuration file, which contains basic Traefik configuration information. `TRAEFIK_DYNAMIC_DIR` is the path to Traefik's dynamic configuration directory, and configuration files in this directory will be automatically monitored and reloaded by Traefik. Finally, `NGINX_CONFIG_FILE` specifies the path to the Nginx configuration file, which will be shared and used by all website service containers.",
+      "example": {
+        "title": "Example:",
+        "description": "If your deployment directory is `/volume1` and the project directory name is `NFX-Edge`:",
+        "command": "CERTS_DIR=/volume1/certs/websites\nTRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml\nTRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic\nNGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf",
+        "note": "**If you renamed the directory:** If you renamed the project directory to `Websites`, replace `NFX-Edge` in the paths with `Websites` accordingly."
+      }
+    },
+    "step3": {
+      "title": "Step 3: Create Certificate Directory",
+      "description": "Create the certificate storage directory:",
+      "command": "# Create certificate directory (replace <YOUR_DEPLOYMENT_DIR> with actual path)\nmkdir -p /volume1/certs/websites\n\n# Set appropriate permissions (optional, but recommended)\n# chmod 755 /volume1/certs/websites",
+      "description2": "The certificate directory is where SSL/TLS certificate files for all websites are stored. To facilitate management and organization, each website uses an independent subfolder to store its own certificate files. Certificate files follow a uniform standard naming format: the certificate file is named `cert.crt`, and the private key file is named `key.key`. This naming convention ensures that NFX-Edge can correctly identify and load certificate files."
+    }
+  },
+  "dockerCompose": {
+    "title": "Configure Docker Compose",
+    "description": "Edit the `docker-compose.yml` file and configure it according to your actual needs.",
+    "step1": {
+      "title": "Step 1: Configure Traefik Dashboard",
+      "description": "In `docker-compose.yml`, find the `labels` section of the `reverse-proxy` service and modify the Traefik Dashboard domain:",
+      "yaml": "labels:\n  - traefik.enable=true\n  # Modify to your actual domain (e.g., traefik.yourdomain.com)\n  - traefik.http.routers.web-dashboard.rule=Host(`traefik.yourdomain.com`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))\n  - traefik.http.routers.web-dashboard.entrypoints=websecure\n  - traefik.http.routers.web-dashboard.tls=true\n  - traefik.http.routers.web-dashboard.service=api@internal\n  # Modify BasicAuth password hash (generate using htpasswd)\n  - traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$$2y$$05$$...\n  - traefik.http.routers.web-dashboard.middlewares=dashboard-auth",
+      "generateHash": {
+        "title": "Generate BasicAuth Password Hash:",
+        "commands": [
+          "# Generate password hash using htpasswd (if system has it installed)\nhtpasswd -nb admin your_password",
+          "# Or use Docker container to generate\ndocker run --rm httpd:alpine htpasswd -nb admin your_password",
+          "# Replace the output hash value in docker-compose.yml"
+        ]
+      }
+    },
+    "step2": {
+      "title": "Step 2: Configure Website Services",
+      "description": "According to your needs, add or modify website services in `docker-compose.yml`. The basic configuration for each website service is as follows:",
+      "yaml": "www_example:\n  image: nginx:alpine\n  container_name: NFX-Edge-WWW-EXAMPLE\n  restart: always\n  volumes:\n    - ./www.example.com:/usr/share/nginx/html:ro\n    - ${NGINX_CONFIG_FILE}:/etc/nginx/conf.d/default.conf:ro\n  labels:\n    - traefik.enable=true\n    # Modify to your actual domain\n    - traefik.http.routers.example.rule=Host(`example.com`) || Host(`www.example.com`)\n    - traefik.http.routers.example.entrypoints=websecure\n    - traefik.http.routers.example.tls=true\n  networks:\n    - nfx-edge\n  depends_on:\n    - reverse-proxy",
+      "description2": "In this configuration, there are several key configuration items to understand. `container_name` specifies the container name, and it is recommended to use meaningful naming conventions, such as `NFX-Edge-WWW-EXAMPLE`, so that the purpose of each container can be clearly identified. The `volumes` configuration item is used to mount data volumes, here mounting the website static file directory and Nginx configuration file, and using read-only mode (`:ro`), which means containers can only read these files and cannot modify them, improving security. The `labels` section contains Traefik routing rule configurations, where domain matching rules and TLS configuration are specified. Traefik will create routing rules based on these labels. The `networks` configuration ensures that all containers are connected to the `nfx-edge` network, allowing containers to communicate with each other. Finally, the `depends_on` configuration ensures that the `reverse-proxy` service starts first, which is important for dependency relationships, as website services need to wait for the reverse proxy service to be ready before they can work normally."
+    },
+    "step3": {
+      "title": "Step 3: Create Website Directories",
+      "description": "Create corresponding directories for each website and add static files:",
+      "command": "# Create website directory (replace example.com with your actual domain)\nmkdir -p www.example.com\n\n# Copy website static files to the directory\n# For example, if you have a built frontend project:\n# cp -r /path/to/your/build/* www.example.com/\n\n# Or create index.html directly in this directory for testing\ncat > www.example.com/index.html << EOF\n<!DOCTYPE html>\n<html>\n<head>\n    <title>Example Site</title>\n</head>\n<body>\n    <h1>Welcome to Example Site</h1>\n</body>\n</html>\nEOF"
+    }
+  },
+  "certificates": {
+    "title": "Configure SSL/TLS Certificates",
+    "description": "NFX-Edge itself does not manage certificates, but supports two certificate usage methods:",
+    "method1": {
+      "title": "Method 1: Using NFX-Vault (Recommended) ⭐",
+      "description": "[NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault) is a Web-based SSL certificate management and monitoring system responsible for uniformly applying, checking, exporting, and managing all SSL/TLS certificates. NFX-Edge obtains and uses certificates by integrating with NFX-Vault.",
+      "install": {
+        "title": "Install NFX-Vault",
+        "step1": {
+          "title": "1. Clone NFX-Vault Project",
+          "command": "# Navigate to deployment directory\ncd <YOUR_DEPLOYMENT_DIR>\n\n# Clone NFX-Vault repository\ngit clone https://github.com/NebulaForgeX/NFX-Vault.git\ncd NFX-Vault\n\n# Configure and start services according to NFX-Vault's README\ndocker compose up -d"
+        },
+        "step2": {
+          "title": "2. Configure Network Connection",
+          "description": "To ensure NFX-Vault and NFX-Edge can communicate properly, add network configuration to NFX-Vault's `docker-compose.yml`:",
+          "yaml": "services:\n  backend-api:\n    networks:\n      - nfx-edge  # Add nfx-edge network\n      # ... other network configurations\n\nnetworks:\n  nfx-edge:\n    external: true  # Use external network\n  # ... other network configurations",
+          "restart": {
+            "description": "Then restart NFX-Vault service:",
+            "command": "cd NFX-Vault\ndocker compose down\ndocker compose up -d"
+          }
+        },
+        "step3": {
+          "title": "3. Apply for Certificates via Web Interface",
+          "description": "After completing network configuration, you can apply for certificates through NFX-Vault's Web interface. First, access NFX-Vault's Web interface, then fill in the necessary application information, including domain name, email address, and folder_name, etc. folder_name is an important parameter that determines the subfolder name for certificate files in the storage directory. It is recommended to use meaningful naming, such as `www_example` or `admin_example`. After submitting the application, the system will automatically process the certificate application process, which may take a few minutes. Once the certificate is successfully applied and generated, certificate files will be automatically stored in the `${CERTS_DIR}/{folder_name}/` directory, with file naming format `cert.crt` (certificate file) and `key.key` (private key file)."
+        },
+        "step4": {
+          "title": "4. Update certs.yml",
+          "description": "Add new certificate path in `dynamic/certs.yml`:",
+          "yaml": "tls:\n  certificates:\n    - certFile: /certs/websites/{folder_name}/cert.crt\n      keyFile: /certs/websites/{folder_name}/key.key\n      stores:\n        - default",
+          "restart": {
+            "description": "Then restart Traefik service to load the new certificate:",
+            "command": "sudo docker compose restart reverse-proxy"
+          },
+          "verify": {
+            "title": "Verify Connection:",
+            "command": "# Check if NFX-Vault API is reachable\ndocker exec NFX-Edge-Reverse-Proxy wget -O- http://NFX-Vault-Backend-API:8000/health"
+          }
+        }
+      }
+    },
+    "method2": {
+      "title": "Method 2: Manually Provide Certificate Files",
+      "description": "If you already have certificate files or want to manage certificates through other methods (certificate management is handled by external systems, NFX-Edge is only responsible for using certificate files):",
+      "step1": {
+        "title": "1. Create Certificate Directory",
+        "command": "# Create certificate directory for each website (replace folder_name with actual folder name)\nmkdir -p ${CERTS_DIR}/{folder_name}\n\n# For example:\nmkdir -p /volume1/certs/websites/www_example"
+      },
+      "step2": {
+        "title": "2. Copy Certificate Files",
+        "command": "# Copy certificate files to corresponding directory\ncp cert.pem ${CERTS_DIR}/{folder_name}/cert.crt\ncp key.pem ${CERTS_DIR}/{folder_name}/key.key\n\n# Set appropriate permissions (recommended)\nchmod 600 ${CERTS_DIR}/{folder_name}/cert.crt\nchmod 600 ${CERTS_DIR}/{folder_name}/key.key"
+      },
+      "step3": {
+        "title": "3. Update dynamic/certs.yml",
+        "description": "Add certificate path in `dynamic/certs.yml`:",
+        "yaml": "tls:\n  certificates:\n    - certFile: /certs/websites/{folder_name}/cert.crt\n      keyFile: /certs/websites/{folder_name}/key.key\n      stores:\n        - default"
+      },
+      "step4": {
+        "title": "4. Restart Traefik Service",
+        "command": "sudo docker compose restart reverse-proxy"
+      }
+    }
+  },
+  "verifyConfig": {
+    "title": "Verify Configuration",
+    "description": "Before starting services, it is highly recommended to perform a comprehensive configuration check. This step can help you discover and resolve configuration issues in a timely manner, avoiding various errors after startup.",
+    "checks": [
+      "First, you need to check whether the configuration file format is correct. Both `docker-compose.yml` and `.env` files must comply with YAML and key-value pair syntax specifications. Any syntax errors may cause service startup failures. It is recommended to use the syntax checking function of text editors, or use online YAML validation tools to check configuration files.",
+      "Second, verify the correctness of all paths. All paths configured in environment variables should point to actually existing directories, or ensure that Docker has permission to create these directories. Paths should use absolute paths and avoid relative paths, which ensures that paths remain correct when executing commands from different working directories.",
+      "Domain configuration is also a key item to check. Ensure that all domains configured in `docker-compose.yml` have DNS A records correctly set up, and these records point to your NAS public IP address. If domain resolution is incorrect, users will not be able to access your websites, and the certificate application process may also fail.",
+      "Regarding certificate configuration, if you have already prepared certificate files, you need to confirm that these files are placed in the correct directories and that certificate paths are correctly configured in the `dynamic/certs.yml` file. Certificate file permissions are also important. It is recommended to set certificate file permissions to 600, so only the file owner can read and write.",
+      "Finally, perform port occupancy checks. Ports 80 and 443 are the standard ports for HTTP and HTTPS, and you must ensure that these ports are not occupied by other services. If ports are occupied, NFX-Edge services will not be able to start normally."
+    ],
+    "portCheck": {
+      "title": "Check Port Usage:",
+      "command": "# Check if ports are occupied\nnetstat -tuln | grep -E ':(80|443)'\n# or\nss -tuln | grep -E ':(80|443)'",
+      "note": "If ports are occupied, you need to stop the services occupying the ports first (e.g., Web Center, refer to Chapter 2)."
+    }
+  },
+  "startService": {
+    "title": "Start Services",
+    "description": "After completing all configurations, you can start NFX-Edge services:",
+    "command": "# Ensure you are in the project directory\ncd <YOUR_DEPLOYMENT_DIR>/NFX-Edge  # or the directory name you renamed to\n\n# Start all services\nsudo docker compose up -d",
+    "description2": "When executing the startup command, the `-d` parameter indicates background running mode (detached mode), which means the services will run in the background and will not occupy the current terminal window. After services start, Docker Compose will automatically create the required Docker networks (if networks do not exist yet), and then start each container in sequence according to dependency relationships. The entire startup process may take some time, especially on the first startup when Docker images need to be downloaded."
+  },
+  "verifyDeployment": {
+    "title": "Verify Deployment",
+    "step1": {
+      "title": "Step 1: Check Service Status",
+      "command": "# View all service statuses\nsudo docker compose ps\n\n# Should see all services with status \"Up\"",
+      "expectedOutput": {
+        "title": "Expected Output Example:",
+        "output": "NAME                          STATUS          PORTS\nNFX-Edge-Reverse-Proxy        Up              0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp\nNFX-Edge-WWW-EXAMPLE          Up              80/tcp"
+      }
+    },
+    "step2": {
+      "title": "Step 2: View Service Logs",
+      "commands": [
+        "# View logs for all services\nsudo docker compose logs -f",
+        "# Or view logs for specific service\nsudo docker compose logs -f reverse-proxy\nsudo docker compose logs -f www_example"
+      ],
+      "description": "When viewing logs, you need to pay attention to several key points. First, the Traefik reverse proxy service should start normally, and there should be no error messages in the logs. If you see error messages, you need to troubleshoot based on the error content. Second, certificate loading is also a key item to check. Check the logs for certificate-related error messages, such as certificate files not found, certificate format errors, etc. Finally, you need to confirm that routing rules are correctly configured. Traefik should be able to identify all configured services and routing rules."
+    },
+    "step3": {
+      "title": "Step 3: Access Websites for Verification",
+      "description": "Access various websites to verify services are working normally:",
+      "sites": [
+        "**Main Site**: `https://www.example.com` (replace `example.com` with your actual domain)",
+        "**Admin Panel**: `https://admin.example.com` (if admin panel is configured)",
+        "**Traefik Dashboard**: `https://traefik.yourdomain.com/dashboard/`"
+      ],
+      "description2": "When performing access verification, you need to check several key aspects. First, HTTPS connections should work normally, and the browser address bar should display a security lock icon, indicating that the connection is encrypted. Second, website content should display normally, which indicates that the Nginx container and file mounting are working properly. Third, HTTP requests should automatically redirect to HTTPS, which can be verified by accessing the HTTP version of the website. The browser should automatically jump to the HTTPS version. Finally, the Traefik Dashboard should be accessible normally. When accessing, you will be prompted to enter a username and password for BasicAuth authentication, which is to protect the management interface from unauthorized access."
+    },
+    "step4": {
+      "title": "Step 4: Test HTTP to HTTPS Redirect",
+      "description": "Access the HTTP version of the website, it should automatically redirect to HTTPS:",
+      "command": "# Test redirect using curl\ncurl -I http://www.example.com\n\n# Should see 301 or 308 redirect response"
+    }
+  },
+  "addNewSite": {
+    "title": "Add New Websites",
+    "description": "When you need to add a new website, you can follow these steps:",
+    "step1": {
+      "title": "Step 1: Add Service in docker-compose.yml",
+      "description": "Copy the existing website service configuration and modify relevant parameters:",
+      "yaml": "www_newdomain:\n  image: nginx:alpine\n  container_name: NFX-Edge-WWW-NEWDOMAIN\n  restart: always\n  volumes:\n    - ./www.newdomain.com:/usr/share/nginx/html:ro\n    - ${NGINX_CONFIG_FILE}:/etc/nginx/conf.d/default.conf:ro\n  labels:\n    - traefik.enable=true\n    - traefik.http.routers.newdomain.rule=Host(`newdomain.com`) || Host(`www.newdomain.com`)\n    - traefik.http.routers.newdomain.entrypoints=websecure\n    - traefik.http.routers.newdomain.tls=true\n  networks:\n    - nfx-edge\n  depends_on:\n    - reverse-proxy"
+    },
+    "step2": {
+      "title": "Step 2: Create Website Directory and Add Files",
+      "command": "mkdir -p www.newdomain.com\n# Put website static files in the directory"
+    },
+    "step3": {
+      "title": "Step 3: Prepare Certificates",
+      "description": "Certificate preparation depends on the certificate management method you use. If you use NFX-Vault to manage certificates, you can apply for a new certificate through the Web interface, setting folder_name to `www_newdomain` during the application. If you use manual certificate management, you need to copy certificate files to the `${CERTS_DIR}/www_newdomain/` directory, ensuring the file names are `cert.crt` and `key.key` respectively."
+    },
+    "step4": {
+      "title": "Step 4: Update dynamic/certs.yml",
+      "yaml": "tls:\n  certificates:\n    - certFile: /certs/websites/www_newdomain/cert.crt\n      keyFile: /certs/websites/www_newdomain/key.key\n      stores:\n        - default"
+    },
+    "step5": {
+      "title": "Step 5: Start New Service",
+      "command": "# Start new service\nsudo docker compose up -d www_newdomain\n\n# Restart Traefik to load new certificate\nsudo docker compose restart reverse-proxy"
+    }
+  },
+  "commonOperations": {
+    "title": "Common Operations",
+    "restart": {
+      "title": "Restart Services",
+      "commands": [
+        "# Use restart script (recommended, if exists)\n./restart.sh",
+        "# Or use Docker Compose command\nsudo docker compose restart",
+        "# Restart specific service\nsudo docker compose restart reverse-proxy\nsudo docker compose restart www_example"
+      ]
+    },
+    "stop": {
+      "title": "Stop Services",
+      "commands": [
+        "# Stop all services (preserve data)\nsudo docker compose down",
+        "# Stop and delete data volumes\nsudo docker compose down -v"
+      ]
+    },
+    "update": {
+      "title": "Update Services",
+      "commands": [
+        "# Pull latest images\nsudo docker compose pull",
+        "# Recreate and start containers\nsudo docker compose up -d"
+      ]
+    },
+    "updateContent": {
+      "title": "Update Website Content",
+      "description": "Website content is mounted via volumes, changes take effect immediately without restarting containers:",
+      "command": "# Directly modify files in the corresponding directory\nvim www.example.com/index.html\n\n# After file modification, Nginx will automatically serve new content"
+    },
+    "viewStatus": {
+      "title": "View Service Status",
+      "commands": [
+        "# View all service statuses\nsudo docker compose ps",
+        "# View resource usage\ndocker stats"
+      ]
+    }
+  },
+  "docs": {
+    "title": "View Detailed Documentation",
+    "description": "Before diving deep into using NFX-Edge, it is strongly recommended that you read the [NFX-Edge Official Documentation](https://github.com/NebulaForgeX/NFX-Edge) in detail. The official documentation contains more detailed and comprehensive content than this chapter, including detailed descriptions of all configuration options, usage methods for advanced features, troubleshooting guides, best practice recommendations, and detailed instructions for certificate management.",
+    "description2": "The official documentation is an important reference for learning and using NFX-Edge. It not only provides complete usage guides but also includes API documentation and best practices from actual deployments. By reading the official documentation, you can gain a deeper understanding of how the system works, master more advanced features, and find solutions faster when encountering problems. Whether for daily operations or system optimization, the official documentation is an indispensable reference resource."
+  },
+  "nextSteps": {
+    "title": "Next Steps",
+    "description": "After completing NFX-Edge deployment, you can begin subsequent work. First, it is recommended to comprehensively verify all websites to ensure each website can be accessed normally, HTTPS connections work properly, and HTTP to HTTPS redirect functionality works correctly. If problems are found, troubleshoot and fix them promptly.",
+    "description2": "Next, you can continue configuring more website services. One of the advantages of NFX-Edge is the ability to easily add new websites. You only need to follow the instructions in the \"Add New Websites\" section of this chapter, add new service definitions in the configuration file, create corresponding website directories, and configure certificate paths.",
+    "description3": "If you haven't integrated NFX-Vault for certificate management yet, it is recommended to complete the integration as soon as possible. NFX-Vault provides a unified certificate management interface that can greatly simplify certificate application, renewal, and monitoring work. Through the Web interface, you can conveniently view the status and expiration times of all certificates and apply for new certificates or renew certificates that are about to expire in a timely manner.",
+    "description4": "Finally, you can begin deploying other NFX services, such as application services. NFX-Edge, as the edge service layer, can provide unified reverse proxy and HTTPS support for these backend services, enabling the entire NFX ecosystem to work together.",
+    "conclusion": "**NFX-Edge is the edge service layer of the NFX ecosystem. Correctly deploying and configuring it is the foundation for normal access to all website services.**"
+  }
+}

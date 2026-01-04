@@ -1,0 +1,16 @@
+{
+  "title": "仓库",
+  "description": "NFX 生态系统包含多个开源项目，每个项目都有其特定的用途和功能。",
+  "nfxStack": {
+    "description": "NFX Stack 是 NFX 生态系统的核心资源栈，提供 MySQL、Redis、Kafka 等基础服务。"
+  },
+  "nfxEdge": {
+    "description": "NFX-Edge 是基于 Traefik 的多网站反向代理解决方案，提供统一的多网站管理和自动 HTTPS 支持。"
+  },
+  "nfxVault": {
+    "description": "NFX-Vault 是一个现代化的 SSL 证书管理和监控系统，提供统一的证书申请、检查、导出和管理功能。"
+  },
+  "nfxPolicy": {
+    "description": "NFX-Policy 是 NFX 项目的部署与配置策略文档，提供详细的部署指南和最佳实践。"
+  }
+}

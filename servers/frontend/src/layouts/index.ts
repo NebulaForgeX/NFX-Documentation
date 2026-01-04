@@ -1,3 +1,1 @@
-// Export layouts here
-// Example: export { default as SomeLayout } from './SomeLayout'
-
+export { default as MainLayout } from './MainLayout/index.vue'

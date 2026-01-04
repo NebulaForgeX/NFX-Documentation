@@ -1,15 +1,13 @@
 <template>
-  <div id="app">
+  <MainLayout>
     <router-view />
-  </div>
+  </MainLayout>
 </template>
 
 <script setup lang="ts">
-// App component
+import MainLayout from '@/layouts/MainLayout/index.vue'
 </script>
 
-<style scoped>
-#app {
-  min-height: 100vh;
-}
+<style>
+/* 主题变量在 theme.css 中定义 */
 </style>

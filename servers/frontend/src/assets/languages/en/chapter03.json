@@ -1,0 +1,229 @@
+{
+  "title": "Chapter 3: NFX Stack Core Resource Stack Deployment",
+  "intro": "[NFX Stack (Resources)](https://github.com/NebulaForgeX/NFX-Stack) is the core infrastructure layer of the NFX ecosystem, providing all the basic resources required by services, including databases, caches, and message queue services. This chapter will guide you through the deployment and configuration of NFX Stack.",
+  "why": {
+    "title": "Why is NFX Stack the Core Service?",
+    "description": "NFX Stack is the foundation of the entire NFX ecosystem for the following reasons:",
+    "items": [
+      "**Unified Data Storage** - Provides unified database and storage solutions for all services",
+      "**Standardized Configuration** - Unified management of connection configurations, ports, and authentication information for all databases",
+      "**Centralized Resource Management** - Manage all infrastructure services in one place",
+      "**Simplified Service Integration** - Other NFX services only need to connect to NFX Stack without separate database configuration",
+      "**Consistent Development Environment** - Ensures all developers and services use the same resource stack configuration"
+    ]
+  },
+  "clone": {
+    "title": "Clone the Project Repository",
+    "description": "After completing NAS system configuration (Chapter 2), you can now connect to the NAS via SSH. Let's start deploying NFX Stack.",
+    "step1": {
+      "title": "Step 1: Navigate to Deployment Directory",
+      "description": "First, switch to your chosen deployment directory. You can choose an appropriate directory location based on your NAS configuration:",
+      "command": "# Example: If your deployment directory is /volume1\ncd /volume1\n\n# Or you can choose other directories, for example:\n# cd /mnt/data\n# cd /home/user/projects\n# etc., choose according to your actual situation",
+      "notes": [
+        "Choose an appropriate location on your NAS as the project deployment directory",
+        "Ensure the directory has sufficient disk space",
+        "It is recommended to use a unified parent directory to manage all NFX projects"
+      ]
+    },
+    "step2": {
+      "title": "Step 2: Clone NFX Stack Repository",
+      "description": "Use Git to clone the [NFX Stack](https://github.com/NebulaForgeX/NFX-Stack) repository:",
+      "command": "git clone https://github.com/NebulaForgeX/NFX-Stack.git",
+      "notes": [
+        "By default, the repository will be cloned to the `NFX-Stack` directory",
+        "Assuming your deployment directory is `<YOUR_DEPLOYMENT_DIR>`, the full path is `<YOUR_DEPLOYMENT_DIR>/NFX-Stack`",
+        "For example: If the deployment directory is `/volume1`, the path is `/volume1/NFX-Stack`",
+        "If the deployment directory is `/mnt/data`, the path is `/mnt/data/NFX-Stack`"
+      ],
+      "optional": {
+        "title": "Optional: Rename Directory",
+        "description": "If you want to use a different directory name (e.g., `Resources`), you can rename it after cloning:",
+        "commands": [
+          "# First clone\ngit clone https://github.com/NebulaForgeX/NFX-Stack.git\n\n# Then rename (optional)\nmv NFX-Stack Resources",
+          "# Or specify the directory name directly during cloning:\ngit clone https://github.com/NebulaForgeX/NFX-Stack.git Resources"
+        ]
+      }
+    },
+    "step3": {
+      "title": "Step 3: Enter Project Directory",
+      "command": "# If using the default name\ncd NFX-Stack\n\n# Or if you renamed the directory (e.g., to Resources)\n# cd Resources"
+    }
+  },
+  "envConfig": {
+    "title": "Configure Environment Variables",
+    "step1": {
+      "title": "Step 1: Copy Environment Variable Template",
+      "description": "NFX Stack provides an `.example.env` file as a configuration template. We need to copy it and create the actual `.env` file:",
+      "command": "cp .example.env .env",
+      "important": [
+        "The `.env` file contains sensitive information (passwords, keys, etc.) and will not be committed to the Git repository",
+        "`.example.env` is a template file for reference and documentation",
+        "Never commit the `.env` file to version control"
+      ]
+    },
+    "step2": {
+      "title": "Step 2: Edit Environment Variable File",
+      "description": "Open the `.env` file with your preferred text editor:",
+      "commands": [
+        "# Using nano (simple and easy to use)\nnano .env",
+        "# Or using vi/vim\nvi .env",
+        "# Or using other editors"
+      ]
+    }
+  },
+  "ipPort": {
+    "title": "Configure IP Addresses and Ports",
+    "ip": {
+      "title": "IP Address Configuration",
+      "description": "Set all `*_HOST` parameters to your NAS IP address.",
+      "example": "**Example:** If your NAS IP address is `192.168.1.66`, all HOST configuration items should be set to `192.168.1.66`",
+      "hosts": [
+        "`MYSQL_DATABASE_HOST=192.168.1.66`",
+        "`MYSQL_UI_HOST=192.168.1.66`",
+        "`MONGO_DATABASE_HOST=192.168.1.66`",
+        "`MONGO_UI_HOST=192.168.1.66`",
+        "`POSTGRESQL_DATABASE_HOST=192.168.1.66`",
+        "`POSTGRESQL_UI_HOST=192.168.1.66`",
+        "`REDIS_DATABASE_HOST=192.168.1.66`",
+        "`REDIS_UI_HOST=192.168.1.66`",
+        "`KAFKA_EXTERNAL_HOST=192.168.1.66`",
+        "`KAFKA_INTERNAL_HOST_IP=192.168.1.66` (Note: This is the IP used internally by Kafka)",
+        "`KAFKA_UI_HOST=192.168.1.66`",
+        "`MINIO_API_HOST=192.168.1.66` (if using MinIO)",
+        "`MINIO_UI_HOST=192.168.1.66` (if using MinIO)"
+      ],
+      "security": [
+        "Use the actual NAS IP address instead of `0.0.0.0` (all interfaces) or `127.0.0.1` (localhost only)",
+        "This limits services to listen only on the specified IP, improving security",
+        "If your NAS has multiple network interfaces, use the interface IP that needs to expose services"
+      ]
+    },
+    "port": {
+      "title": "Port Configuration",
+      "description": "Configure different ports for each service, ensuring no port conflicts.",
+      "warning": "⚠️ **Important Security Notice: Ports Should NOT Be Configured in ONU Port Forwarding Rules**",
+      "important": "**Note: The configured ports should NOT be included in the ONU (router) Port Forwarding rules, otherwise these services will be accessible from the external network!**",
+      "reasons": [
+        "Databases and management interfaces should not be exposed to the external network",
+        "Only ports configured in ONU port forwarding will be forwarded to internal devices",
+        "Ports not configured in port forwarding can only be accessed from the internal network, improving security"
+      ],
+      "recommendations": [
+        "**Database Ports** - Use high port numbers (such as 10013, 10014, 10015, 10016, etc.)",
+        "**Management Interface Ports** - Use different high port numbers (such as 10101, 10106, 10111, 10121, 10131, etc.)",
+        "**Avoid Common Ports** - Do not use standard ports like 3306 (MySQL default), 5432 (PostgreSQL default), etc.",
+        "**Port Range Recommendation** - Use ports in the range 10000-65535"
+      ],
+      "example": "# MySQL\nMYSQL_DATABASE_PORT=10013\nMYSQL_UI_PORT=10101\n\n# MongoDB\nMONGO_DATABASE_PORT=10014\nMONGO_UI_PORT=10111\n\n# PostgreSQL\nPOSTGRESQL_DATABASE_PORT=10016\nPOSTGRESQL_UI_PORT=10106\n\n# Redis\nREDIS_DATABASE_PORT=10015\nREDIS_UI_PORT=10121\n\n# Kafka\nKAFKA_EXTERNAL_PORT=10109\nKAFKA_UI_PORT=10131\n\n# MinIO (if used)\nMINIO_API_PORT=9000\nMINIO_UI_PORT=9001",
+      "check": {
+        "title": "Port Conflict Check:",
+        "description": "Before configuring ports, it is recommended to check if ports are already in use:",
+        "command": "# Check if a port is in use\nnetstat -tuln | grep <PORT>\n# or\nss -tuln | grep <PORT>"
+      }
+    }
+  },
+  "dataPath": {
+    "title": "Configure Data Persistence Paths",
+    "description": "Data persistence paths determine where database files are stored on the host machine. Correctly configuring these paths is very important for data security and backup.",
+    "structure": {
+      "title": "Default Data Directory Structure",
+      "description": "The NFX Stack repository provides a `Databases` folder in the project directory for data storage. Assuming your project is deployed at `<YOUR_DEPLOYMENT_DIR>/NFX-Stack` (or the name you renamed it to), the data directory structure is as follows:",
+      "tree": "<YOUR_DEPLOYMENT_DIR>/NFX-Stack/Databases/\n├── mysql/              # MySQL data directory\n├── mysql-init/         # MySQL initialization scripts directory\n├── mongodb/            # MongoDB data directory\n├── mongodb-init/       # MongoDB initialization scripts directory\n├── postgresql/         # PostgreSQL data directory\n├── postgresql-init/    # PostgreSQL initialization scripts directory\n├── redis/              # Redis data directory\n└── kafka/              # Kafka data directory",
+      "note": "**Note:** `<YOUR_DEPLOYMENT_DIR>` is your chosen deployment directory, and the project directory name is `NFX-Stack` by default (or the name you renamed it to). For example, if deployed at `/volume1`, the path is `/volume1/NFX-Stack/Databases/`; if deployed at `/mnt/data`, the path is `/mnt/data/NFX-Stack/Databases/`."
+    },
+    "config": {
+      "title": "Configure Data Paths",
+      "description": "Configure data persistence paths in the `.env` file. Replace `<YOUR_DEPLOYMENT_DIR>` with your actual deployment directory path, and `<PROJECT_DIR>` with the project directory name (default is `NFX-Stack`, or the name you renamed it to):",
+      "template": "# MySQL\nMYSQL_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/mysql\nMYSQL_INIT_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/mysql-init\n\n# MongoDB\nMONGO_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/mongodb\nMONGO_INIT_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/mongodb-init\n\n# Redis\nREDIS_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/redis\n\n# Kafka\nKAFKA_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/kafka\n\n# MinIO (if used, usually placed in Stores directory)\n# MINIO_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Stores\n\n# PostgreSQL\nPOSTGRESQL_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/postgresql\nPOSTGRESQL_INIT_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/postgresql-init",
+      "example": "# MySQL\nMYSQL_DATA_PATH=/volume1/NFX-Stack/Databases/mysql\nMYSQL_INIT_PATH=/volume1/NFX-Stack/Databases/mysql-init\n\n# MongoDB\nMONGO_DATA_PATH=/volume1/NFX-Stack/Databases/mongodb\nMONGO_INIT_PATH=/volume1/NFX-Stack/Databases/mongodb-init\n\n# Redis\nREDIS_DATA_PATH=/volume1/NFX-Stack/Databases/redis\n\n# Kafka\nKAFKA_DATA_PATH=/volume1/NFX-Stack/Databases/kafka\n\n# MinIO (if used)\n# MINIO_DATA_PATH=/volume1/NFX-Stack/Stores\n\n# PostgreSQL\nPOSTGRESQL_DATA_PATH=/volume1/NFX-Stack/Databases/postgresql\nPOSTGRESQL_INIT_PATH=/volume1/NFX-Stack/Databases/postgresql-init",
+      "renameNote": "**If you renamed the directory:** If you renamed the project directory to `Resources`, replace `NFX-Stack` with `Resources` in the paths accordingly."
+    },
+    "custom": {
+      "title": "Custom Data Paths (Optional)",
+      "description": "If you want to store data in other locations, you can modify these paths. For example:",
+      "examples": [
+        "Store on different volumes or disks",
+        "Use network storage (NFS, SMB, etc.)",
+        "Separate storage for different types of data"
+      ],
+      "notes": [
+        "Ensure paths exist or Docker has permissions to create directories",
+        "Paths should use absolute paths, avoid relative paths",
+        "Ensure sufficient disk space",
+        "Consider convenience of backup and recovery"
+      ]
+    },
+    "create": {
+      "title": "Create Data Directories (If Needed)",
+      "description": "If directories do not exist, Docker will create them automatically, but you can also create them manually to ensure correct permissions:",
+      "command": "# Create all data directories (replace <YOUR_DEPLOYMENT_DIR> and <PROJECT_DIR> with actual paths)\nmkdir -p <YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/{mysql,mysql-init,mongodb,mongodb-init,postgresql,postgresql-init,redis,kafka}\n\n# Set appropriate permissions (if needed)\n# chmod 755 <YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases",
+      "example": "mkdir -p /volume1/NFX-Stack/Databases/{mysql,mysql-init,mongodb,mongodb-init,postgresql,postgresql-init,redis,kafka}\n# chmod 755 /volume1/NFX-Stack/Databases"
+    }
+  },
+  "password": {
+    "title": "Configure Passwords and Authentication Information",
+    "strong": {
+      "title": "Set Strong Passwords",
+      "description": "Set strong passwords for all services:",
+      "items": [
+        "**Database root passwords** - At least 16 characters, including uppercase and lowercase letters, numbers, and special characters",
+        "**Redis password** - Avoid using default or weak passwords",
+        "**MongoDB authentication information** - Use strong passwords",
+        "**MinIO access keys** - Use randomly generated strong key pairs"
+      ]
+    },
+    "management": {
+      "title": "Password Management Recommendations",
+      "items": [
+        "Use a password manager to generate and store passwords",
+        "Do not reuse the same password across different services",
+        "Regularly change production environment passwords",
+        "Backup the `.env` file to a secure location (after desensitization)"
+      ]
+    }
+  },
+  "otherConfig": {
+    "title": "Other Configuration Items",
+    "kafka": {
+      "title": "Kafka Internal IP Configuration",
+      "description": "`KAFKA_INTERNAL_HOST_IP` is the IP address used internally by Kafka for the `ADVERTISED_LISTENERS` configuration. Usually set to:",
+      "items": [
+        "The same IP address as `KAFKA_EXTERNAL_HOST` (if Kafka clients are on the same network)",
+        "Or use the IP within the container network"
+      ]
+    }
+  },
+  "verify": {
+    "title": "Verify Configuration",
+    "description": "After completing the configuration, it is recommended to check the following:",
+    "items": [
+      "**Configuration File Format** - Ensure there are no syntax errors",
+      "**IP Address Consistency** - All HOST parameters use the same NAS IP",
+      "**No Port Conflicts** - All ports are unique and not in the port forwarding list",
+      "**Path Correctness** - Data paths point to correct directories",
+      "**Password Strength** - All passwords meet security requirements"
+    ]
+  },
+  "docs": {
+    "title": "Review Detailed Documentation",
+    "description": "Before starting services, it is strongly recommended to read the [NFX Stack Official Documentation](https://github.com/NebulaForgeX/NFX-Stack) in detail to understand:",
+    "items": [
+      "Detailed configuration instructions for each service",
+      "Default ports and recommended configurations",
+      "Dependencies between services",
+      "Common issues and solutions",
+      "Advanced configuration options"
+    ],
+    "note": "The official documentation contains complete usage guides, API documentation, and best practices, which are very important for in-depth understanding and use of NFX Stack."
+  },
+  "nextSteps": {
+    "title": "Next Steps",
+    "description": "After completing the NFX Stack configuration, you can:",
+    "items": [
+      "Start NFX Stack services (refer to [NFX Stack README](https://github.com/NebulaForgeX/NFX-Stack))",
+      "Verify all services are running normally",
+      "Proceed to the next chapter to deploy other NFX services"
+    ],
+    "conclusion": "**NFX Stack is the core of the entire NFX ecosystem, and correctly configuring it is the foundation for the successful deployment of all subsequent services.**"
+  }
+}

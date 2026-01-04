@@ -1,0 +1,51 @@
+{
+  "title": "NFX-Policy",
+  "subtitle": "NebulaForgeX 项目部署与配置策略文档",
+  "backToHome": "← 返回首页",
+  "nav": {
+    "home": "首页",
+    "repo": "仓库",
+    "about": "关于"
+  },
+  "footer": {
+    "copyright": "NebulaForgeX. All rights reserved.",
+    "about": "关于",
+    "github": "GitHub"
+  },
+  "chapters": {
+    "title": "章节列表",
+    "chinese": "中文版 (Chinese)",
+    "english": "English Version"
+  },
+  "chapterList": {
+    "chapter01": {
+      "id": "chapter-01-router-configuration",
+      "title": "第一章节：路由器配置与网络安全设置"
+    },
+    "chapter02": {
+      "id": "chapter-02-nas-setup",
+      "title": "第二章节：NAS 系统初始化与开发环境配置"
+    },
+    "chapter03": {
+      "id": "chapter-03-nfx-stack-deployment",
+      "title": "第三章节：NFX Stack 核心资源栈部署"
+    },
+    "chapter04": {
+      "id": "chapter-04-nfx-edge-deployment",
+      "title": "第四章节：NFX-Edge 反向代理与多网站管理部署"
+    },
+    "chapter05": {
+      "id": "chapter-05-nfx-vault-deployment",
+      "title": "第五章节：NFX-Vault 证书管理系统部署"
+    }
+  },
+  "theme": {
+    "switchToLight": "切换到浅色模式",
+    "switchToDark": "切换到深色模式"
+  },
+  "language": {
+    "switch": "切换语言"
+  },
+  "nextChapter": "下一章节"
+}
+

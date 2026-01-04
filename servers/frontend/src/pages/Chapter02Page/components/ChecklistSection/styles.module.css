@@ -1,0 +1,30 @@
+.section {
+  margin-bottom: 3rem;
+}
+
+.section h2 {
+  font-size: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+}
+
+.checklist {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 2rem;
+}
+
+.checklist li {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: #f0f8ff;
+  border-left: 4px solid #0066cc;
+  border-radius: 4px;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+

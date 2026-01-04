@@ -1,0 +1,268 @@
+{
+  "title": "Chapter 5: NFX-Vault Certificate Management System Deployment",
+  "intro": "[NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault) is a modern SSL certificate management and monitoring system that provides unified certificate application, checking, exporting, and management functions. The system adopts a frontend-backend separated architecture, supporting both Web interface and command-line tools, helping you easily manage SSL certificates for multiple domains. This chapter will guide you through the deployment and configuration of NFX-Vault.",
+  "why": {
+    "title": "Why Do We Need NFX-Vault?",
+    "description": "In the NFX ecosystem, SSL/TLS certificate management is an important but tedious task. Traditional certificate management methods usually require manually applying for certificates, periodically checking certificate status, and manually updating certificates. These tasks are not only time-consuming and labor-intensive but also error-prone. NFX-Vault is designed to solve these problems.",
+    "unifiedPlatform": {
+      "title": "Unified Certificate Management Platform",
+      "description": "NFX-Vault provides a unified certificate management platform. Whether it's website certificates or API service certificates, all can be managed in the same system. The system automatically scans the certificate storage directory, identifies all certificate files, and stores certificate information in the database, making certificate management and querying very simple."
+    },
+    "realtimeMonitoring": {
+      "title": "Real-time Monitoring Functionality",
+      "description": "Real-time monitoring functionality is one of the core features of NFX-Vault. The system periodically checks the status of all certificates, including certificate validity period, remaining days, domain information, etc. When certificates are about to expire, the system will remind you through the interface, helping you update certificates in time to avoid service interruption due to certificate expiration. This proactive monitoring mechanism greatly improves the reliability of certificate management."
+    },
+    "exportFunction": {
+      "title": "Convenient Certificate Export Function",
+      "description": "The system also provides a convenient certificate export function. When you need to use certificates, you can export certificate files to a specified directory with one click through the Web interface. This function is especially suitable for integration with reverse proxy systems such as NFX-Edge. The exported certificate files can be directly used by tools such as Traefik, achieving seamless connection between certificate management and certificate usage."
+    },
+    "modernWebInterface": {
+      "title": "Modern Web Interface",
+      "description": "The modern Web interface makes certificate management intuitive and easy to use. The responsive interface built with React and TypeScript can be accessed and used on any device. Clear data display and friendly interactive design allow even users who are not familiar with command-line operations to easily manage certificates."
+    },
+    "architecture": {
+      "title": "Technical Architecture Advantages",
+      "description": "From a technical architecture perspective, NFX-Vault adopts a frontend-backend separated design. The backend is built on FastAPI, providing high-performance RESTful API services. This design not only ensures system performance and scalability but also makes it easy to integrate the system into other automation processes. If you prefer command-line operations, the system also provides an interactive command-line tool to meet the usage habits of different users."
+    },
+    "automation": {
+      "title": "Automated Scheduling Function",
+      "description": "The automated scheduling function further simplifies certificate management work. The system supports scheduled tasks that can automatically scan certificate directories and update certificate status information. This means you don't need to manually trigger these operations. The system will automatically complete them in the background, greatly reducing operational workload."
+    }
+  },
+  "prerequisites": {
+    "title": "Prerequisites",
+    "description": "Before starting to deploy NFX-Vault, you need to ensure that your environment has completed the necessary foundational configuration and deployment of dependent services. These preparations are crucial for the normal operation of NFX-Vault.",
+    "router": {
+      "title": "Router Configuration",
+      "description": "First, you need to complete the router configuration (refer to Chapter 1). Although NFX-Vault mainly runs in the internal network environment, correct network configuration is still necessary. Ensure that the NAS device can normally access the internet, which is very important for certificate application and renewal."
+    },
+    "nas": {
+      "title": "NAS System Configuration",
+      "description": "Second, the basic configuration of the NAS system also needs to be completed (refer to Chapter 2). Docker Engine is the container runtime environment for running NFX-Vault, and you must ensure it is properly installed and running. SSH service should be enabled to facilitate remote management and configuration operations. Bash environment configuration is very important for running scripts and command-line tools."
+    },
+    "stack": {
+      "title": "NFX Stack Deployment",
+      "description": "Most importantly, NFX Stack must have been deployed (refer to Chapter 3). NFX-Vault depends on three core services provided by NFX Stack: MySQL database, Redis cache, and Kafka message queue. MySQL is used to store certificate metadata information, including certificate paths, domains, validity periods, etc. Redis is used to cache certificate information to improve query performance. Kafka is used for asynchronous task processing, such as certificate application, certificate export, and other time-consuming operations. Before deploying NFX-Vault, you must ensure that these three services are all running normally and that NFX-Vault can access these services."
+    },
+    "edge": {
+      "title": "NFX-Edge Deployment",
+      "description": "Regarding NFX-Edge deployment (refer to Chapter 4), although NFX-Vault can be deployed before NFX-Edge, following the recommended deployment order, it is usually deployed after NFX-Edge is deployed, or both can be deployed in parallel. This is because the main role of NFX-Vault is to provide certificate management services for reverse proxy systems such as NFX-Edge. When you need to use certificates in NFX-Edge, you can apply for and manage these certificates through NFX-Vault."
+    },
+    "resources": {
+      "title": "System Resources",
+      "description": "Finally, you need to ensure that there are sufficient system resources. NFX-Vault contains three services: frontend, backend API, and backend Pipeline. It is recommended that the system has at least 2GB of memory. In terms of disk space, you need to reserve sufficient storage space for certificate files, which depends on the number of certificates you need to manage."
+    }
+  },
+  "clone": {
+    "title": "Clone the Project Repository",
+    "step1": {
+      "title": "Step 1: Navigate to Deployment Directory",
+      "description": "Switch to your chosen deployment directory. It is recommended to deploy NFX-Vault under the same parent directory as other NFX projects, which can maintain consistency in project structure and facilitate unified management.",
+      "command": "# Example: If your deployment directory is /volume1\ncd /volume1\n\n# Or your other chosen directory"
+    },
+    "step2": {
+      "title": "Step 2: Clone NFX-Vault Repository",
+      "description": "Use Git to clone the NFX-Vault repository. If your deployment directory is `/volume1`, it is recommended to clone the repository directly as the `Certs` directory, which conforms to the naming conventions of the NFX ecosystem.",
+      "command": "git clone https://github.com/NebulaForgeX/NFX-Vault.git Certs",
+      "description2": "After the clone operation is executed, the repository will be downloaded locally and the `Certs` directory will be created. Assuming your deployment directory is `<YOUR_DEPLOYMENT_DIR>`, the full project path will be `<YOUR_DEPLOYMENT_DIR>/Certs`. For example, if you choose to deploy under the `/volume1` directory, the final path will be `/volume1/Certs`.",
+      "note": "If you want to use Git's default directory name, you can also clone directly and rename the directory in subsequent steps. However, it is recommended to use `Certs` as the directory name, which can be consistent with other projects in the NFX ecosystem."
+    },
+    "step3": {
+      "title": "Step 3: Enter Project Directory",
+      "description": "After cloning is complete, enter the project directory for subsequent configuration work.",
+      "command": "cd Certs"
+    }
+  },
+  "createDirs": {
+    "title": "Create Certificate Storage Directory",
+    "description": "Before configuring environment variables, you need to first create the certificate storage directory structure. NFX-Vault uses directory structure to organize certificate files, and different types of certificates (such as website certificates and API certificates) are stored in different directories.",
+    "description2": "NFX-Vault supports two types of certificate storage: Websites and Apis. The Websites directory is used to store website-related certificates, which are usually used by reverse proxy systems such as NFX-Edge. The Apis directory is used to store API service-related certificates. This classified management makes the organization of certificates clearer.",
+    "description3": "Create the corresponding directory structure for each type. Each type needs an `exported` subdirectory to store exported certificate files. In addition, you need to create an `acme.json` file, which is used for Traefik's certificate storage (if using Traefik's automatic certificate function).",
+    "command": "# Create Websites certificate directory\nmkdir -p Websites/exported\ntouch Websites/acme.json\nchmod 600 Websites/acme.json\n\n# Create Apis certificate directory\nmkdir -p Apis/exported\ntouch Apis/acme.json\nchmod 600 Apis/acme.json",
+    "permissions": "Here you need to pay attention to the file permission settings. The `acme.json` file contains sensitive certificate information and should have strict access permissions. Using `chmod 600` ensures that only the file owner can read and write the file, and other users cannot access it, which is very important for protecting certificate security."
+  },
+  "envConfig": {
+    "title": "Configure Environment Variables",
+    "step1": {
+      "title": "Step 1: Copy Environment Variable Template",
+      "description": "NFX-Vault provides an `.example.env` file as a configuration template. We need to copy it and create the actual `.env` file.",
+      "command": "cp .example.env .env",
+      "note": "The environment variable file contains all configuration information of the system, including service ports, database connection information, cache configuration, etc. This file should not be committed to the Git repository because it contains sensitive information such as database passwords."
+    },
+    "step2": {
+      "title": "Step 2: Edit Environment Variable File",
+      "description": "Use your favorite text editor to open the `.env` file for configuration.",
+      "commands": [
+        "# Use nano (simple and easy to use)\nnano .env",
+        "# Or use vi/vim\nvi .env",
+        "# Or use other editors"
+      ]
+    },
+    "step3": {
+      "title": "Step 3: Configure Service Ports",
+      "description": "Configure the access ports for frontend and backend services. These ports should be selected from ports not occupied by other services to avoid port conflicts.",
+      "command": "BACKEND_HOST=192.168.1.64\nBACKEND_PORT=10200\nFRONTEND_HOST=192.168.1.64\nFRONTEND_PORT=10199",
+      "description2": "`BACKEND_HOST` and `FRONTEND_HOST` should be set to your NAS IP address. `BACKEND_PORT` is the access port for the backend API service, default is 10200. `FRONTEND_PORT` is the access port for the frontend Web interface, default is 10199. These ports usually do not need to be forwarded on the router because NFX-Vault is mainly used in the internal network."
+    },
+    "step4": {
+      "title": "Step 4: Configure MySQL Database Connection",
+      "description": "Configure MySQL database connection information. This information must be consistent with the MySQL service configuration in NFX Stack.",
+      "command": "MYSQL_HOST=192.168.1.64\nMYSQL_DATABASE_PORT=3306\nMYSQL_DATABASE=nfxvault\nMYSQL_ROOT_USERNAME=root\nMYSQL_ROOT_PASSWORD=your_mysql_password",
+      "description2": "`MYSQL_HOST` should be set to the host IP address where the MySQL service in NFX Stack is located, usually your NAS IP address. `MYSQL_DATABASE_PORT` is the MySQL service port, default is 3306, but if your NFX Stack is configured with a different port, you need to modify accordingly. `MYSQL_DATABASE` is the database name, NFX-Vault uses `nfxvault` as the default database name. `MYSQL_ROOT_USERNAME` and `MYSQL_ROOT_PASSWORD` are MySQL root username and password, which should be consistent with the configuration in NFX Stack.",
+      "note": "When NFX-Vault is started for the first time, the system will automatically create the database and table structure, so you don't need to manually create the database. However, you need to ensure that the MySQL service is running and that the provided username and password have permissions to create databases."
+    },
+    "step5": {
+      "title": "Step 5: Configure Redis Cache Connection",
+      "description": "Configure Redis cache connection information. Redis is used to cache certificate information to improve query performance.",
+      "command": "REDIS_HOST=192.168.1.64\nREDIS_DATABASE_PORT=6379\nREDIS_DB=0\nREDIS_PASSWORD=your_redis_password",
+      "description2": "`REDIS_HOST` should be set to the host IP address where the Redis service in NFX Stack is located. `REDIS_DATABASE_PORT` is the Redis service port, default is 6379. `REDIS_DB` specifies which Redis database to use, default is database 0. `REDIS_PASSWORD` is the Redis password, which should be consistent with the configuration in NFX Stack. If your Redis does not have a password set, you can leave this option empty or comment it out."
+    },
+    "step6": {
+      "title": "Step 6: Configure Kafka Message Queue Connection",
+      "description": "Configure Kafka message queue connection information. Kafka is used to handle asynchronous tasks such as certificate application, certificate export, and other operations.",
+      "command": "KAFKA_BOOTSTRAP_SERVERS=192.168.1.64:9092\nKAFKA_EVENT_TOPIC=nfxvault.cert_server\nKAFKA_EVENT_POISON_TOPIC=nfxvault.cert_server.poison\nKAFKA_CONSUMER_GROUP_ID=nfxvault-cert-server",
+      "description2": "`KAFKA_BOOTSTRAP_SERVERS` specifies the Kafka server address and port in the format `host:port`. If your NFX Stack has Kafka configured with a different port, you need to modify accordingly. `KAFKA_EVENT_TOPIC` is the name of the event topic, used to publish certificate-related events. `KAFKA_EVENT_POISON_TOPIC` is the poison message topic, used to store messages that failed to process. `KAFKA_CONSUMER_GROUP_ID` is the consumer group ID, used to identify the consumer group."
+    },
+    "step7": {
+      "title": "Step 7: Configure Certificate Management Related Settings",
+      "description": "Configure certificate storage directory and ACME challenge directory and other settings.",
+      "command": "CERTS_DIR=/volume1/Certs\nACME_CHALLENGE_DIR=/tmp/acme-challenges\nCERT_MAX_WAIT_TIME=360",
+      "description2": "`CERTS_DIR` is the root directory for certificate storage and should be set to the absolute path of the NFX-Vault project directory. For example, if the project is deployed in `/volume1/Certs`, this value should be set to `/volume1/Certs`. `ACME_CHALLENGE_DIR` is the storage directory for ACME HTTP-01 challenge files. The system will use this directory when applying for Let's Encrypt certificates. `CERT_MAX_WAIT_TIME` is the maximum waiting time for certificate application (in seconds), default is 360 seconds (6 minutes)."
+    },
+    "step8": {
+      "title": "Step 8: Configure Scheduled Tasks",
+      "description": "Configure the execution time and behavior of scheduled tasks.",
+      "command": "READ_ON_STARTUP=true\nSCHEDULE_ENABLED=true\nSCHEDULE_WEEKLY_DAY=mon\nSCHEDULE_WEEKLY_HOUR=2\nSCHEDULE_WEEKLY_MINUTE=0",
+      "description2": "When `READ_ON_STARTUP` is set to `true`, the system will automatically scan the certificate directory and read certificate information into the database at startup. This is very useful for first startup or when the certificate directory has changed. When `SCHEDULE_ENABLED` is set to `true`, the scheduled task function is enabled. `SCHEDULE_WEEKLY_DAY` specifies which day of the week to execute the task, optional values are `mon`, `tue`, `wed`, `thu`, `fri`, `sat`, `sun`. `SCHEDULE_WEEKLY_HOUR` and `SCHEDULE_WEEKLY_MINUTE` specify the hour and minute of execution time. The example configuration indicates execution at 2:00 AM every Monday."
+    }
+  },
+  "dockerNetwork": {
+    "title": "Configure Docker Network",
+    "description": "NFX-Vault needs to connect to two Docker networks: `nfx-vault` and `nfx-edge`. The `nfx-vault` network is NFX-Vault's internal network, used for communication between frontend, backend API, and backend Pipeline services. This network will be automatically created when Docker Compose starts.",
+    "description2": "The `nfx-edge` network is an external network, used to communicate with reverse proxy services such as NFX-Edge. If NFX-Edge has been deployed, this network should already exist. If NFX-Edge has not been deployed yet, you need to create this network first.",
+    "command": "# If the nfx-edge network does not exist, create it first\ndocker network create nfx-edge",
+    "description3": "In the `docker-compose.yml` file, the `nfx-edge` network is configured as an external network (`external: true`), which means Docker Compose will not create this network but will use the existing network. Ensure that the `nfx-edge` network already exists before starting NFX-Vault, or deploy NFX-Edge first."
+  },
+  "verifyConfig": {
+    "title": "Verify Configuration",
+    "description": "Before starting services, it is recommended to perform a comprehensive configuration check to ensure all configuration items are correctly set, avoiding problems after startup.",
+    "checks": [
+      "First, check whether the environment variable file format is correct. The `.env` file should conform to the key-value pair format, with one configuration item per line, using equal signs to separate keys and values. Ensure there are no syntax errors, such as missing quotes, extra spaces, etc.",
+      "Second, verify whether all dependent services are running normally. Check whether the MySQL service is running, which can be verified by attempting to connect to the database. Check whether the Redis service is accessible, you can use the `redis-cli` command to test the connection. Check whether the Kafka service is running normally, you can check the status of the Kafka container.",
+      "Third, confirm that the network configuration is correct. If NFX-Edge has been deployed, ensure that the `nfx-edge` network exists. You can use the `docker network ls` command to view all Docker networks.",
+      "Fourth, check the permissions of the certificate directory. Ensure that the NFX-Vault container has permission to access the certificate storage directory. If the directory permissions are incorrect, it may cause certificate reading failures.",
+      "Finally, verify whether ports are occupied. Check whether the frontend port (default 10199) and backend port (default 10200) are occupied by other services. You can use the `netstat` or `ss` command to check port occupancy."
+    ]
+  },
+  "startService": {
+    "title": "Start Services",
+    "description": "After completing all configurations, you can start NFX-Vault services.",
+    "command": "# Ensure you are in the project directory\ncd /volume1/Certs\n\n# Start all services\nsudo docker compose up -d",
+    "description2": "When executing the startup command, the `-d` parameter indicates background running mode (detached mode). The services will run in the background and will not occupy the current terminal window. Docker Compose will start each service in sequence according to dependencies: first start the backend API service, then start the backend Pipeline service, and finally start the frontend service.",
+    "description3": "On the first startup, Docker needs to build images, which may take some time, especially if your network speed is slow. The build process will download necessary dependency packages and base images, please be patient.",
+    "description4": "After startup is complete, the system will automatically create the database table structure (if the database does not exist yet). The backend API service will connect to the MySQL database and create necessary tables and indexes. This process is completed automatically without manual intervention.",
+    "description5": "If `READ_ON_STARTUP=true` is configured, the system will automatically scan the certificate directory after startup is complete, read all certificate file information and store it in the database. This process may take some time, depending on the number of files in the certificate directory."
+  },
+  "verifyDeployment": {
+    "title": "Verify Deployment",
+    "step1": {
+      "title": "Step 1: Check Service Status",
+      "description": "After startup, first check the running status of all services to ensure all containers are started normally.",
+      "command": "# View all service statuses\nsudo docker compose ps\n\n# Should see all services with status \"Up\"",
+      "description2": "Normally, you should see three services running: `NFX-Vault-Backend-API`, `NFX-Vault-Backend-Pipeline`, and `NFX-Vault-Frontend`. The status of all services should display as \"Up\".",
+      "note": "If a service does not start normally, the status may display as \"Exited\" or \"Restarting\". In this case, you need to check the service logs to troubleshoot the problem."
+    },
+    "step2": {
+      "title": "Step 2: View Service Logs",
+      "description": "Viewing service logs can help you understand the service startup process and running status, and discover potential problems in time.",
+      "commands": [
+        "# View logs for all services\nsudo docker compose logs -f",
+        "# Or view logs for specific service\nsudo docker compose logs -f backend-api\nsudo docker compose logs -f backend-pipeline\nsudo docker compose logs -f frontend"
+      ],
+      "description2": "When viewing logs, you need to pay attention to several key points. The backend API service should be able to successfully connect to the MySQL database, and there should be no database connection errors in the logs. Redis connection should also be normal, and there should be no connection failure errors. Kafka connection also needs to be normal, and the backend Pipeline service needs to be able to connect to Kafka to consume messages.",
+      "note": "If `READ_ON_STARTUP=true` is configured, you should be able to see the certificate scanning process in the logs, including which directories were scanned and how many certificates were read."
+    },
+    "step3": {
+      "title": "Step 3: Access Web Interface",
+      "description": "Access the frontend Web interface through a browser to verify that the service is working normally.",
+      "command": "# Access frontend Web interface\n# Replace IP address with your actual NAS IP\nhttp://192.168.1.64:10199",
+      "description2": "If the service starts normally, the browser should be able to open the Web interface. The interface should load normally and display the certificate list (if certificates have been scanned). If the interface cannot be opened, you need to check firewall settings and port mapping configuration."
+    },
+    "step4": {
+      "title": "Step 4: Access API Documentation",
+      "description": "NFX-Vault provides complete API documentation that can be accessed through Swagger UI or ReDoc.",
+      "commands": [
+        "# Swagger UI\nhttp://192.168.1.64:10200/docs",
+        "# ReDoc\nhttp://192.168.1.64:10200/redoc"
+      ],
+      "description2": "The API documentation provides detailed descriptions of all API interfaces, including request parameters, response formats, etc. This is very useful for integrating NFX-Vault into other systems."
+    },
+    "step5": {
+      "title": "Step 5: Test API Connection",
+      "description": "You can test whether the API is working normally through command-line tools.",
+      "commands": [
+        "# Test health check interface\ncurl http://192.168.1.64:10200/health",
+        "# View Websites certificate list\ncurl \"http://192.168.1.64:10200/vault/tls/check/websites?offset=0&limit=20\""
+      ],
+      "description2": "If the API is working normally, these commands should return JSON format response data. If error messages are returned, you need to troubleshoot based on the error content."
+    }
+  },
+  "integrateEdge": {
+    "title": "Integration with NFX-Edge",
+    "description": "One of the main uses of NFX-Vault is to provide certificate management services for NFX-Edge. After completing the deployment of NFX-Vault, you can integrate with NFX-Edge through the following steps.",
+    "step1": {
+      "title": "Ensure Network Connection",
+      "description": "First, ensure that NFX-Edge and NFX-Vault are on the same Docker network. NFX-Vault's `backend-api` service has been configured to connect to the `nfx-edge` network, so if NFX-Edge has been deployed, the network connection should already be established."
+    },
+    "step2": {
+      "title": "Configure ACME Challenge Forwarding",
+      "description": "Second, in NFX-Edge's configuration, the `dynamic/acme-challenge.yml` file should already be configured to forward ACME challenge requests to NFX-Vault's `backend-api` service. This way, when applying for Let's Encrypt certificates through NFX-Vault, ACME challenge requests will be correctly forwarded."
+    },
+    "step3": {
+      "title": "Apply for Certificates",
+      "description": "Third, apply for certificates through NFX-Vault's Web interface. When applying for certificates, you need to specify `folder_name`, which determines the subfolder name for certificate files in the storage directory. After successful application, certificate files will be automatically stored in the `${CERTS_DIR}/{folder_name}/` directory."
+    },
+    "step4": {
+      "title": "Update Certificate Configuration",
+      "description": "Fourth, update NFX-Edge's certificate configuration. Add the new certificate path in NFX-Edge's `dynamic/certs.yml` file, then restart the Traefik service to load the new certificate."
+    },
+    "conclusion": "Through this integration method, you can achieve automatic certificate application and management, greatly simplifying the certificate management workflow."
+  },
+  "commonOperations": {
+    "title": "Common Operations",
+    "viewList": {
+      "title": "View Certificate List",
+      "description": "Through the Web interface, you can view the list of all certificates, including certificate status, expiration time, remaining days, and other information. The system will automatically update the remaining days of certificates, helping you understand the certificate validity period in time."
+    },
+    "apply": {
+      "title": "Apply for New Certificates",
+      "description": "Through the Web interface, you can apply for new Let's Encrypt certificates. When applying, you need to fill in domain name, email address, folder_name, and other information. The system will automatically handle the certificate application process, including ACME challenge verification, certificate generation, and other steps."
+    },
+    "export": {
+      "title": "Export Certificates",
+      "description": "Through the Web interface, you can export certificate files to a specified directory with one click. The exported certificate files can be directly used by reverse proxy systems such as NFX-Edge. The export function supports batch operations, allowing you to export multiple certificates at once."
+    },
+    "refresh": {
+      "title": "Refresh Certificate Information",
+      "description": "If files in the certificate directory have changed, you can rescan the directory and update certificate information in the database through the refresh function. Refresh operations can be triggered through the Web interface or through API calls."
+    },
+    "cli": {
+      "title": "Command-line Tool Usage",
+      "description": "In addition to the Web interface, NFX-Vault also provides a command-line tool `cmd.sh` that can manage certificates without using the Web interface. The command-line tool provides an interactive interface where you can view certificate lists, verify certificate information, etc.",
+      "command": "cd /volume1/Certs\n./cmd.sh",
+      "description2": "The command-line tool will guide you to select the certificate type (Websites or Apis), then list all certificate directories, and you can select a specific directory for verification to view the detailed information of the certificate."
+    }
+  },
+  "docs": {
+    "title": "View Detailed Documentation",
+    "description": "Before diving deep into using NFX-Vault, it is strongly recommended that you read the [NFX-Vault Official Documentation](https://github.com/NebulaForgeX/NFX-Vault) in detail. The official documentation contains more detailed and comprehensive content than this chapter, including detailed descriptions of all configuration items, complete API interface documentation, usage methods for advanced features, troubleshooting guides, etc.",
+    "description2": "Especially the API documentation is very important for users who need to integrate NFX-Vault into automation processes. Through the API, you can achieve automation of certificate applications, monitoring of certificate status, automatic export of certificates, and other operations.",
+    "description3": "The official documentation also contains detailed descriptions of the project structure, which is very helpful for understanding how the system works, conducting secondary development, or customization."
+  },
+  "nextSteps": {
+    "title": "Next Steps",
+    "description": "After completing the deployment of NFX-Vault, you can start using the certificate management functions. If NFX-Edge has been deployed, you can start applying for and managing certificates for NFX-Edge through NFX-Vault. If NFX-Edge has not been deployed yet, you can continue to deploy NFX-Edge and then integrate the certificate management function.",
+    "description2": "You can also explore other functions of NFX-Vault, such as automating certificate management through the API, configuring scheduled tasks to automatically check certificate status, using command-line tools for batch operations, etc.",
+    "conclusion": "**NFX-Vault is the certificate management core of the NFX ecosystem. Correctly deploying and configuring it is the foundation for achieving automated certificate management.**"
+  }
+}

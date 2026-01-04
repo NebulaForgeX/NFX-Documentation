@@ -1,0 +1,51 @@
+{
+  "title": "NFX-Policy",
+  "subtitle": "NebulaForgeX Project Deployment and Configuration Strategy Documentation",
+  "backToHome": "← Back to Home",
+  "nav": {
+    "home": "Home",
+    "repo": "Repositories",
+    "about": "About"
+  },
+  "footer": {
+    "copyright": "NebulaForgeX. All rights reserved.",
+    "about": "About",
+    "github": "GitHub"
+  },
+  "chapters": {
+    "title": "Chapter List",
+    "chinese": "Chinese Version",
+    "english": "English Version"
+  },
+  "chapterList": {
+    "chapter01": {
+      "id": "chapter-01-router-configuration",
+      "title": "Chapter 1: Router Configuration and Network Security Setup"
+    },
+    "chapter02": {
+      "id": "chapter-02-nas-setup",
+      "title": "Chapter 2: NAS System Initialization and Development Environment Configuration"
+    },
+    "chapter03": {
+      "id": "chapter-03-nfx-stack-deployment",
+      "title": "Chapter 3: NFX Stack Core Resource Stack Deployment"
+    },
+    "chapter04": {
+      "id": "chapter-04-nfx-edge-deployment",
+      "title": "Chapter 4: NFX-Edge Reverse Proxy and Multi-Website Management Deployment"
+    },
+    "chapter05": {
+      "id": "chapter-05-nfx-vault-deployment",
+      "title": "Chapter 5: NFX-Vault Certificate Management System Deployment"
+    }
+  },
+  "theme": {
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
+  },
+  "language": {
+    "switch": "Switch language"
+  },
+  "nextChapter": "Next Chapter"
+}
+

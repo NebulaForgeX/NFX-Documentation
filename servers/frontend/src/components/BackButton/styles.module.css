@@ -1,0 +1,42 @@
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  color: var(--color-fg-text);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-2);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  max-width: fit-content;
+}
+
+.backButton:hover {
+  color: var(--color-primary);
+  background-color: var(--color-bg-3);
+  border-color: var(--color-primary);
+  transform: translateX(-2px);
+}
+
+.backButton:active {
+  transform: translateX(-1px);
+}
+
+.backButton .icon {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.backButton:hover .icon {
+  transform: translateX(-2px);
+}
+
+.backButton:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+

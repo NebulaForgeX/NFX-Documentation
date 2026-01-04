@@ -1,3 +1,9 @@
 export { default as HomePage } from './HomePage/index.vue'
-export { default as ChapterPage } from './ChapterPage/index.vue'
-
+export { default as Chapter01Page } from './Chapter01Page/index.vue'
+export { default as Chapter02Page } from './Chapter02Page/index.vue'
+export { default as Chapter03Page } from './Chapter03Page/index.vue'
+export { default as Chapter04Page } from './Chapter04Page/index.vue'
+export { default as Chapter05Page } from './Chapter05Page/index.vue'
+export { default as NotFoundPage } from './NotFoundPage/index.vue'
+export { default as RepoPage } from './RepoPage/index.vue'
+export { default as AboutPage } from './AboutPage/index.vue'

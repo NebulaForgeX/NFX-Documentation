@@ -21,16 +21,13 @@
       <DocsSection />
       <NextStepsSection />
 
-      <!-- Next Chapter Button -->
-      <div :class="styles.nextButtonContainer">
-        <NextPageButton />
-      </div>
+
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { BackButton, NextPageButton } from '@/components'
+import { BackButton } from '@/components'
 import styles from './styles.module.css'
 import WhySection from './components/WhySection/index.vue'
 import PrerequisitesSection from './components/PrerequisitesSection/index.vue'

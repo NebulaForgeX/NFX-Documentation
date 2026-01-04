@@ -172,5 +172,7 @@
       }
     }
   },
-  "conclusion": "**完成路由器配置后，您的网络环境已准备好，可以进入下一章节进行 NAS 系统的配置。**"
+  "conclusion": "**完成路由器配置后，您的网络环境已准备好，可以进入下一章节进行 NAS 系统的配置。**",
+  "nextChapterPath": "chapter-02-nas-setup",
+  "nextChapterText": "下一章节"
 }

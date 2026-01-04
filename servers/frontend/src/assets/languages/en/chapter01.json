@@ -172,5 +172,7 @@
       }
     }
   },
-  "conclusion": "**After completing router configuration, your network environment is ready, and you can proceed to the next chapter for NAS system configuration.**"
+  "conclusion": "**After completing router configuration, your network environment is ready, and you can proceed to the next chapter for NAS system configuration.**",
+  "nextChapterPath": "chapter-02-nas-setup",
+  "nextChapterText": "Next Chapter"
 }

@@ -20,13 +20,18 @@
 
       <!-- Next Chapter Button -->
       <div :class="styles.nextButtonContainer">
-        <NextPageButton />
+        <NextPageButton 
+          v-if="$t('chapter03.nextChapterPath')"
+          :to="`/${locale}/${$t('chapter03.nextChapterPath')}`"
+          :text="$t('chapter03.nextChapterText')"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { BackButton, NextPageButton } from '@/components'
 import styles from './styles.module.css'
 import WhySection from './components/WhySection/index.vue'
@@ -39,4 +44,6 @@ import OtherConfigSection from './components/OtherConfigSection/index.vue'
 import VerifySection from './components/VerifySection/index.vue'
 import DocsSection from './components/DocsSection/index.vue'
 import NextStepsSection from './components/NextStepsSection/index.vue'
+
+const { locale } = useI18n()
 </script>

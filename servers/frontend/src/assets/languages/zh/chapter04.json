@@ -323,5 +323,7 @@
     "description3": "如果还没有集成 NFX-Vault 进行证书管理，建议尽快完成集成工作。NFX-Vault 提供了统一的证书管理界面，可以大大简化证书的申请、更新和监控工作。通过 Web 界面，您可以方便地查看所有证书的状态、过期时间，并及时申请新证书或更新即将过期的证书。",
     "description4": "最后，您可以开始部署其他的 NFX 服务，例如应用程序服务。NFX-Edge 作为边缘服务层，可以为这些后端服务提供统一的反向代理和 HTTPS 支持，使得整个 NFX 生态系统能够协同工作。",
     "conclusion": "**NFX-Edge 是 NFX 生态系统的边缘服务层，正确部署和配置它是所有网站服务正常访问的基础。**"
-  }
+  },
+  "nextChapterPath": "chapter-05-nfx-vault-deployment",
+  "nextChapterText": "下一章节"
 }

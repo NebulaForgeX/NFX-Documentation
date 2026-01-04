@@ -225,5 +225,7 @@
       "进入下一章节，部署其他 NFX 服务"
     ],
     "conclusion": "**NFX Stack 是整个 NFX 生态系统的核心，正确配置它是后续所有服务成功部署的基础。**"
-  }
+  },
+  "nextChapterPath": "chapter-04-nfx-edge-deployment",
+  "nextChapterText": "下一章节"
 }

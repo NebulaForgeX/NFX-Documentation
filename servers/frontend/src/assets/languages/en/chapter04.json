@@ -323,5 +323,7 @@
     "description3": "If you haven't integrated NFX-Vault for certificate management yet, it is recommended to complete the integration as soon as possible. NFX-Vault provides a unified certificate management interface that can greatly simplify certificate application, renewal, and monitoring work. Through the Web interface, you can conveniently view the status and expiration times of all certificates and apply for new certificates or renew certificates that are about to expire in a timely manner.",
     "description4": "Finally, you can begin deploying other NFX services, such as application services. NFX-Edge, as the edge service layer, can provide unified reverse proxy and HTTPS support for these backend services, enabling the entire NFX ecosystem to work together.",
     "conclusion": "**NFX-Edge is the edge service layer of the NFX ecosystem. Correctly deploying and configuring it is the foundation for normal access to all website services.**"
-  }
+  },
+  "nextChapterPath": "chapter-05-nfx-vault-deployment",
+  "nextChapterText": "Next Chapter"
 }

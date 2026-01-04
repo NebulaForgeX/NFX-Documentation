@@ -218,5 +218,7 @@
       "✅ Can connect to NAS via SSH normally"
     ],
     "conclusion": "**After completing all the above configurations, your NAS development environment is ready, and you can start deploying the NFX service stack!**"
-  }
+  },
+  "nextChapterPath": "chapter-03-nfx-stack-deployment",
+  "nextChapterText": "Next Chapter"
 }

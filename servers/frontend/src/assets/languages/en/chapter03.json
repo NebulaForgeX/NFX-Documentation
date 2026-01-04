@@ -225,5 +225,7 @@
       "Proceed to the next chapter to deploy other NFX services"
     ],
     "conclusion": "**NFX Stack is the core of the entire NFX ecosystem, and correctly configuring it is the foundation for the successful deployment of all subsequent services.**"
-  }
+  },
+  "nextChapterPath": "chapter-04-nfx-edge-deployment",
+  "nextChapterText": "Next Chapter"
 }

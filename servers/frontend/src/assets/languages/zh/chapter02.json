@@ -218,5 +218,7 @@
       "✅ 可以通过 SSH 正常连接到 NAS"
     ],
     "conclusion": "**完成以上所有配置后，您的 NAS 开发环境已准备就绪，可以开始部署 NFX 服务栈了！**"
-  }
+  },
+  "nextChapterPath": "chapter-03-nfx-stack-deployment",
+  "nextChapterText": "下一章节"
 }

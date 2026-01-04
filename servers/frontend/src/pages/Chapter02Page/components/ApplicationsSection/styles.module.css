@@ -6,7 +6,7 @@
   font-size: 2rem;
   margin-top: 2rem;
   margin-bottom: 1rem;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid var(--color-border);
   padding-bottom: 0.5rem;
 }
 
@@ -31,7 +31,7 @@
   max-width: 100%;
   height: auto;
   margin: 1.5rem 0;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -39,8 +39,22 @@
 .appItem {
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background-color: #f9f9f9;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
+  color: var(--color-fg-text);
+}
+
+.appItem h4 {
+  color: var(--color-fg-text);
+}
+
+.appItem p {
+  color: var(--color-fg-text);
+}
+
+.appItem strong {
+  color: var(--color-fg-text);
 }
 
 ul,
@@ -52,10 +66,12 @@ ol {
 li {
   margin-bottom: 0.5rem;
   line-height: 1.6;
+  color: var(--color-fg-text);
 }
 
 p {
   margin-bottom: 0.75rem;
+  color: var(--color-fg-text);
 }
 
 strong {
@@ -63,7 +79,8 @@ strong {
 }
 
 code {
-  background-color: #f4f4f4;
+  background-color: var(--color-bg-code);
+  color: var(--color-fg-code);
   padding: 0.2rem 0.4rem;
   border-radius: 3px;
   font-family: 'Courier New', monospace;

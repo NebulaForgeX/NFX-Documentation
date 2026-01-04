@@ -41,6 +41,10 @@
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
+  
+  /* 代码块颜色 */
+  --color-bg-code: #f4f4f4;
+  --color-fg-code: #111827;
 }
 
 /* 暗色主题 */
@@ -78,6 +82,10 @@
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  
+  /* 代码块颜色 */
+  --color-bg-code: #1f2937;
+  --color-fg-code: #f9fafb;
 }
 
 /* 系统偏好暗色主题（仅在未手动设置时生效） */
@@ -116,6 +124,10 @@
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    
+    /* 代码块颜色 */
+    --color-bg-code: #1f2937;
+    --color-fg-code: #f9fafb;
   }
 }
 

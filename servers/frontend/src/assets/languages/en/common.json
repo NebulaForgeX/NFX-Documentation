@@ -4,6 +4,7 @@
   "backToHome": "← Back to Home",
   "nav": {
     "home": "Home",
+    "chapters": "Chapters",
     "repo": "Repositories",
     "about": "About"
   },

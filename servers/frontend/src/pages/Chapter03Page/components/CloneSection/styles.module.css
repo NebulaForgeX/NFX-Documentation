@@ -6,7 +6,7 @@
   font-size: 2rem;
   margin-top: 2rem;
   margin-bottom: 1rem;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid var(--color-border);
   padding-bottom: 0.5rem;
 }
 
@@ -41,22 +41,26 @@ ul {
 li {
   margin-bottom: 0.5rem;
   line-height: 1.6;
+  color: var(--color-fg-text);
 }
 
 p {
   margin-bottom: 1rem;
+  color: var(--color-fg-text);
 }
 
 pre {
-  background-color: #1e1e1e;
+  background-color: var(--color-bg-code);
   padding: 1rem;
   border-radius: 5px;
   overflow-x: auto;
   margin: 1rem 0;
+  color: var(--color-fg-code);
+  border: 1px solid var(--color-border);
 }
 
 pre code {
-  color: #d4d4d4;
+  color: var(--color-fg-code);
   font-family: 'Courier New', monospace;
   font-size: 0.9em;
   background-color: transparent;

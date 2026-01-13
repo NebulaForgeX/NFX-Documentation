@@ -64,7 +64,7 @@
       "title": "Step 2: Clone NFX-Vault Repository",
       "description": "Use Git to clone the NFX-Vault repository. If your deployment directory is `/volume1`, it is recommended to clone the repository directly as the `Certs` directory, which conforms to the naming conventions of the NFX ecosystem.",
       "command": "git clone https://github.com/NebulaForgeX/NFX-Vault.git Certs",
-      "description2": "After the clone operation is executed, the repository will be downloaded locally and the `Certs` directory will be created. Assuming your deployment directory is `<YOUR_DEPLOYMENT_DIR>`, the full project path will be `<YOUR_DEPLOYMENT_DIR>/Certs`. For example, if you choose to deploy under the `/volume1` directory, the final path will be `/volume1/Certs`.",
+      "description2": "After the clone operation is executed, the repository will be downloaded locally and the `Certs` directory will be created. Assuming your deployment directory is `<YOUR_DEPLOYMENT_DIR>`, the full project path will be `<YOUR_DEPLOYMENT_DIR>/Certs`. For example, if you choose to deploy under the `/volume1` directory, the final path will be `/home/kali/repo`.",
       "note": "If you want to use Git's default directory name, you can also clone directly and rename the directory in subsequent steps. However, it is recommended to use `Certs` as the directory name, which can be consistent with other projects in the NFX ecosystem."
     },
     "step3": {
@@ -126,8 +126,8 @@
     "step7": {
       "title": "Step 7: Configure Certificate Management Related Settings",
       "description": "Configure certificate storage directory and ACME challenge directory and other settings.",
-      "command": "CERTS_DIR=/volume1/Certs\nACME_CHALLENGE_DIR=/tmp/acme-challenges\nCERT_MAX_WAIT_TIME=360",
-      "description2": "`CERTS_DIR` is the root directory for certificate storage and should be set to the absolute path of the NFX-Vault project directory. For example, if the project is deployed in `/volume1/Certs`, this value should be set to `/volume1/Certs`. `ACME_CHALLENGE_DIR` is the storage directory for ACME HTTP-01 challenge files. The system will use this directory when applying for Let's Encrypt certificates. `CERT_MAX_WAIT_TIME` is the maximum waiting time for certificate application (in seconds), default is 360 seconds (6 minutes)."
+      "command": "CERTS_DIR=/home/kali/repo\nACME_CHALLENGE_DIR=/tmp/acme-challenges\nCERT_MAX_WAIT_TIME=360",
+      "description2": "`CERTS_DIR` is the root directory for certificate storage and should be set to the absolute path of the NFX-Vault project directory. For example, if the project is deployed in `/home/kali/repo`, this value should be set to `/home/kali/repo`. `ACME_CHALLENGE_DIR` is the storage directory for ACME HTTP-01 challenge files. The system will use this directory when applying for Let's Encrypt certificates. `CERT_MAX_WAIT_TIME` is the maximum waiting time for certificate application (in seconds), default is 360 seconds (6 minutes)."
     },
     "step8": {
       "title": "Step 8: Configure Scheduled Tasks",
@@ -157,7 +157,7 @@
   "startService": {
     "title": "Start Services",
     "description": "After completing all configurations, you can start NFX-Vault services.",
-    "command": "# Ensure you are in the project directory\ncd /volume1/Certs\n\n# Start all services\nsudo docker compose up -d",
+    "command": "# Ensure you are in the project directory\ncd /home/kali/repo\n\n# Start all services\nsudo docker compose up -d",
     "description2": "When executing the startup command, the `-d` parameter indicates background running mode (detached mode). The services will run in the background and will not occupy the current terminal window. Docker Compose will start each service in sequence according to dependencies: first start the backend API service, then start the backend Pipeline service, and finally start the frontend service.",
     "description3": "On the first startup, Docker needs to build images, which may take some time, especially if your network speed is slow. The build process will download necessary dependency packages and base images, please be patient.",
     "description4": "After startup is complete, the system will automatically create the database table structure (if the database does not exist yet). The backend API service will connect to the MySQL database and create necessary tables and indexes. This process is completed automatically without manual intervention.",
@@ -249,7 +249,7 @@
     "cli": {
       "title": "Command-line Tool Usage",
       "description": "In addition to the Web interface, NFX-Vault also provides a command-line tool `cmd.sh` that can manage certificates without using the Web interface. The command-line tool provides an interactive interface where you can view certificate lists, verify certificate information, etc.",
-      "command": "cd /volume1/Certs\n./cmd.sh",
+      "command": "cd /home/kali/repo\n./cmd.sh",
       "description2": "The command-line tool will guide you to select the certificate type (Websites or Apis), then list all certificate directories, and you can select a specific directory for verification to view the detailed information of the certificate."
     }
   },

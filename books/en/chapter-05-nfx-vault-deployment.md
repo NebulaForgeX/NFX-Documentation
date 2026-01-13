@@ -53,7 +53,7 @@ Use Git to clone the NFX-Vault repository. If your deployment directory is `/vol
 git clone https://github.com/NebulaForgeX/NFX-Vault.git Certs
 ```
 
-After the clone operation is executed, the repository will be downloaded locally and the `Certs` directory will be created. Assuming your deployment directory is `<YOUR_DEPLOYMENT_DIR>`, the full project path will be `<YOUR_DEPLOYMENT_DIR>/Certs`. For example, if you choose to deploy under the `/volume1` directory, the final path will be `/volume1/Certs`.
+After the clone operation is executed, the repository will be downloaded locally and the `Certs` directory will be created. Assuming your deployment directory is `<YOUR_DEPLOYMENT_DIR>`, the full project path will be `<YOUR_DEPLOYMENT_DIR>/Certs`. For example, if you choose to deploy under the `/volume1` directory, the final path will be `/home/kali/repo`.
 
 If you want to use Git's default directory name, you can also clone directly and then rename the directory in subsequent steps. However, it is recommended to use `Certs` as the directory name to maintain consistency with other projects in the NFX ecosystem.
 
@@ -173,12 +173,12 @@ KAFKA_CONSUMER_GROUP_ID=nfxvault-cert-server
 Configure certificate storage directory and ACME challenge directory settings.
 
 ```bash
-CERTS_DIR=/volume1/Certs
+CERTS_DIR=/home/kali/repo
 ACME_CHALLENGE_DIR=/tmp/acme-challenges
 CERT_MAX_WAIT_TIME=360
 ```
 
-`CERTS_DIR` is the root directory for certificate storage and should be set to the absolute path of the NFX-Vault project directory. For example, if the project is deployed in `/volume1/Certs`, this value should be set to `/volume1/Certs`. `ACME_CHALLENGE_DIR` is the storage directory for ACME HTTP-01 challenge files, which the system will use when applying for Let's Encrypt certificates. `CERT_MAX_WAIT_TIME` is the maximum waiting time (in seconds) for certificate applications, defaulting to 360 seconds (6 minutes).
+`CERTS_DIR` is the root directory for certificate storage and should be set to the absolute path of the NFX-Vault project directory. For example, if the project is deployed in `/home/kali/repo`, this value should be set to `/home/kali/repo`. `ACME_CHALLENGE_DIR` is the storage directory for ACME HTTP-01 challenge files, which the system will use when applying for Let's Encrypt certificates. `CERT_MAX_WAIT_TIME` is the maximum waiting time (in seconds) for certificate applications, defaulting to 360 seconds (6 minutes).
 
 ### Step 8: Configure Scheduled Tasks
 
@@ -227,7 +227,7 @@ After completing all configurations, you can start the NFX-Vault services.
 
 ```bash
 # Ensure you are in the project directory
-cd /volume1/Certs
+cd /home/kali/repo
 
 # Start all services
 sudo docker compose up -d
@@ -353,7 +353,7 @@ If files in the certificate directory have changed, you can rescan the directory
 In addition to the Web interface, NFX-Vault also provides a command-line tool `cmd.sh` that can manage certificates without using the Web interface. The command-line tool provides an interactive interface where you can view certificate lists, verify certificate information, etc.
 
 ```bash
-cd /volume1/Certs
+cd /home/kali/repo
 ./cmd.sh
 ```
 

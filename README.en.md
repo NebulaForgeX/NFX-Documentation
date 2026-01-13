@@ -58,7 +58,7 @@ Services in the NFX ecosystem have clear dependencies. It is recommended to depl
 
 - SSL certificate management and monitoring system
 - Can be used to automatically apply for and manage Let's Encrypt certificates
-- Deployment location: `/volume1/Certs`
+- Deployment location: `/home/kali/repo`
 - Requires connection to: MySQL, Redis, Kafka (from [NFX Stack](https://github.com/NebulaForgeX/NFX-Stack))
 
 ### 3. Application Service Layer

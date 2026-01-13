@@ -58,7 +58,7 @@ NFX 生态系统中的服务存在明确的依赖关系，建议按以下顺序�
 
 - SSL 证书管理和监控系统
 - 可用于自动申请和管理 Let's Encrypt 证书
-- 部署位置：`/volume1/Certs`
+- 部署位置：`/home/kali/repo`
 - 需要连接：MySQL、Redis、Kafka（来自 [NFX Stack](https://github.com/NebulaForgeX/NFX-Stack)）
 
 ### 3. 应用服务层

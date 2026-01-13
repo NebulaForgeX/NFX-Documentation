@@ -53,7 +53,7 @@ cd /volume1
 git clone https://github.com/NebulaForgeX/NFX-Vault.git Certs
 ```
 
-克隆操作执行后，仓库会被下载到本地并创建 `Certs` 目录。假设您的部署目录是 `<YOUR_DEPLOYMENT_DIR>`，那么完整的项目路径就是 `<YOUR_DEPLOYMENT_DIR>/Certs`。例如，如果您选择在 `/volume1` 目录下部署，那么最终的路径将是 `/volume1/Certs`。
+克隆操作执行后，仓库会被下载到本地并创建 `Certs` 目录。假设您的部署目录是 `<YOUR_DEPLOYMENT_DIR>`，那么完整的项目路径就是 `<YOUR_DEPLOYMENT_DIR>/Certs`。例如，如果您选择在 `/volume1` 目录下部署，那么最终的路径将是 `/home/kali/repo`。
 
 如果您希望使用 Git 默认的目录名，也可以直接克隆，然后在后续步骤中重命名目录。但建议使用 `Certs` 作为目录名，这样可以与 NFX 生态系统的其他项目保持一致。
 
@@ -173,12 +173,12 @@ KAFKA_CONSUMER_GROUP_ID=nfxvault-cert-server
 配置证书存储目录和 ACME 挑战目录等设置。
 
 ```bash
-CERTS_DIR=/volume1/Certs
+CERTS_DIR=/home/kali/repo
 ACME_CHALLENGE_DIR=/tmp/acme-challenges
 CERT_MAX_WAIT_TIME=360
 ```
 
-`CERTS_DIR` 是证书存储的根目录，应该设置为 NFX-Vault 项目目录的绝对路径。例如，如果项目部署在 `/volume1/Certs`，则此值应该设置为 `/volume1/Certs`。`ACME_CHALLENGE_DIR` 是 ACME HTTP-01 挑战文件的存储目录，系统会在申请 Let's Encrypt 证书时使用此目录。`CERT_MAX_WAIT_TIME` 是证书申请的最大等待时间（秒），默认是 360 秒（6 分钟）。
+`CERTS_DIR` 是证书存储的根目录，应该设置为 NFX-Vault 项目目录的绝对路径。例如，如果项目部署在 `/home/kali/repo`，则此值应该设置为 `/home/kali/repo`。`ACME_CHALLENGE_DIR` 是 ACME HTTP-01 挑战文件的存储目录，系统会在申请 Let's Encrypt 证书时使用此目录。`CERT_MAX_WAIT_TIME` 是证书申请的最大等待时间（秒），默认是 360 秒（6 分钟）。
 
 ### 步骤 8：配置调度任务
 
@@ -227,7 +227,7 @@ docker network create nfx-edge
 
 ```bash
 # 确保在项目目录中
-cd /volume1/Certs
+cd /home/kali/repo
 
 # 启动所有服务
 sudo docker compose up -d
@@ -353,7 +353,7 @@ NFX-Vault 的主要用途之一是为 NFX-Edge 提供证书管理服务。完成
 除了 Web 界面，NFX-Vault 还提供了命令行工具 `cmd.sh`，可以在不使用 Web 界面的情况下管理证书。命令行工具提供了交互式的界面，可以查看证书列表、验证证书信息等。
 
 ```bash
-cd /volume1/Certs
+cd /home/kali/repo
 ./cmd.sh
 ```
 

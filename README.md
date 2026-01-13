@@ -67,7 +67,7 @@ NFX 生态系统中的服务存在明确的依赖关系，建议按以下顺序�
 
 - 多网站反向代理系统
 - 依赖证书管理服务（推荐使用 [NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault)）
-- 部署位置：`/volume1/Websites`
+- 部署位置：`/home/kali/repo`
 - 配置网络：`nfx-edge`（需要预先创建）
 
 **其他业务服务**

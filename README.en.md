@@ -67,7 +67,7 @@ Services in the NFX ecosystem have clear dependencies. It is recommended to depl
 
 - Multi-website reverse proxy system
 - Depends on certificate management service (recommended to use [NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault))
-- Deployment location: `/volume1/Websites`
+- Deployment location: `/home/kali/repo`
 - Network configuration: `nfx-edge` (needs to be created in advance)
 
 **Other Business Services**

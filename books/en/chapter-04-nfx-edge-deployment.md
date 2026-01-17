@@ -99,7 +99,7 @@ Create a `.env` file to configure environment variables:
 
 ```bash
 cat > .env << EOF
-CERTS_DIR=/volume1/certs/websites
+CERTS_DIR=/home/kali/Certs-repo/websites
 TRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml
 TRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic
 NGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf
@@ -113,7 +113,7 @@ The environment variable file contains several key configuration items. `CERTS_D
 **Example:** If your deployment directory is `/volume1` and the project directory name is `NFX-Edge`:
 
 ```bash
-CERTS_DIR=/volume1/certs/websites
+CERTS_DIR=/home/kali/Certs-repo/websites
 TRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml
 TRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic
 NGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf
@@ -127,10 +127,10 @@ Create the certificate storage directory:
 
 ```bash
 # Create certificate directory (replace <YOUR_DEPLOYMENT_DIR> with actual path)
-mkdir -p /volume1/certs/websites
+mkdir -p /home/kali/Certs-repo/websites
 
 # Set appropriate permissions (optional, but recommended)
-# chmod 755 /volume1/certs/websites
+# chmod 755 /home/kali/Certs-repo/websites
 ```
 
 The certificate directory is where SSL/TLS certificate files for all websites are stored. To facilitate management and organization, each website uses an independent subfolder to store its own certificate files. Certificate files follow a uniform standard naming format: the certificate file is named `cert.crt`, and the private key file is named `key.key`. This naming convention ensures that NFX-Edge can correctly identify and load certificate files.
@@ -313,7 +313,7 @@ If you already have certificate files or want to manage certificates through oth
 mkdir -p ${CERTS_DIR}/{folder_name}
 
 # For example:
-mkdir -p /volume1/certs/websites/www_example
+mkdir -p /home/kali/Certs-repo/websites/www_example
 ```
 
 2. **Copy Certificate Files**

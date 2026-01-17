@@ -86,20 +86,20 @@
     "step2": {
       "title": "步骤 2：创建环境变量文件",
       "description": "创建 `.env` 文件来配置环境变量：",
-      "command": "cat > .env << EOF\nCERTS_DIR=/volume1/certs/websites\nTRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml\nTRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic\nNGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf\nEOF",
+      "command": "cat > .env << EOF\nCERTS_DIR=/home/kali/Certs-repo/websites\nTRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml\nTRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic\nNGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf\nEOF",
       "description2": "在创建 `.env` 文件时，需要根据您的实际部署环境进行配置。请将模板中的 `<YOUR_DEPLOYMENT_DIR>` 替换为您实际的部署目录路径，例如 `/volume1`。同时，将 `<PROJECT_DIR>` 替换为项目目录名，默认情况下是 `NFX-Edge`，如果您在克隆仓库后重命名了目录（例如改为 `Websites`），则需要使用重命名后的名称。另外，`.env` 文件包含路径等配置信息，同样不应该提交到 Git 仓库中。",
       "description3": "环境变量文件中包含了几个关键的配置项。`CERTS_DIR` 指定了证书存储目录的路径，所有网站的 SSL/TLS 证书文件都会存储在这个目录下。`TRAEFIK_CONFIG_FILE` 指向 Traefik 的静态配置文件，这个文件包含了 Traefik 的基本配置信息。`TRAEFIK_DYNAMIC_DIR` 是 Traefik 动态配置目录的路径，在这个目录中的配置文件会被 Traefik 自动监控和重新加载。最后，`NGINX_CONFIG_FILE` 指定了 Nginx 配置文件的路径，这个配置文件会被所有网站服务容器共享使用。",
       "example": {
         "title": "示例：",
         "description": "如果您的部署目录是 `/volume1`，项目目录名为 `NFX-Edge`：",
-        "command": "CERTS_DIR=/volume1/certs/websites\nTRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml\nTRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic\nNGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf",
+        "command": "CERTS_DIR=/home/kali/Certs-repo/websites\nTRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml\nTRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic\nNGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf",
         "note": "**如果重命名了目录：** 如果您将项目目录重命名为 `Websites`，则相应地将路径中的 `NFX-Edge` 替换为 `Websites`。"
       }
     },
     "step3": {
       "title": "步骤 3：创建证书目录",
       "description": "创建证书存储目录：",
-      "command": "# 创建证书目录（将 <YOUR_DEPLOYMENT_DIR> 替换为实际路径）\nmkdir -p /volume1/certs/websites\n\n# 设置适当的权限（可选，但推荐）\n# chmod 755 /volume1/certs/websites",
+      "command": "# 创建证书目录（将 <YOUR_DEPLOYMENT_DIR> 替换为实际路径）\nmkdir -p /home/kali/Certs-repo/websites\n\n# 设置适当的权限（可选，但推荐）\n# chmod 755 /home/kali/Certs-repo/websites",
       "description2": "证书目录是存储所有网站 SSL/TLS 证书文件的位置。为了便于管理和组织，每个网站都会使用独立的子文件夹来存储自己的证书文件。证书文件的命名遵循统一的标准格式：证书文件命名为 `cert.crt`，私钥文件命名为 `key.key`。这种命名规范确保了 NFX-Edge 能够正确识别和加载证书文件。"
     }
   },
@@ -176,7 +176,7 @@
       "description": "如果您已有证书文件或希望通过其他方式管理证书（证书管理由外部系统负责，NFX-Edge 只负责使用证书文件）：",
       "step1": {
         "title": "1. 创建证书目录",
-        "command": "# 为每个网站创建证书目录（将 folder_name 替换为实际文件夹名）\nmkdir -p ${CERTS_DIR}/{folder_name}\n\n# 例如：\nmkdir -p /volume1/certs/websites/www_example"
+        "command": "# 为每个网站创建证书目录（将 folder_name 替换为实际文件夹名）\nmkdir -p ${CERTS_DIR}/{folder_name}\n\n# 例如：\nmkdir -p /home/kali/Certs-repo/websites/www_example"
       },
       "step2": {
         "title": "2. 复制证书文件",

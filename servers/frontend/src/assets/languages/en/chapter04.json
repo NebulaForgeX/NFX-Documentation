@@ -86,20 +86,20 @@
     "step2": {
       "title": "Step 2: Create Environment Variables File",
       "description": "Create a `.env` file to configure environment variables:",
-      "command": "cat > .env << EOF\nCERTS_DIR=/volume1/certs/websites\nTRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml\nTRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic\nNGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf\nEOF",
+      "command": "cat > .env << EOF\nCERTS_DIR=/home/kali/Certs-repo/websites\nTRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml\nTRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic\nNGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf\nEOF",
       "description2": "When creating the `.env` file, you need to configure it according to your actual deployment environment. Please replace `<YOUR_DEPLOYMENT_DIR>` in the template with your actual deployment directory path, for example `/volume1`. At the same time, replace `<PROJECT_DIR>` with the project directory name. By default, this is `NFX-Edge`, but if you renamed the directory after cloning the repository (for example, to `Websites`), you need to use the renamed name. Additionally, the `.env` file contains path and other configuration information and should also not be committed to the Git repository.",
       "description3": "The environment variable file contains several key configuration items. `CERTS_DIR` specifies the path of the certificate storage directory, and all SSL/TLS certificate files for websites will be stored in this directory. `TRAEFIK_CONFIG_FILE` points to Traefik's static configuration file, which contains basic Traefik configuration information. `TRAEFIK_DYNAMIC_DIR` is the path to Traefik's dynamic configuration directory, and configuration files in this directory will be automatically monitored and reloaded by Traefik. Finally, `NGINX_CONFIG_FILE` specifies the path to the Nginx configuration file, which will be shared and used by all website service containers.",
       "example": {
         "title": "Example:",
         "description": "If your deployment directory is `/volume1` and the project directory name is `NFX-Edge`:",
-        "command": "CERTS_DIR=/volume1/certs/websites\nTRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml\nTRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic\nNGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf",
+        "command": "CERTS_DIR=/home/kali/Certs-repo/websites\nTRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml\nTRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic\nNGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf",
         "note": "**If you renamed the directory:** If you renamed the project directory to `Websites`, replace `NFX-Edge` in the paths with `Websites` accordingly."
       }
     },
     "step3": {
       "title": "Step 3: Create Certificate Directory",
       "description": "Create the certificate storage directory:",
-      "command": "# Create certificate directory (replace <YOUR_DEPLOYMENT_DIR> with actual path)\nmkdir -p /volume1/certs/websites\n\n# Set appropriate permissions (optional, but recommended)\n# chmod 755 /volume1/certs/websites",
+      "command": "# Create certificate directory (replace <YOUR_DEPLOYMENT_DIR> with actual path)\nmkdir -p /home/kali/Certs-repo/websites\n\n# Set appropriate permissions (optional, but recommended)\n# chmod 755 /home/kali/Certs-repo/websites",
       "description2": "The certificate directory is where SSL/TLS certificate files for all websites are stored. To facilitate management and organization, each website uses an independent subfolder to store its own certificate files. Certificate files follow a uniform standard naming format: the certificate file is named `cert.crt`, and the private key file is named `key.key`. This naming convention ensures that NFX-Edge can correctly identify and load certificate files."
     }
   },
@@ -176,7 +176,7 @@
       "description": "If you already have certificate files or want to manage certificates through other methods (certificate management is handled by external systems, NFX-Edge is only responsible for using certificate files):",
       "step1": {
         "title": "1. Create Certificate Directory",
-        "command": "# Create certificate directory for each website (replace folder_name with actual folder name)\nmkdir -p ${CERTS_DIR}/{folder_name}\n\n# For example:\nmkdir -p /volume1/certs/websites/www_example"
+        "command": "# Create certificate directory for each website (replace folder_name with actual folder name)\nmkdir -p ${CERTS_DIR}/{folder_name}\n\n# For example:\nmkdir -p /home/kali/Certs-repo/websites/www_example"
       },
       "step2": {
         "title": "2. Copy Certificate Files",

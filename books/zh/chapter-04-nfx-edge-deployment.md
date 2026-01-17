@@ -99,7 +99,7 @@ cp docker-compose.example.yml docker-compose.yml
 
 ```bash
 cat > .env << EOF
-CERTS_DIR=/volume1/certs/websites
+CERTS_DIR=/home/kali/Certs-repo/websites
 TRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml
 TRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic
 NGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf
@@ -113,7 +113,7 @@ EOF
 **示例：** 如果您的部署目录是 `/volume1`，项目目录名为 `NFX-Edge`：
 
 ```bash
-CERTS_DIR=/volume1/certs/websites
+CERTS_DIR=/home/kali/Certs-repo/websites
 TRAEFIK_CONFIG_FILE=/volume1/NFX-Edge/traefik.yml
 TRAEFIK_DYNAMIC_DIR=/volume1/NFX-Edge/dynamic
 NGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf
@@ -127,10 +127,10 @@ NGINX_CONFIG_FILE=/volume1/NFX-Edge/nginx.conf
 
 ```bash
 # 创建证书目录（将 <YOUR_DEPLOYMENT_DIR> 替换为实际路径）
-mkdir -p /volume1/certs/websites
+mkdir -p /home/kali/Certs-repo/websites
 
 # 设置适当的权限（可选，但推荐）
-# chmod 755 /volume1/certs/websites
+# chmod 755 /home/kali/Certs-repo/websites
 ```
 
 证书目录是存储所有网站 SSL/TLS 证书文件的位置。为了便于管理和组织，每个网站都会使用独立的子文件夹来存储自己的证书文件。证书文件的命名遵循统一的标准格式：证书文件命名为 `cert.crt`，私钥文件命名为 `key.key`。这种命名规范确保了 NFX-Edge 能够正确识别和加载证书文件。
@@ -310,7 +310,7 @@ docker exec NFX-Edge-Reverse-Proxy wget -O- http://NFX-Vault-Backend-API:8000/he
 mkdir -p ${CERTS_DIR}/{folder_name}
 
 # 例如：
-mkdir -p /volume1/certs/websites/www_example
+mkdir -p /home/kali/Certs-repo/websites/www_example
 ```
 
 2. **复制证书文件**

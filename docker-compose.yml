@@ -6,6 +6,9 @@ services:
     build:
       context: ./servers/frontend
       dockerfile: Dockerfile
+      args:
+        BACKEND_HOST: ${BACKEND_HOST}
+        BACKEND_PORT: ${BACKEND_PORT}
     container_name: NFX-Documentation-Frontend
     restart: always
     ports:

@@ -1,0 +1,28 @@
+{
+  "title": "NFX-UI API Documentation",
+  "overviewTitle": "Overview",
+  "overviewIntro": "NFX-UI is the shared frontend UI library of the NebulaForgeX ecosystem. Modules map to src directories; each component/export has its own doc.",
+  "installTitle": "Install",
+  "installBody": "npm install nfx-ui or local npm link nfx-ui. No separate CSS; styles are inlined.",
+  "sections": {
+    "overview": { "title": "Overview" },
+    "apis": { "title": "APIs" },
+    "animations": { "title": "Animations & Loading" },
+    "components": { "title": "Base Components" },
+    "constants": { "title": "Constants & Query Key" },
+    "events": { "title": "Events" },
+    "hooks": { "title": "Hooks" },
+    "icons": { "title": "Icons" },
+    "languages": { "title": "Languages" },
+    "layouts": { "title": "Layouts" },
+    "navigations": { "title": "Navigations" },
+    "preference": { "title": "Preference" },
+    "services": { "title": "Services" },
+    "stores": { "title": "Stores" },
+    "themes": { "title": "Themes" },
+    "types": { "title": "Types" },
+    "utils": { "title": "Utils" }
+  },
+  "docLink": "Full docs at",
+  "githubDocs": "NFX-UI docs"
+}

@@ -10,6 +10,7 @@ import {
   NotFoundPage,
   RepoPage,
   AboutPage,
+  UIapiPage,
 } from '@/pages'
 
 const routes: RouteRecordRaw[] = [
@@ -27,6 +28,24 @@ const routes: RouteRecordRaw[] = [
     path: '/about',
     name: 'About',
     component: AboutPage,
+  },
+  {
+    path: '/ui-api',
+    name: 'UIapi',
+    component: UIapiPage,
+    redirect: { name: 'UIapiOverview' },
+    children: [
+      {
+        path: 'overview',
+        name: 'UIapiOverview',
+        component: () => import('@/pages/UIapiPage/pages/OverviewPage/index.vue'),
+      },
+      {
+        path: ':section/:doc?',
+        name: 'UIapiSection',
+        component: () => import('@/pages/UIapiPage/pages/SectionPage/index.vue'),
+      },
+    ],
   },
   // 中文章节路由
   {

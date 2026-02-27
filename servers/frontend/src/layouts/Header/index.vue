@@ -33,6 +33,10 @@
         <FolderGit2 :size="18" :class="styles.navIcon" />
         <span>{{ $t('common.nav.repo') }}</span>
       </router-link>
+      <router-link to="/ui-api" :class="[styles.navLink, { [styles.active]: $route.path.startsWith('/ui-api') }]">
+        <Code2 :size="18" :class="styles.navIcon" />
+        <span>{{ $t('common.nav.uiApi') }}</span>
+      </router-link>
       <router-link to="/about" :class="[styles.navLink, { [styles.active]: $route.path === '/about' }]">
         <Info :size="18" :class="styles.navIcon" />
         <span>{{ $t('common.nav.about') }}</span>
@@ -50,7 +54,7 @@
 import { ref, computed, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import { Book, Home, FolderGit2, Info } from 'lucide-vue-next'
+import { Book, Home, FolderGit2, Code2, Info } from 'lucide-vue-next'
 import ThemeSwitcher from '@/components/ThemeSwitcher/index.vue'
 import LanguageSwitcher from '@/components/LanguageSwitcher/index.vue'
 import styles from './styles.module.css'

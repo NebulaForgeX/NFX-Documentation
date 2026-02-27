@@ -1,0 +1,20 @@
+.title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--color-fg-heading);
+}
+
+.docLink {
+  margin-top: 1rem;
+  color: var(--color-fg-secondary);
+  font-size: 0.95rem;
+}
+
+.docLink a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.docLink a:hover {
+  text-decoration: underline;
+}

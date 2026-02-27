@@ -6,7 +6,8 @@
     "home": "Home",
     "chapters": "Chapters",
     "repo": "Repositories",
-    "about": "About"
+    "about": "About",
+    "uiApi": "UI-API"
   },
   "footer": {
     "copyright": "NebulaForgeX. All rights reserved.",
@@ -49,4 +50,3 @@
   },
   "nextChapter": "Next Chapter"
 }
-

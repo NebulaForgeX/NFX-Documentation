@@ -1,0 +1,28 @@
+{
+  "title": "NFX-UI API 文档",
+  "overviewTitle": "概述",
+  "overviewIntro": "NFX-UI 是 NebulaForgeX 生态的统一前端 UI 库，按模块划分与 src 下目录一一对应；每个组件/导出有单独说明。",
+  "installTitle": "安装",
+  "installBody": "npm install nfx-ui 或本地 npm link nfx-ui。无需单独引入 CSS，样式已内联。",
+  "sections": {
+    "overview": { "title": "概述" },
+    "apis": { "title": "APIs" },
+    "animations": { "title": "动效与加载" },
+    "components": { "title": "基础组件" },
+    "constants": { "title": "常量与 Query Key" },
+    "events": { "title": "事件" },
+    "hooks": { "title": "Hooks" },
+    "icons": { "title": "图标" },
+    "languages": { "title": "多语言" },
+    "layouts": { "title": "布局" },
+    "navigations": { "title": "路由导航" },
+    "preference": { "title": "偏好" },
+    "services": { "title": "服务" },
+    "stores": { "title": "状态" },
+    "themes": { "title": "主题" },
+    "types": { "title": "类型" },
+    "utils": { "title": "工具函数" }
+  },
+  "docLink": "完整文档请参阅",
+  "githubDocs": "NFX-UI docs"
+}

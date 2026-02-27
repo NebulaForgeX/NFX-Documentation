@@ -1,20 +1,29 @@
 .layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .main {
   flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  overflow: hidden;
 }
 
-@media (max-width: 768px) {
-  .main {
-    padding: 1rem;
-  }
+.mainSlot {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
+.mainSlot::-webkit-scrollbar {
+  display: none;
+}

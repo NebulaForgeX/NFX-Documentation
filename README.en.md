@@ -298,6 +298,9 @@ Before using the following repositories, please ensure you have read this docume
 - **[NFX Stack (Resources)](https://github.com/NebulaForgeX/NFX-Stack)** - Infrastructure resource stack
 - **[NFX-Vault (Certs)](https://github.com/NebulaForgeX/NFX-Vault)** - SSL certificate management system
 - **[NFX-Edge (Websites)](https://github.com/NebulaForgeX/NFX-Edge)** - Multi-website reverse proxy system
+- **[NFX-UI](https://github.com/NebulaForgeX/NFX-UI)** - Shared frontend UI library (React components, design tokens, theme system)
+- **[NFX-News](https://github.com/NebulaForgeX/NFX-News)** - Smart trending news aggregation platform
+- **[NFX-Identity](https://github.com/NebulaForgeX/NFX-Identity)** - Unified authentication and identity service
 
 ---
 

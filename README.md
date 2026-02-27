@@ -298,6 +298,9 @@ NFX 生态系统使用多个 Docker 网络：
 - **[NFX Stack (Resources)](https://github.com/NebulaForgeX/NFX-Stack)** - 基础设施资源栈
 - **[NFX-Vault (Certs)](https://github.com/NebulaForgeX/NFX-Vault)** - SSL 证书管理系统
 - **[NFX-Edge (Websites)](https://github.com/NebulaForgeX/NFX-Edge)** - 多网站反向代理系统
+- **[NFX-UI](https://github.com/NebulaForgeX/NFX-UI)** - 统一前端 UI 库（React 组件、设计令牌、主题系统）
+- **[NFX-News](https://github.com/NebulaForgeX/NFX-News)** - 智能热点资讯聚合平台
+- **[NFX-Identity](https://github.com/NebulaForgeX/NFX-Identity)** - 统一认证与身份服务
 
 ---
 

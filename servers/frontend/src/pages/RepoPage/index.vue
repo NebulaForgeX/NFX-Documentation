@@ -61,6 +61,24 @@ const repos = computed(() => [
     url: 'https://github.com/NebulaForgeX/NFX-Documentation',
     language: 'Vue',
   },
+  {
+    name: 'NFX-UI',
+    description: t('repo.nfxUi.description'),
+    url: 'https://github.com/NebulaForgeX/NFX-UI',
+    language: 'React / TypeScript',
+  },
+  {
+    name: 'NFX-News',
+    description: t('repo.nfxNews.description'),
+    url: 'https://github.com/NebulaForgeX/NFX-News',
+    language: 'Python / TypeScript',
+  },
+  {
+    name: 'NFX-Identity',
+    description: t('repo.nfxIdentity.description'),
+    url: 'https://github.com/NebulaForgeX/NFX-Identity',
+    language: 'Go',
+  },
 ])
 </script>
 

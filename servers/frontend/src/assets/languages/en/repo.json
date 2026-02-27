@@ -12,5 +12,14 @@
   },
   "nfxDocumentation": {
     "description": "NFX-Documentation is the deployment and configuration strategy documentation for NFX projects, providing detailed deployment guides and best practices."
+  },
+  "nfxUi": {
+    "description": "NFX-UI is the shared frontend UI library of the NebulaForgeX ecosystem, providing React components, design tokens, theme system, and utilities for consistent look and behavior across NFX applications."
+  },
+  "nfxNews": {
+    "description": "NFX-News is a smart trending news aggregation platform with multi-platform crawl, AI-powered analysis, and microservices architecture; it provides RESTful API, HTML reports, and AI conversational interface."
+  },
+  "nfxIdentity": {
+    "description": "NFX-Identity is the centralized identity and authentication platform for the NFX ecosystem, providing auth, authorization, user and permission management, built with Go and DDD/CQRS."
   }
 }

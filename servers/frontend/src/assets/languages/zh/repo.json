@@ -12,5 +12,14 @@
   },
   "nfxDocumentation": {
     "description": "NFX-Documentation 是 NFX 项目的部署与配置文档，提供详细的部署指南和最佳实践。"
+  },
+  "nfxUi": {
+    "description": "NFX-UI 是 NebulaForgeX 生态的统一前端 UI 库，提供 React 组件、设计令牌、主题系统与工具函数，为 NFX 应用提供一致的外观与交互。"
+  },
+  "nfxNews": {
+    "description": "NFX-News 是智能热点资讯聚合平台，支持多平台爬取、AI 分析与微服务架构，提供 RESTful API、HTML 报告与 AI 对话界面。"
+  },
+  "nfxIdentity": {
+    "description": "NFX-Identity 是 NFX 生态的统一认证与身份服务，提供认证、授权、用户与权限管理，基于 Go 与 DDD/CQRS 设计。"
   }
 }

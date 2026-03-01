@@ -1,7 +1,7 @@
 # Button / 按钮
 
-按钮组件，支持多种变体、尺寸、左右图标与 loading 态。  
-Button component with variants, sizes, left/right icons and loading state.
+按钮组件：变体、尺寸、四向图标、仅图标（iconOnly）、loading、fullWidth。  
+Button with variants, sizes, top/right/bottom/left icons, icon-only mode, loading, full width.
 
 ---
 
@@ -25,14 +25,18 @@ import type { ButtonProps } from "nfx-ui";
 | fullWidth | boolean | No | false | 是否占满宽度。Full width. |
 | leftIcon | ReactNode | No | — | 左侧图标。Left icon. |
 | rightIcon | ReactNode | No | — | 右侧图标。Right icon. |
-| loading | boolean | No | false | 加载中（显示 spinner，禁用点击）。Loading state (spinner, disabled). |
+| topIcon | ReactNode | No | — | 上方图标。Top icon. |
+| bottomIcon | ReactNode | No | — | 下方图标。Bottom icon. |
+| iconOnly | boolean | No | false | 仅图标无文案（方形按钮）。Icon only, no text. |
+| iconSize | number | No | — | 图标尺寸覆盖。Override icon size. |
+| loading | boolean | No | false | 加载中（显示 spinner，禁用点击）。Loading state. |
 
 ---
 
 ## 输入 Input / 输出 Output
 
 - **Input**：上述 props + 子节点 `children`。Props above plus `children`.
-- **Output**：渲染为 `<button>`，loading 时显示 spinner、禁用点击。Renders `<button>`; when loading shows spinner and is disabled.
+- **Output**：渲染为 `<button>`；loading 时显示 spinner、禁用点击；iconOnly 时为方形图标按钮。Renders `<button>`; when loading shows spinner and is disabled; when iconOnly renders square icon button.
 
 ---
 
@@ -50,6 +54,15 @@ import type { ButtonProps } from "nfx-ui";
 >
   提交 / Submit
 </Button>
+
+// 仅图标（原 IconButton 用法）/ Icon only
+<Button
+  variant="outline"
+  iconOnly
+  leftIcon={<X size={18} />}
+  aria-label="关闭 / Close"
+  onClick={onClose}
+/>
 
 // 不同变体与尺寸 / Variants and sizes
 <Button variant="outline" size="small">取消 / Cancel</Button>

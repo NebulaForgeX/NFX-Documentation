@@ -9,12 +9,11 @@ Import by name from `nfx-ui`; no separate CSS. All components support `className
 
 | 组件 Component | 说明 Description | 文档 Doc |
 |----------------|-------------------|----------|
-| Button | 按钮：variant、size、左右图标、loading | [button.md](./button.md) |
+| Button | 按钮：variant、size、四向图标、iconOnly、loading | [button.md](./button.md) |
 | Input | 输入框：label、error、helperText、左右图标 | [input.md](./input.md) |
 | Textarea | 多行文本 Multiline text | [textarea.md](./textarea.md) |
 | Dropdown | 下拉选择 Dropdown select | [dropdown.md](./dropdown.md) |
 | Icon | 图标封装 Icon wrapper | [icon.md](./icon.md) |
-| IconButton | 图标按钮 Icon button | [icon-button.md](./icon-button.md) |
 | SearchInput | 搜索输入框 Search input | [search-input.md](./search-input.md) |
 | ShowFilter | 筛选展示控件 Filter/visibility control | [show-filter.md](./show-filter.md) |
 | SlideDownSwitcher | 折叠切换 Collapsible toggle | [slide-down-switcher.md](./slide-down-switcher.md) |
@@ -34,7 +33,6 @@ import {
   Input,
   Dropdown,
   Icon,
-  IconButton,
   SearchInput,
   ShowFilter,
   SlideDownSwitcher,

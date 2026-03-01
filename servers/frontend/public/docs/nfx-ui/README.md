@@ -17,24 +17,24 @@ All sub-docs include **Chinese & English descriptions**, **parameter tables** (P
 
 ## 文档结构（对应 src/）
 
-| 目录 | 说明 | 主包导出 |
-|------|------|----------|
-| [animations](./animations/) | 动效与加载：ECGLoading、TruckLoading、WaveBackground、SquareBackground 等 | ✅ |
-| [apis](./apis/) | API 路径树：path、PathNode（业务项目用其构建 URL_PATHS / API_ENDPOINTS） | ✅ |
-| [components](./components/) | 基础组件：Button、Input、Dropdown、Icon、Slider、VirtualList 等 | ✅ |
-| [constants](./constants/) | 公用常量与 Query key：createKey、createListKey、createItemKey、defineEnum 等 | ✅ |
-| [events](./events/) | 通用 EventEmitter、defineEvents、EventNamesOf | ✅ |
-| [hooks](./hooks/) | makeUnifiedQuery、makeUnifiedInfiniteQuery、makeCursorFetchFunction 等 | ✅ |
-| [icons](./icons/) | Lucide 图标重导出 | ❌ 仅 @/icons |
-| [languages](./languages/) | LanguageProvider、LanguageSwitcher、getLocalLanguage | ✅ |
-| [layouts](./layouts/) | LayoutProvider、Sidebar、Header、Footer、Background 等 | ✅ |
-| [navigations](./navigations/) | defineRouter、createRouter、isActiveRoute、matchRoute、RouteKey、RoutePath | ✅ |
-| [preference](./preference/) | DashboardBackgroundEnum、parsePreferenceJson、getDefaultPreference | ✅ |
-| [services](./services/) | compressImage 等 | ❌ 仅 @/services |
-| [stores](./stores/) | makeStore、makePersistStore | ❌ 仅 @/stores |
-| [themes](./themes/) | ThemeProvider、ThemeSwitcher、主题枚举与变量 | ✅ |
-| [types](./types/) | API 类型、工具类型：ApiErrorBody、ListDTO、Nullable、Result 等 | ✅ |
-| [utils](./utils/) | 地址、数组、颜色、邮箱、电话、价格、时间、Result、retry、singleton 等 | ✅ |
+| 目录 | 说明 | 引入路径 Import from |
+|------|------|------------------------|
+| [animations](./animations/) | 动效与加载：ECGLoading、TruckLoading、WaveBackground、SquareBackground 等 | `nfx-ui/animations` |
+| [apis](./apis/) | API 路径树：path、PathNode（业务项目用其构建 URL_PATHS / API_ENDPOINTS） | `nfx-ui/apis` |
+| [components](./components/) | 基础组件：Button、Input、Dropdown、Icon、Slider、VirtualList 等 | `nfx-ui/components` |
+| [constants](./constants/) | 公用常量与 Query key：createKey、createListKey、createItemKey、defineEnum 等 | `nfx-ui/constants` |
+| [events](./events/) | 通用 EventEmitter、defineEvents、EventNamesOf | `nfx-ui/events` |
+| [hooks](./hooks/) | makeUnifiedQuery、makeUnifiedInfiniteQuery、makeCursorFetchFunction 等 | `nfx-ui/hooks` |
+| [icons](./icons/) | Lucide 图标重导出 | `nfx-ui/icons` |
+| [languages](./languages/) | LanguageProvider、getLocalLanguage、LanguageEnum | `nfx-ui/languages` |
+| [layouts](./layouts/) | LayoutProvider、LayoutSwitcher、Sidebar、Header、Footer、Background 等 | `nfx-ui/layouts` |
+| [navigations](./navigations/) | defineRouter、createRouter、isActiveRoute、matchRoute、RouteKey、RoutePath | `nfx-ui/navigations` |
+| [preference](./preference/) | DashboardBackgroundEnum、parsePreferenceJson、getDefaultPreference | `nfx-ui/preference` |
+| [services](./services/) | compressImage 等 | `nfx-ui/services` |
+| [stores](./stores/) | makeStore、makePersistStore | `nfx-ui/stores` |
+| [themes](./themes/) | ThemeProvider、ThemeSwitcher、主题枚举与变量 | `nfx-ui/themes` |
+| [types](./types/) | API 类型、工具类型：ApiErrorBody、ListDTO、Nullable、Result 等 | `nfx-ui/types` |
+| [utils](./utils/) | 地址、数组、颜色、邮箱、电话、价格、时间、Result、retry、singleton 等 | `nfx-ui/utils` |
 
 ---
 
@@ -60,19 +60,40 @@ npm link nfx-ui
 项目需已安装 `react`、`react-dom`（^18.0.0 或 ^19.0.0）。按需可能还需 `lucide-react`、`recharts`、`@tanstack/react-query` 等（见仓库 `package.json`）。  
 Your project must have `react` and `react-dom` (^18.0.0 or ^19.0.0); optionally `lucide-react`, `recharts`, `@tanstack/react-query`.
 
+### 子路径导出 / Subpath exports
+
+本库**仅提供子路径导出**，无聚合入口；按需从对应子路径引入，避免打进全量。  
+This package **only exposes subpath exports**; import from the relevant subpath to avoid pulling the whole lib.
+
+| 子路径 Subpath | 说明 Description |
+|----------------|------------------|
+| `nfx-ui/themes` | ThemeProvider、ThemeSwitcher、主题枚举与变量 |
+| `nfx-ui/layouts` | LayoutProvider、LayoutSwitcher、Sidebar、Header、Footer、Background 等 |
+| `nfx-ui/components` | Button、Input、Dropdown、Icon、Slider、VirtualList、SlideDownSwitcher 等 |
+| `nfx-ui/animations` | ECGLoading、TruckLoading、WaveBackground、SquareBackground 等 |
+| `nfx-ui/hooks` | makeUnifiedQuery、makeUnifiedInfiniteQuery、makeCursorFetchFunction 等 |
+| `nfx-ui/preference` | DashboardBackgroundEnum、parsePreferenceJson、getDefaultPreference |
+| `nfx-ui/stores` | makeStore、makePersistStore |
+| `nfx-ui/apis` | path、PathNode |
+| `nfx-ui/events` | EventEmitter、defineEvents |
+| `nfx-ui/services` | compressImage 等 |
+| `nfx-ui/navigations` | defineRouter、createRouter、isActiveRoute、matchRoute |
+| `nfx-ui/types` | ApiErrorBody、ListDTO、Nullable、Maybe、Result、ok、err 等 |
+| `nfx-ui/utils` | 地址、数组、颜色、邮箱、电话、价格、时间、retry、singleton 等 |
+| `nfx-ui/constants` | createKey、createListKey、defineEnum 等 |
+| `nfx-ui/languages` | LanguageProvider、getLocalLanguage、LanguageEnum |
+| `nfx-ui/icons` | Lucide 图标重导出 |
+
 ### 使用要点 / Usage notes
 
 - 无需单独引入 CSS，样式已内联。No separate CSS; styles are inlined.
-- 类型从 `nfx-ui` 引入即可获得类型提示。Import types from `nfx-ui` for full type hints.
+- 类型从对应子路径引入即可获得类型提示。Import types from the matching subpath for full type hints.
 
 ```tsx
-import {
-  Button,
-  ECGLoading,
-  ThemeProvider,
-  LanguageProvider,
-  type ApiErrorBody,
-} from "nfx-ui";
+import { ThemeProvider, ThemeSwitcher } from "nfx-ui/themes";
+import { LanguageProvider, getLocalLanguage, LanguageEnum } from "nfx-ui/languages";
+import { Button } from "nfx-ui/components";
+import type { ApiErrorBody } from "nfx-ui/types";
 
 export function App() {
   return (

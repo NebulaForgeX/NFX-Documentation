@@ -8,7 +8,7 @@ Image compression and related helpers. Parameters and Input/Output below.
 ## 引入 / Import
 
 ```ts
-import { compressImage } from "@/services";
+import { compressImage } from "nfx-ui/services";
 ```
 
 ---

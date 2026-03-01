@@ -7,11 +7,11 @@ Usage guide for shared constants and React Query key factories. Parameters and I
 
 ## 入口 / Entry
 
-从 `nfx-ui` 统一导出（外部使用）。本仓库内可从 `@/constants` 引用。  
-Exported from `nfx-ui` (external). In repo: `@/constants`.
+从 **`nfx-ui/constants`** 子路径导出（外部使用）。本仓库内可从 `@/constants` 引用。  
+Exported from **`nfx-ui/constants`** (external). In repo: `@/constants`.
 
 ```ts
-import { CACHE_ITEM, CACHE_LIST, createItemKey, createKey, createListKey, createQueryKeys, defineEnum, enumPickMap } from "nfx-ui";
+import { CACHE_ITEM, CACHE_LIST, createItemKey, createKey, createListKey, createQueryKeys, defineEnum, enumPickMap } from "nfx-ui/constants";
 ```
 
 ---
@@ -29,7 +29,7 @@ Fixed segments used in query keys to denote "list" vs "item".
 **Example**
 
 ```ts
-import { CACHE_ITEM, CACHE_LIST } from "nfx-ui";
+import { CACHE_ITEM, CACHE_LIST } from "nfx-ui/constants";
 
 const customKey = ["catalog", CACHE_LIST, "category"];
 // => ["catalog", "list", "category"]
@@ -51,7 +51,7 @@ function createKey(...segments: unknown[]): QueryKey;
 **Example**
 
 ```ts
-import { createKey } from "nfx-ui";
+import { createKey } from "nfx-ui/constants";
 
 const key = createKey("catalog", "stats", "category", "count");
 useQuery({ queryKey: createKey("auth", "me"), queryFn: fetchCurrentUser });
@@ -75,7 +75,7 @@ function createListKey(domain: string, subDomain: string): ListKeyChainable;
 **Example**
 
 ```ts
-import { createListKey } from "nfx-ui";
+import { createListKey } from "nfx-ui/constants";
 
 const listKey = createListKey("catalog", "category");
 // listKey => ["catalog", "list", "category"]
@@ -102,7 +102,7 @@ function createItemKey(domain: string, subDomain: string): ItemKeyChainable;
 **Example**
 
 ```ts
-import { createItemKey } from "nfx-ui";
+import { createItemKey } from "nfx-ui/constants";
 
 const itemKey = createItemKey("catalog", "category");
 itemKey("abc"); // => ["catalog", "item", "category", "abc"]
@@ -125,7 +125,7 @@ function createQueryKeys(domain: string, subDomain: string): QueryKeysBundle;
 **Example**
 
 ```ts
-import { createQueryKeys } from "nfx-ui";
+import { createQueryKeys } from "nfx-ui/constants";
 
 const { list, item } = createQueryKeys("catalog", "category");
 useQuery({ queryKey: list, queryFn: fetchCategories });
@@ -150,7 +150,7 @@ function defineEnum<const M extends EnumMetaMap>(metaMap: M): DefinedEnum<M>;
 **Example**
 
 ```ts
-import { defineEnum } from "nfx-ui";
+import { defineEnum } from "nfx-ui/constants";
 
 const Status = defineEnum({
   Draft: { label: "草稿", value: 0 },
@@ -172,7 +172,7 @@ Picks a map of one property from each enum entry.
 **Example**
 
 ```ts
-import { defineEnum, enumPickMap } from "nfx-ui";
+import { defineEnum, enumPickMap } from "nfx-ui/constants";
 
 const Status = defineEnum({
   Draft: { label: "草稿", value: 0 },

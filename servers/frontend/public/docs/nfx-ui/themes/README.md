@@ -12,16 +12,16 @@ Theme Provider, switcher, theme enums and CSS variables. Parameters and examples
 | ThemeProvider | 主题上下文 Theme context | [theme-provider.md](./theme-provider.md) |
 | ThemeSwitcher | 主题切换控件 Theme switcher | [theme-switcher.md](./theme-switcher.md) |
 
-## 主题数据 / Theme data
+## 主题数据与 Hooks / Theme data and hooks
 
-- `themes`、`defaultTheme`、`darkTheme`、`cosmicTheme` 等（见 themes 模块导出）。Exported from themes module.
-- `bases`：基础主题（iOS/Android/Windows/Linux 等圆角与平台风格）。Base themes (corner radius, platform style).
-- 类型 Types：`ThemeEnum`、`BaseEnum` 等.
+- **数据**：`themes`、`defaultTheme`、`darkTheme`、`cosmicTheme`、`corporateTheme`、`forestTheme`、`coffeeTheme`、`wineTheme`、`bases`（iOS/Android/Windows/Linux 等基础主题）。Data: themes, defaultTheme, darkTheme, cosmicTheme, corporateTheme, forestTheme, coffeeTheme, wineTheme, bases.
+- **Hooks**：`useTheme`、`useThemeVariables`（从 `nfx-ui/themes` 引入）。Hooks: useTheme, useThemeVariables.
+- **类型**：`ThemeEnum`、`BaseEnum`、`Theme`、`BaseTheme` 等。Types: ThemeEnum, BaseEnum, Theme, BaseTheme, etc.
 
 ---
 
 ## 引入示例 / Import example
 
 ```tsx
-import { ThemeProvider, ThemeSwitcher } from "nfx-ui";
+import { ThemeProvider, ThemeSwitcher } from "nfx-ui/themes";
 ```

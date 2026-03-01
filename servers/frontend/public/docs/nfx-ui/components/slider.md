@@ -8,8 +8,8 @@ Slider for selecting a numeric value or range.
 ## 引入 / Import
 
 ```tsx
-import { Slider } from "nfx-ui";
-import type { SliderProps } from "nfx-ui";
+import { Slider } from "nfx-ui/components";
+import type { SliderProps } from "nfx-ui/components";
 ```
 
 ---

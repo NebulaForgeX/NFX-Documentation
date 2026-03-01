@@ -8,7 +8,7 @@ Provides layout context (sidebar visibility, layout mode, etc.); children use `u
 ## 引入 / Import
 
 ```tsx
-import { LayoutProvider } from "nfx-ui";
+import { LayoutProvider } from "nfx-ui/layouts";
 ```
 
 ---

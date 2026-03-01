@@ -7,14 +7,13 @@ Unified query Hook factories (single-item, infinite list), cursor fetch, and typ
 
 ## 入口 / Entry
 
-从 `nfx-ui` 导出（外部使用）。本仓库内可从 `@/hooks` 引用。  
-Exported from `nfx-ui` (external). In repo: `@/hooks`.
+从 `nfx-ui/hooks` 导出（外部使用）；类型从 `nfx-ui/types`。本仓库内可从 `@/hooks` 引用。  
+Exported from `nfx-ui/hooks` (external); types from `nfx-ui/types`. In repo: `@/hooks`.
 
 ```ts
-import type { FetchNumberListParams, InfiniteQueryOptions, SuspenseInfiniteQueryOptions } from "nfx-ui";
-import type { ListDTOWithNextCursor, ListDTOWithTotalNumber } from "nfx-ui";
-
-import { makeCursorFetchFunction, makeStringCursorFetchFunction, makeUnifiedInfiniteQuery, makeUnifiedQuery } from "nfx-ui";
+import type { FetchNumberListParams, InfiniteQueryOptions, SuspenseInfiniteQueryOptions } from "nfx-ui/types";
+import type { ListDTOWithNextCursor, ListDTOWithTotalNumber } from "nfx-ui/types";
+import { makeCursorFetchFunction, makeStringCursorFetchFunction, makeUnifiedInfiniteQuery, makeUnifiedQuery } from "nfx-ui/hooks";
 ```
 
 ---
@@ -144,8 +143,8 @@ function makeStringCursorFetchFunction<T, F extends object = Record<string, unkn
 
 | 类型                                                              | 说明                                                                          |
 | ----------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `FetchNumberListParams<F>`                                        | F & OffsetLimitNumber（nfx-ui types）。                                       |
-| `FetchStringListParams<F>`                                        | F & OffsetLimitString（nfx-ui types）。                                       |
+| `FetchNumberListParams<F>`                                        | F & OffsetLimitNumber（nfx-ui/types）。                                       |
+| `FetchStringListParams<F>`                                        | F & OffsetLimitString（nfx-ui/types）。                                       |
 | `ListDTOWithTotalNumber<T>`                                       | `{ items: T[], total: number }`。                                              |
 | `ListDTOWithNextCursor<T>`                                        | `{ items: T[], nextCursor: string }`。                                        |
 | `InfiniteQueryOptions<T>` / `SuspenseInfiniteQueryOptions<T>`     | 无限查询 options（不含 queryKey/queryFn/getNextPageParam/initialPageParam）。 |

@@ -1,14 +1,14 @@
 # Types 类型定义 / Type Definitions
 
-从 `nfx-ui` 导出的共享 TypeScript 类型与 API 相关类型。  
-Shared TypeScript and API-related types exported from `nfx-ui`.
+从 **`nfx-ui/types`** 子路径导出的共享 TypeScript 类型与 API 相关类型。  
+Shared TypeScript and API-related types exported from **`nfx-ui/types`**.
 
 ---
 
 ## 入口 / Entry
 
 ```ts
-import type { ApiErrorBody, ListDTOWithTotalNumber, ListDTOWithNextCursor, Nullable, Maybe, Result } from "nfx-ui";
+import type { ApiErrorBody, ListDTOWithTotalNumber, ListDTOWithNextCursor, Nullable, Maybe } from "nfx-ui/types";
 ```
 
 ---
@@ -16,18 +16,16 @@ import type { ApiErrorBody, ListDTOWithTotalNumber, ListDTOWithNextCursor, Nulla
 ## 引入示例 / Import example
 
 ```ts
-import type { ApiErrorBody, ListDTOWithTotalNumber, Nullable, Maybe } from "nfx-ui";
-import { ok, err } from "nfx-ui";
+import type { ApiErrorBody, ListDTOWithTotalNumber, Nullable, Maybe } from "nfx-ui/types";
 
 // 类型注解 / Type annotations
 const errorBody: ApiErrorBody = { status: 400, message: "Bad request" };
 const list: ListDTOWithTotalNumber<{ id: string }> = { items: [], total: 0 };
 const name: Nullable<string> = "Alice";
-
-// Result 构造 / Result constructors
-const [data, error] = ok(42);   // [42, null]
-const [d2, e2] = err(new Error("x")); // [null, Error]
 ```
+
+**Result 类型与 ok/err 构造** 从 **`nfx-ui/utils`** 引入，见 [utils/result.md](../utils/result.md)。  
+*For Result type and ok/err constructors, import from **`nfx-ui/utils`**; see [utils/result.md](../utils/result.md).*
 
 ## 文档 / Docs
 

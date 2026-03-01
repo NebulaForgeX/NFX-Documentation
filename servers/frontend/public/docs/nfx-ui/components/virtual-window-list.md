@@ -8,8 +8,8 @@ Virtual list that scrolls inside a given container; for table body, side list, e
 ## 引入 / Import
 
 ```tsx
-import { VirtualWindowList } from "nfx-ui";
-import type { VirtualWindowListProps } from "nfx-ui";
+import { VirtualWindowList } from "nfx-ui/components";
+import type { VirtualWindowListProps } from "nfx-ui/components";
 ```
 
 ---

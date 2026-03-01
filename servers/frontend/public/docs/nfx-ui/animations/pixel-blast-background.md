@@ -8,7 +8,7 @@ Pixel blast-style background using WebGL (Three.js + postprocessing); supports m
 ## 引入 / Import
 
 ```tsx
-import { PixelBlastBackground } from "nfx-ui";
+import { PixelBlastBackground } from "nfx-ui/animations";
 ```
 
 ---

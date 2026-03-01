@@ -8,7 +8,7 @@ Create Record from readonly array; optional valueMapper for values.
 ## 引入 / Import
 
 ```ts
-import { createMap } from "nfx-ui";
+import { createMap } from "nfx-ui/utils";
 ```
 
 ---

@@ -8,7 +8,7 @@ Execute fn, retry on failure per opts, return Result.
 ## 引入 / Import
 
 ```ts
-import { withRetryResult } from "nfx-ui";
+import { withRetryResult } from "nfx-ui/utils";
 ```
 
 ---

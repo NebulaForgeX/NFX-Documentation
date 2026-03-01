@@ -8,7 +8,7 @@ ECG-style loading animation for waiting on data or operations.
 ## 引入 / Import
 
 ```tsx
-import { ECGLoading } from "nfx-ui";
+import { ECGLoading } from "nfx-ui/animations";
 ```
 
 ---

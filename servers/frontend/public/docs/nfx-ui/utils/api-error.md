@@ -8,7 +8,7 @@ Parse API error body and message from an exception.
 ## 引入 / Import
 
 ```ts
-import { getApiError, getApiErrorMessage } from "nfx-ui";
+import { getApiError, getApiErrorMessage } from "nfx-ui/utils";
 ```
 
 ---

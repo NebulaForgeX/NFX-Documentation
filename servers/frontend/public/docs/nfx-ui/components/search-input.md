@@ -8,8 +8,8 @@ Input with search icon for search bars.
 ## 引入 / Import
 
 ```tsx
-import { SearchInput } from "nfx-ui";
-import type { SearchInputProps } from "nfx-ui";
+import { SearchInput } from "nfx-ui/components";
+import type { SearchInputProps } from "nfx-ui/components";
 ```
 
 ---

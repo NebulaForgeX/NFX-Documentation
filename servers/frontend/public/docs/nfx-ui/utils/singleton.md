@@ -8,7 +8,7 @@ Singleton wrapper: multiple new of same constructor return same instance.
 ## 引入 / Import
 
 ```ts
-import { singleton } from "nfx-ui";
+import { singleton } from "nfx-ui/utils";
 ```
 
 ---

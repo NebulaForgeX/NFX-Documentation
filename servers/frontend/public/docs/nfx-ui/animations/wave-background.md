@@ -8,14 +8,14 @@ Wave line background; line color follows theme primary; suitable as page or sect
 ## 引入 / Import
 
 ```tsx
-import { WaveBackground } from "nfx-ui";
+import { WaveBackground } from "nfx-ui/animations";
 ```
 
 ---
 
 ## 参数 / Parameters
 
-（不暴露 `lineColor`、`backgroundColor`，由组件内部从主题读取。Not exposed; read from theme internally.)
+（不暴露 `lineColor`、`backgroundColor`，由组件内部从主题读取。Not exposed; read from theme internally. 下表默认值为 **WaveBackground** 包装器所使用；底层 Waves 组件默认值不同。Default values below are used by the **WaveBackground** wrapper.)
 
 | 参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description |
 |----------------|-----------|---------------|--------------|------------------|

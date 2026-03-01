@@ -8,7 +8,7 @@ Use inside LayoutProvider to get setter for layout state.
 ## 引入 / Import
 
 ```tsx
-import { useSet } from "nfx-ui";
+import { useSet } from "nfx-ui/layouts";
 ```
 
 ---

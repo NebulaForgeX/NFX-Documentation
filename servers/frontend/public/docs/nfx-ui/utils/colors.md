@@ -8,7 +8,7 @@ Convert color to RGBA, interpolate, etc.
 ## 引入 / Import
 
 ```ts
-import { toRgbaWithAlpha, rgbToRgba, hexToRGBA, interpolateColor } from "nfx-ui";
+import { toRgbaWithAlpha, rgbToRgba, hexToRGBA, interpolateColor } from "nfx-ui/utils";
 ```
 
 ---

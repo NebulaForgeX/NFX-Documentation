@@ -1,7 +1,7 @@
 # Events Module Documentation
 
 This module provides only the generic EventEmitter; domain emitters are implemented by the app.  
-**Note:** Events are not exported from the main `nfx-ui` package; use `@/events` only inside this repo or monorepo.
+**Note:** Events are exported from **`nfx-ui/events`**; in consuming apps use `import ... from "nfx-ui/events"`. In repo you can use `@/events`.
 
 ---
 

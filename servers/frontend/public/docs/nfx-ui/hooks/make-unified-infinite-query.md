@@ -6,7 +6,7 @@ Creates a unified infinite-query Hook factory (normal or suspense), using number
 ## 引入
 
 ```ts
-import { makeUnifiedInfiniteQuery } from "nfx-ui";
+import { makeUnifiedInfiniteQuery } from "nfx-ui/hooks";
 ```
 
 ## 签名 / Signature

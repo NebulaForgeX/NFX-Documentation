@@ -8,8 +8,8 @@ Result type for success or failure; ok/err are constructors.
 ## 引入 / Import
 
 ```ts
-import { ok, err } from "nfx-ui";
-import type { Result } from "nfx-ui";
+import { ok, err } from "nfx-ui/utils";
+import type { Result } from "nfx-ui/utils";
 ```
 
 ---

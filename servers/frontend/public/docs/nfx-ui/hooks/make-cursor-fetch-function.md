@@ -6,7 +6,7 @@ Converts offset/limit list API to number-cursor fetcher for infinite query.
 ## 引入
 
 ```ts
-import { makeCursorFetchFunction } from "nfx-ui";
+import { makeCursorFetchFunction } from "nfx-ui/hooks";
 ```
 
 ## 签名 / Signature

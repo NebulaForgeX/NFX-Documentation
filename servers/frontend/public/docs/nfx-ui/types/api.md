@@ -14,7 +14,7 @@ import type {
   ListDTOWithNextCursor,
   OffsetLimitNumber,
   OffsetLimitString,
-} from "nfx-ui";
+} from "nfx-ui/types";
 ```
 
 ---

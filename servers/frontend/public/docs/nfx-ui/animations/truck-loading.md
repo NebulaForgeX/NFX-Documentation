@@ -8,7 +8,7 @@ Truck-driving style loading animation for logistics or playful waiting states.
 ## 引入 / Import
 
 ```tsx
-import { TruckLoading } from "nfx-ui";
+import { TruckLoading } from "nfx-ui/animations";
 ```
 
 ---

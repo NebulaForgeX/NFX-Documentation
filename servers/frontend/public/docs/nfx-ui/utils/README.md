@@ -1,6 +1,6 @@
 # Utils 工具函数 / Utility Functions
 
-从 `nfx-ui` 导出的工具函数：地址、数组、API 错误、颜色、邮箱、表单、对象、电话、轮询、价格、Promise、Result、重试、单例、Suspense、时间等。  
+从 **`nfx-ui/utils`** 子路径导出的工具函数：地址、数组、API 错误、颜色、邮箱、表单、对象、电话、轮询、价格、Promise、Result、重试、单例、Suspense、时间等。  
 Exported utilities: address, array, API error, colors, email, form, object, phone, polling, price, promise, result, retry, singleton, suspense, time, etc.
 
 ---
@@ -30,7 +30,10 @@ import {
   suspenseIfNull,
   formatDisplayDate,
   formatRelativeTime,
-} from "nfx-ui";
+  getItem,
+  setItem,
+  removeItem,
+} from "nfx-ui/utils";
 ```
 
 ---
@@ -48,7 +51,7 @@ import {
   err,
   withRetryResult,
   formatDisplayDate,
-} from "nfx-ui";
+} from "nfx-ui/utils";
 
 normalizeAddress("  北京 朝阳  ");           // 地址规范化
 getApiErrorMessage(e, "请求失败");          // 解析 API 错误文案
@@ -80,3 +83,4 @@ formatDisplayDate("2025-02-27");            // 展示日期
 | suspense | suspenseIfNull Suspense helper | [suspense.md](./suspense.md) |
 | time | 日期时间格式化 Date/time format | [time.md](./time.md) |
 | types | createMap 等 Type/runtime utils | [types.md](./types.md) |
+| lstorage | 本地存储封装 getItem / setItem / removeItem | [lstorage.md](./lstorage.md) |

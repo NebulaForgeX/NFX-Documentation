@@ -19,7 +19,7 @@ import type {
   isOK,
   Array,
   ArrayOrSingle,
-} from "nfx-ui";
+} from "nfx-ui/types";
 ```
 
 ---

@@ -8,7 +8,7 @@ Use inside LayoutProvider to get layout actions (e.g. toggle sidebar).
 ## 引入 / Import
 
 ```tsx
-import { useAction } from "nfx-ui";
+import { useAction } from "nfx-ui/layouts";
 ```
 
 ---

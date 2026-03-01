@@ -8,7 +8,7 @@ Poll fetcher until isOK(data) is true or retry limit reached.
 ## 引入 / Import
 
 ```ts
-import { pollUntil } from "nfx-ui";
+import { pollUntil } from "nfx-ui/utils";
 ```
 
 ---

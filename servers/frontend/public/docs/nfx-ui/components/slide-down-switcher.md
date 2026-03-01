@@ -8,8 +8,8 @@ Collapsible block with title/trigger; content expands or collapses downward.
 ## 引入 / Import
 
 ```tsx
-import { SlideDownSwitcher } from "nfx-ui";
-import type { SlideDownSwitcherProps } from "nfx-ui";
+import { SlideDownSwitcher } from "nfx-ui/components";
+import type { SlideDownSwitcherProps } from "nfx-ui/components";
 ```
 
 ---

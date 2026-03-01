@@ -8,8 +8,8 @@ Editor for a list of key-value pairs; add, remove, edit rows.
 ## 引入 / Import
 
 ```tsx
-import { KeyValueEditor } from "nfx-ui";
-import type { KeyValueEditorProps, KeyValuePair } from "nfx-ui";
+import { KeyValueEditor } from "nfx-ui/components";
+import type { KeyValueEditorProps, KeyValuePair } from "nfx-ui/components";
 ```
 
 ---

@@ -8,7 +8,7 @@ Convert between stored and display price; abbreviate numbers.
 ## 引入 / Import
 
 ```ts
-import { toDatabasePrice, toDisplayPrice, toDisplayPriceNumber, formatNumberAbbreviated } from "nfx-ui";
+import { toDatabasePrice, toDisplayPrice, toDisplayPriceNumber, formatNumberAbbreviated } from "nfx-ui/utils";
 ```
 
 ---

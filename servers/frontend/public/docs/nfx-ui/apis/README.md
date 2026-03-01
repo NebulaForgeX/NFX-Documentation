@@ -1,17 +1,17 @@
 # Apis 模块 / Apis Module
 
-API 路径树工具：`path`、`PathNode`。**从 nfx-ui 主包导出**，业务项目用 `path` 构建自己的 URL_PATHS、API_ENDPOINTS。  
-API path tree: `path`, `PathNode`. **Exported from nfx-ui**; consuming apps use `path` to build their own URL_PATHS and API_ENDPOINTS.
+API 路径树工具：`path`、`PathNode`。从 **`nfx-ui/apis`** 子路径导出，业务项目用 `path` 构建自己的 URL_PATHS、API_ENDPOINTS。  
+API path tree: `path`, `PathNode`. Exported from **`nfx-ui/apis`**; consuming apps use `path` to build their own URL_PATHS and API_ENDPOINTS.
 
 ---
 
 ## 入口 / Entry
 
-**从 nfx-ui 引用（业务项目）:**
+**从 nfx-ui/apis 引用（业务项目）:**
 
 ```ts
-import { path } from "nfx-ui";
-import type { PathNode } from "nfx-ui";
+import { path } from "nfx-ui/apis";
+import type { PathNode } from "nfx-ui/apis";
 ```
 
 **本仓库内:** `import { path } from "@/apis";`、`import type { PathNode } from "@/apis";`
@@ -19,7 +19,7 @@ import type { PathNode } from "nfx-ui";
 ## 引入示例 / Import example
 
 ```ts
-import { path } from "nfx-ui";
+import { path } from "nfx-ui/apis";
 
 const URL_PATHS = {
   USER: path("/user", {

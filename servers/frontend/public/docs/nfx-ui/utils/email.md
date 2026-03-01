@@ -8,7 +8,7 @@ Validate email format.
 ## 引入 / Import
 
 ```ts
-import { isValidEmail } from "nfx-ui";
+import { isValidEmail } from "nfx-ui/utils";
 ```
 
 ---

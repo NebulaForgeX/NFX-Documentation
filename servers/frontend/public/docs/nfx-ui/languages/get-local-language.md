@@ -8,7 +8,7 @@ Get local/browser preferred language for i18n init or default language.
 ## 引入 / Import
 
 ```tsx
-import { getLocalLanguage } from "nfx-ui";
+import { getLocalLanguage } from "nfx-ui/languages";
 ```
 
 ---

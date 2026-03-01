@@ -8,8 +8,8 @@ Create plain store or persist store. Parameters and Input/Output below.
 ## 引入 / Import
 
 ```ts
-import { makeStore, makePersistStore } from "@/stores";
-import type { SetState, GetState, MakePersistStoreOptions } from "@/stores";
+import { makeStore, makePersistStore } from "nfx-ui/stores";
+import type { SetState, GetState, MakePersistStoreOptions } from "nfx-ui/stores";
 ```
 
 ---

@@ -8,7 +8,7 @@ Grid square animation background with direction, speed, color and hover highligh
 ## 引入 / Import
 
 ```tsx
-import { SquareBackground } from "nfx-ui";
+import { SquareBackground } from "nfx-ui/animations";
 ```
 
 ---

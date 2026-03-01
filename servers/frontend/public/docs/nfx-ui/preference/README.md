@@ -27,5 +27,5 @@ import {
   parsePreferenceJson,
   getDefaultPreference,
   type Preference,
-} from "nfx-ui";
+} from "nfx-ui/preference";
 ```

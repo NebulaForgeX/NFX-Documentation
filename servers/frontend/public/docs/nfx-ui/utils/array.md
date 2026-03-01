@@ -8,7 +8,7 @@ Merge two arrays by id; remove items from array by id set.
 ## 引入 / Import
 
 ```ts
-import { mergeById, pruneArray } from "nfx-ui";
+import { mergeById, pruneArray } from "nfx-ui/utils";
 ```
 
 ---

@@ -8,7 +8,7 @@ Bouncing square or circle loading animation, simple and generic.
 ## 引入 / Import
 
 ```tsx
-import { BounceLoading } from "nfx-ui";
+import { BounceLoading } from "nfx-ui/animations";
 ```
 
 ---

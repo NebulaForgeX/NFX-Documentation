@@ -18,6 +18,7 @@ Layout components and hooks for page frame, sidebar, header, footer and backgrou
 | Header | 顶栏 Header | [header.md](./header.md) |
 | Footer | 底栏 Footer | [footer.md](./footer.md) |
 | Background | 仪表盘背景 Dashboard background | [background.md](./background.md) |
+| LayoutFrame | 布局骨架容器（供 SideHideLayout / SideShowLayout 内部使用）Layout frame container | — |
 
 ## Hooks
 
@@ -42,5 +43,5 @@ import {
   Header,
   Footer,
   Background,
-} from "nfx-ui";
+} from "nfx-ui/layouts";
 ```

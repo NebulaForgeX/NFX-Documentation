@@ -8,7 +8,7 @@ Letter glitch-style background with random character grid and color shifts.
 ## 引入 / Import
 
 ```tsx
-import { LetterGlitchBackground } from "nfx-ui";
+import { LetterGlitchBackground } from "nfx-ui/animations";
 ```
 
 ---

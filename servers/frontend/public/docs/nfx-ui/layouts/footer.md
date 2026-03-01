@@ -8,7 +8,7 @@ Footer for copyright, links, etc.
 ## 引入 / Import
 
 ```tsx
-import { Footer } from "nfx-ui";
+import { Footer } from "nfx-ui/layouts";
 ```
 
 ---

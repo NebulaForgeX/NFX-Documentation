@@ -8,8 +8,8 @@ Theme switcher (e.g. dropdown or button group); use inside ThemeProvider to chan
 ## 引入 / Import
 
 ```tsx
-import { ThemeSwitcher } from "nfx-ui";
-import type { ThemeSwitcherProps } from "nfx-ui";
+import { ThemeSwitcher } from "nfx-ui/themes";
+import type { ThemeSwitcherProps } from "nfx-ui/themes";
 ```
 
 ---

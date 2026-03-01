@@ -8,7 +8,7 @@ Normalizes an address string (trim, uniform format, etc.).
 ## 引入 / Import
 
 ```ts
-import { normalizeAddress } from "nfx-ui";
+import { normalizeAddress } from "nfx-ui/utils";
 ```
 
 ---

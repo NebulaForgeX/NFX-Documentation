@@ -8,8 +8,8 @@ Type-safe router definition and matching. Parameters and Input/Output below.
 ## 引入 / Import
 
 ```ts
-import { defineRouter, createRouter, isActiveRoute, matchRoute } from "nfx-ui";
-import type { DefinedRouter, RouteKey, RoutePath } from "nfx-ui";
+import { defineRouter, createRouter, isActiveRoute, matchRoute } from "nfx-ui/navigations";
+import type { DefinedRouter, RouteKey, RoutePath } from "nfx-ui/navigations";
 ```
 
 ---
@@ -42,8 +42,8 @@ import type { DefinedRouter, RouteKey, RoutePath } from "nfx-ui";
 ## 示例 / Example
 
 ```ts
-import { defineRouter, createRouter, isActiveRoute, matchRoute } from "nfx-ui";
-import type { DefinedRouter, RouteKey, RoutePath } from "nfx-ui";
+import { defineRouter, createRouter, isActiveRoute, matchRoute } from "nfx-ui/navigations";
+import type { DefinedRouter, RouteKey, RoutePath } from "nfx-ui/navigations";
 
 // 1. 定义路由表（仅 defineRouter 返回值可传入 createRouter）
 const routeMap = defineRouter({

@@ -8,7 +8,7 @@ Omit specified keys from object; returns new object.
 ## 引入 / Import
 
 ```ts
-import { omit } from "nfx-ui";
+import { omit } from "nfx-ui/utils";
 ```
 
 ---

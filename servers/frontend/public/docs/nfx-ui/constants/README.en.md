@@ -6,10 +6,10 @@ Usage guide for shared constants and React Query key factories.
 
 ## Entry
 
-Exported from `nfx-ui` (external). In repo: `@/constants`.
+Exported from `nfx-ui/constants` (external). In repo: `@/constants`.
 
 ```ts
-import { CACHE_ITEM, CACHE_LIST, createItemKey, createKey, createListKey, createQueryKeys, defineEnum, enumPickMap } from "nfx-ui";
+import { CACHE_ITEM, CACHE_LIST, createItemKey, createKey, createListKey, createQueryKeys, defineEnum, enumPickMap } from "nfx-ui/constants";
 ```
 
 ---

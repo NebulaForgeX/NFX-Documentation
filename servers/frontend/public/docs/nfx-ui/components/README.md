@@ -1,7 +1,7 @@
 # Components 基础组件 / Base Components
 
-从 `nfx-ui` 按名引入，无需单独引入 CSS。所有组件支持 `className` 等标准 DOM 属性（按各组件说明为准）。  
-Import by name from `nfx-ui`; no separate CSS. All components support `className` and standard DOM props (see each doc).
+从 **`nfx-ui/components`** 按名引入，无需单独引入 CSS。所有组件支持 `className` 等标准 DOM 属性（按各组件说明为准）。  
+Import by name from **`nfx-ui/components`**; no separate CSS. All components support `className` and standard DOM props (see each doc).
 
 ---
 
@@ -23,6 +23,9 @@ Import by name from `nfx-ui`; no separate CSS. All components support `className
 | VirtualList | 虚拟列表 Virtual list | [virtual-list.md](./virtual-list.md) |
 | VirtualWindowList | 窗口内虚拟列表 Virtual list in container | [virtual-window-list.md](./virtual-window-list.md) |
 
+**说明**：`ThemeSwitcher`、`LayoutSwitcher` 亦可从 `nfx-ui/components` 引入，详细用法见 [themes](../themes/)、[layouts](../layouts/) 文档。  
+*Note: `ThemeSwitcher` and `LayoutSwitcher` are also exported from `nfx-ui/components`; see [themes](../themes/) and [layouts](../layouts/) for details.*
+
 ---
 
 ## 引入示例 / Import example
@@ -42,5 +45,5 @@ import {
   KeyValueEditor,
   VirtualList,
   VirtualWindowList,
-} from "nfx-ui";
+} from "nfx-ui/components";
 ```

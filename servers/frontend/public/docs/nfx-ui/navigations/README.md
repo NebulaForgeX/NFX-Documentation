@@ -1,17 +1,17 @@
 # Navigations 模块 / Navigations Module
 
-路由定义与匹配工具：defineRouter、createRouter、isActiveRoute、matchRoute。**从 nfx-ui 主包导出**。  
-Router definition and matching. **Exported from nfx-ui.**
+路由定义与匹配工具：defineRouter、createRouter、isActiveRoute、matchRoute。从 **`nfx-ui/navigations`** 子路径导出。  
+Router definition and matching. Exported from **`nfx-ui/navigations`**.
 
 ---
 
 ## 入口 / Entry
 
-**从 nfx-ui 引用（业务项目）/ From nfx-ui (consuming app):**
+**从 nfx-ui/navigations 引用（业务项目）/ From nfx-ui/navigations (consuming app):**
 
 ```ts
-import { defineRouter, createRouter, isActiveRoute, matchRoute } from "nfx-ui";
-import type { DefinedRouter, RouteKey, RoutePath } from "nfx-ui";
+import { defineRouter, createRouter, isActiveRoute, matchRoute } from "nfx-ui/navigations";
+import type { DefinedRouter, RouteKey, RoutePath } from "nfx-ui/navigations";
 ```
 
 **本仓库内 / In this repo:**
@@ -24,7 +24,7 @@ import type { DefinedRouter, RouteKey, RoutePath } from "@/navigations";
 ## 引入示例 / Import example
 
 ```ts
-import { defineRouter, createRouter, isActiveRoute, matchRoute } from "nfx-ui";
+import { defineRouter, createRouter, isActiveRoute, matchRoute } from "nfx-ui/navigations";
 
 const routeMap = defineRouter({ HOME: "/", USER: "/user/:id" });
 const router = createRouter(routeMap);

@@ -16,7 +16,7 @@ import {
   formatMonthDayTime,
   formatDate,
   formatTime,
-} from "nfx-ui";
+} from "nfx-ui/utils";
 ```
 
 ---

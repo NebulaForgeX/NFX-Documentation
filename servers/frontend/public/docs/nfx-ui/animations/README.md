@@ -1,7 +1,7 @@
 # Animations 动效与加载 / Animations & Loaders
 
-所有动效与加载组件均从 `nfx-ui` 按名引入，无需单独引入 CSS。  
-All animation and loading components are imported by name from `nfx-ui`; no separate CSS import.
+所有动效与加载组件均从 **`nfx-ui/animations`** 按名引入，无需单独引入 CSS。  
+All animation and loading components are imported by name from **`nfx-ui/animations`**; no separate CSS import.
 
 ---
 
@@ -30,5 +30,5 @@ import {
   SquareBackground,
   LetterGlitchBackground,
   PixelBlastBackground,
-} from "nfx-ui";
+} from "nfx-ui/animations";
 ```

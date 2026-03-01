@@ -8,7 +8,7 @@ Execute fn only once at a time, reuse result; or once per key.
 ## 引入 / Import
 
 ```ts
-import { onceAsync, onceAsyncByKey } from "nfx-ui";
+import { onceAsync, onceAsyncByKey } from "nfx-ui/utils";
 ```
 
 ---

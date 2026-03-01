@@ -8,7 +8,7 @@ Provides theme context; children use useTheme(), useThemeVariables() for current
 ## 引入 / Import
 
 ```tsx
-import { ThemeProvider } from "nfx-ui";
+import { ThemeProvider } from "nfx-ui/themes";
 ```
 
 ---

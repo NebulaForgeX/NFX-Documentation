@@ -8,7 +8,7 @@ Layout when sidebar is visible; sidebar and main content side by side.
 ## 引入 / Import
 
 ```tsx
-import { SideShowLayout } from "nfx-ui";
+import { SideShowLayout } from "nfx-ui/layouts";
 ```
 
 ---

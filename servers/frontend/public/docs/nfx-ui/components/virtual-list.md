@@ -8,8 +8,8 @@ Virtual list; only renders visible items for long-list performance.
 ## 引入 / Import
 
 ```tsx
-import { VirtualList } from "nfx-ui";
-import type { VirtualListProps } from "nfx-ui";
+import { VirtualList } from "nfx-ui/components";
+import type { VirtualListProps } from "nfx-ui/components";
 ```
 
 ---

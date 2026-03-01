@@ -8,8 +8,8 @@ Multiline text input with label, error, required indicator, etc.
 ## 引入 / Import
 
 ```tsx
-import { Textarea } from "nfx-ui";
-import type { TextareaProps } from "nfx-ui";
+import { Textarea } from "nfx-ui/components";
+import type { TextareaProps } from "nfx-ui/components";
 ```
 
 ---

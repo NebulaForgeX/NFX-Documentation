@@ -17,18 +17,39 @@ i18n Provider, switcher and helpers. Parameters and examples in sub-docs.
 LanguageProvider 初始化时会自动合并 NFX-UI 自带的四类 JSON：**theme**、**language**、**layout**、**preference**。使用方只需传入自己的 `bundles`（如 components、各页面等），ThemeSwitcher / LanguageSwitcher / LayoutSwitcher 的文案无需额外配置。  
 On init, LanguageProvider merges built-in **theme**, **language**, **layout**, **preference** bundles. You only pass your own bundles; ThemeSwitcher / LanguageSwitcher / LayoutSwitcher labels work out of the box.
 
+## Hooks（展示名）/ Label Hooks
+
+| Hook / 函数 | 说明 Description | 文档 Doc |
+|-------------|------------------|----------|
+| useLanguageLabel / getLanguageDisplayName | 语言枚举展示名 Language label | [label-hooks.md](./label-hooks.md) |
+| useLayoutLabel / getLayoutDisplayName | 布局模式展示名 Layout label | [label-hooks.md](./label-hooks.md) |
+| usePreferenceLabel / getPreferenceDisplayName | 偏好/Base 展示名 Preference label | [label-hooks.md](./label-hooks.md) |
+| useThemeLabel / getThemeDisplayName | 主题枚举展示名 Theme label | [label-hooks.md](./label-hooks.md) |
+
 ## 工具 / Utils
 
 - `getLocalLanguage`：获取本地语言。Get local language. 见 [get-local-language.md](./get-local-language.md)
 
 ## 类型 / Types
 
-- `LanguageEnum`、`CreateI18nResourcesResult`、`ExtraBundleItem`、i18n 相关类型从 `nfx-ui` 引入。Import from `nfx-ui`.
+- `LanguageEnum`、`CreateI18nResourcesResult`、`ExtraBundleItem`、i18n 相关类型从 `nfx-ui/languages` 引入。Import from `nfx-ui/languages`.
 
 ---
 
 ## 引入示例 / Import example
 
 ```tsx
-import { LanguageProvider, LanguageSwitcher, getLocalLanguage, LanguageEnum } from "nfx-ui";
+import {
+  LanguageProvider,
+  getLocalLanguage,
+  LanguageEnum,
+  useLanguageLabel,
+  useLayoutLabel,
+  usePreferenceLabel,
+  useThemeLabel,
+  getLanguageDisplayName,
+  getLayoutDisplayName,
+  getPreferenceDisplayName,
+  getThemeDisplayName,
+} from "nfx-ui/languages";
 ```

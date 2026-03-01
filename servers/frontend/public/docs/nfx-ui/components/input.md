@@ -8,8 +8,8 @@ Input with label, error, helper text, left/right icons and optional clickable ri
 ## 引入 / Import
 
 ```tsx
-import { Input } from "nfx-ui";
-import type { InputProps } from "nfx-ui";
+import { Input } from "nfx-ui/components";
+import type { InputProps } from "nfx-ui/components";
 ```
 
 ---

@@ -8,8 +8,8 @@ Unified Suspense boundary and error UI; works with React Query etc.
 ## 引入 / Import
 
 ```tsx
-import { Suspense } from "nfx-ui";
-import type { SuspenseProps } from "nfx-ui";
+import { Suspense } from "nfx-ui/components";
+import type { SuspenseProps } from "nfx-ui/components";
 ```
 
 ---

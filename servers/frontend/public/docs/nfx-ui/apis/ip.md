@@ -8,8 +8,8 @@ Generic API path tree: `path(base, children)` and type `PathNode<T>`. Consuming 
 ## 引入 / Import
 
 ```ts
-import { path } from "nfx-ui";
-import type { PathNode } from "nfx-ui";
+import { path } from "nfx-ui/apis";
+import type { PathNode } from "nfx-ui/apis";
 ```
 
 ---
@@ -23,13 +23,22 @@ import type { PathNode } from "nfx-ui";
 
 ---
 
+## path 参数 / path parameters
+
+| 参数 Parameter | 类型 Type | 必填 Required | 说明 Description |
+|----------------|-----------|---------------|------------------|
+| base | string | Yes | 当前节点路径前缀。Path prefix for this node. |
+| children | Record&lt;string, string \| PathNode \| ((...args) => string)&gt; | Yes | 子节点：键为路径名，值为字符串、嵌套 path() 返回值、或 (id) => \`/\${id}\` 等动态函数。Children: key = path name, value = string, nested path(), or dynamic fn. |
+
+---
+
 ## 用法示例 / Usage example
 
 业务项目在自有 `apis/ip.ts` 中定义 base URL 与 path 树，例如：  
 In your app's `apis/ip.ts`, define base URLs and the path tree:
 
 ```ts
-import { path } from "nfx-ui";
+import { path } from "nfx-ui/apis";
 
 const HTTP_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:10021";
 

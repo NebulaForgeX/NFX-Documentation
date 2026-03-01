@@ -8,7 +8,7 @@ Header for Logo, LayoutSwitcher, nav, user area, etc.
 ## 引入 / Import
 
 ```tsx
-import { Header } from "nfx-ui";
+import { Header } from "nfx-ui/layouts";
 ```
 
 ---

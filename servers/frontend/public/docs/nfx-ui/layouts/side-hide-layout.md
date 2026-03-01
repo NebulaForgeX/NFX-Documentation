@@ -8,7 +8,7 @@ Layout when sidebar is hidden; main content takes full width.
 ## 引入 / Import
 
 ```tsx
-import { SideHideLayout } from "nfx-ui";
+import { SideHideLayout } from "nfx-ui/layouts";
 ```
 
 ---

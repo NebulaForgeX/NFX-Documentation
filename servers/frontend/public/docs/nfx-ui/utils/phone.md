@@ -8,7 +8,7 @@ Get country code from phone number; validate phone number.
 ## 引入 / Import
 
 ```ts
-import { getCountryCode, isValidPhoneNumber } from "nfx-ui";
+import { getCountryCode, isValidPhoneNumber } from "nfx-ui/utils";
 ```
 
 ---

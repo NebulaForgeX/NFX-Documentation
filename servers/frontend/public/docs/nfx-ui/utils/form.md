@@ -8,7 +8,7 @@ Convert value to controlled input/textarea value string (text or number).
 ## 引入 / Import
 
 ```ts
-import { toTextInputValue, toNumberInputValue } from "nfx-ui";
+import { toTextInputValue, toNumberInputValue } from "nfx-ui/utils";
 ```
 
 ---

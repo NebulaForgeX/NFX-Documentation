@@ -8,7 +8,7 @@ If value is null/undefined, throw Promise to trigger Suspense; otherwise return 
 ## 引入 / Import
 
 ```ts
-import { suspenseIfNull } from "nfx-ui";
+import { suspenseIfNull } from "nfx-ui/utils";
 ```
 
 ---

@@ -6,7 +6,7 @@ Creates a unified single-item query Hook factory (normal or suspense mode).
 ## 引入 / Import
 
 ```ts
-import { makeUnifiedQuery } from "nfx-ui";
+import { makeUnifiedQuery } from "nfx-ui/hooks";
 ```
 
 ## 签名 / Signature

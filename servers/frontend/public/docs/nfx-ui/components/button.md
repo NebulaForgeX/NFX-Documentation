@@ -8,8 +8,8 @@ Button with variants, sizes, top/right/bottom/left icons, icon-only mode, loadin
 ## 引入 / Import
 
 ```tsx
-import { Button } from "nfx-ui";
-import type { ButtonProps } from "nfx-ui";
+import { Button } from "nfx-ui/components";
+import type { ButtonProps } from "nfx-ui/components";
 ```
 
 ---

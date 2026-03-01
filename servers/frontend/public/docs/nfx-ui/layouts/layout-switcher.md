@@ -8,7 +8,7 @@ Control to toggle layout (e.g. sidebar expand/collapse); requires LayoutProvider
 ## 引入 / Import
 
 ```tsx
-import { LayoutSwitcher } from "nfx-ui";
+import { LayoutSwitcher } from "nfx-ui/layouts";
 ```
 
 ---

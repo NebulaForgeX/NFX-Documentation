@@ -8,8 +8,8 @@ Control for visibility/filter (e.g. table column toggle, filter display and edit
 ## 引入 / Import
 
 ```tsx
-import { ShowFilter } from "nfx-ui";
-import type { ShowFilterProps, ShowFilterValue } from "nfx-ui";
+import { ShowFilter } from "nfx-ui/components";
+import type { ShowFilterProps, ShowFilterValue } from "nfx-ui/components";
 ```
 
 ---

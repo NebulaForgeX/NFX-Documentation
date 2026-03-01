@@ -8,7 +8,7 @@ Dashboard background; type from user preference or profile.preference.
 ## 引入 / Import
 
 ```tsx
-import { Background } from "nfx-ui";
+import { Background } from "nfx-ui/layouts";
 ```
 
 ---

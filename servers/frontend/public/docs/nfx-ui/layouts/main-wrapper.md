@@ -8,7 +8,7 @@ Main content wrapper; sits next to Sidebar; holds Header, main, Footer.
 ## 引入 / Import
 
 ```tsx
-import { MainWrapper } from "nfx-ui";
+import { MainWrapper } from "nfx-ui/layouts";
 ```
 
 ---

@@ -8,7 +8,7 @@ Sidebar container; often used with react-pro-sidebar or custom menu.
 ## 引入 / Import
 
 ```tsx
-import { Sidebar } from "nfx-ui";
+import { Sidebar } from "nfx-ui/layouts";
 ```
 
 ---

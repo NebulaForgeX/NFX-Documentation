@@ -8,7 +8,7 @@ Language switcher (e.g. dropdown for current language); use inside LanguageProvi
 ## 引入 / Import
 
 ```tsx
-import { LanguageSwitcher } from "nfx-ui";
+import { LanguageSwitcher } from "nfx-ui/languages";
 ```
 
 ---

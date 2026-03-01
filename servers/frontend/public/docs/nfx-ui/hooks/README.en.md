@@ -6,13 +6,12 @@ Unified query Hook factories (single-item, infinite list), cursor fetch, and typ
 
 ## Entry
 
-Exported from `nfx-ui` (external). In repo: `@/hooks`.
+Exported from `nfx-ui/hooks` (external); types from `nfx-ui/types`. In repo: `@/hooks`.
 
 ```ts
-import type { FetchNumberListParams, InfiniteQueryOptions, SuspenseInfiniteQueryOptions } from "nfx-ui";
-import type { ListDTOWithNextCursor, ListDTOWithTotalNumber } from "nfx-ui";
-
-import { makeCursorFetchFunction, makeStringCursorFetchFunction, makeUnifiedInfiniteQuery, makeUnifiedQuery } from "nfx-ui";
+import type { FetchNumberListParams, InfiniteQueryOptions, SuspenseInfiniteQueryOptions } from "nfx-ui/types";
+import type { ListDTOWithNextCursor, ListDTOWithTotalNumber } from "nfx-ui/types";
+import { makeCursorFetchFunction, makeStringCursorFetchFunction, makeUnifiedInfiniteQuery, makeUnifiedQuery } from "nfx-ui/hooks";
 ```
 
 ---
@@ -61,6 +60,6 @@ Converts string-cursor list API to `(pageParam: string, filter?) => Promise<List
 ## Type Reference
 
 - FetchNumberListParams&lt;F&gt;, FetchStringListParams&lt;F&gt;
-- ListDTOWithTotalNumber&lt;T&gt;, ListDTOWithNextCursor&lt;T&gt; (from nfx-ui types)
+- ListDTOWithTotalNumber&lt;T&gt;, ListDTOWithNextCursor&lt;T&gt; (from nfx-ui/types)
 - InfiniteQueryOptions&lt;T&gt;, SuspenseInfiniteQueryOptions&lt;T&gt;
 - NormalUnifiedQueryOptions&lt;T&gt;, SuspenseUnifiedQueryOptions&lt;T&gt;

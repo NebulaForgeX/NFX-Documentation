@@ -15,7 +15,7 @@ Provides i18n context and resources; children use `useTranslation` (react-i18nex
 ## 引入 / Import
 
 ```tsx
-import { LanguageProvider, LanguageEnum } from "nfx-ui";
+import { LanguageProvider, LanguageEnum } from "nfx-ui/languages";
 ```
 
 ---
@@ -41,7 +41,9 @@ import { LanguageProvider, LanguageEnum } from "nfx-ui";
 ## 示例 / Example
 
 ```tsx
-import { LanguageEnum, LanguageProvider, ThemeProvider } from "nfx-ui";
+import { ThemeProvider, ThemeEnum } from "nfx-ui/themes";
+import { LanguageEnum, LanguageProvider } from "nfx-ui/languages";
+import { LayoutProvider } from "nfx-ui/layouts";
 import { RESOURCES, NAME_SPACES_MAP, NAME_SPACES } from "@/assets/languages/i18nResources";
 
 // 可选：语言切换后从后端拉取错误码等额外命名空间

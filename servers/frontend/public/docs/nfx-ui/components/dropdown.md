@@ -8,8 +8,8 @@ Dropdown select with options list, placeholder, controlled/uncontrolled.
 ## 引入 / Import
 
 ```tsx
-import { Dropdown } from "nfx-ui";
-import type { DropdownOption, DropdownProps } from "nfx-ui";
+import { Dropdown } from "nfx-ui/components";
+import type { DropdownOption, DropdownProps } from "nfx-ui/components";
 ```
 
 ---

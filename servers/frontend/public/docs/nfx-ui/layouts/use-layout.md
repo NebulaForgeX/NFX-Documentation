@@ -8,7 +8,7 @@ Use inside LayoutProvider to read layout state (e.g. sidebar visible).
 ## 引入 / Import
 
 ```tsx
-import { useLayout } from "nfx-ui";
+import { useLayout } from "nfx-ui/layouts";
 ```
 
 ---

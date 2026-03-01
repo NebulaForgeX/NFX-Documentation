@@ -8,8 +8,8 @@ Icon component wrapping Lucide etc.; supports name or passing an icon element.
 ## 引入 / Import
 
 ```tsx
-import { Icon } from "nfx-ui";
-import type { IconName, IconProps } from "nfx-ui";
+import { Icon } from "nfx-ui/components";
+import type { IconName, IconProps } from "nfx-ui/components";
 ```
 
 ---

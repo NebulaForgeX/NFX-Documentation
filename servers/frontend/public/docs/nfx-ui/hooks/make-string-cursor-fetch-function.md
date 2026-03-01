@@ -6,7 +6,7 @@ Converts string-cursor list API to (pageParam: string, filter?) => ListDTOWithNe
 ## 引入
 
 ```ts
-import { makeStringCursorFetchFunction } from "nfx-ui";
+import { makeStringCursorFetchFunction } from "nfx-ui/hooks";
 ```
 
 ## 签名 / Signature

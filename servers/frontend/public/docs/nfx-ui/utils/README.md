@@ -35,6 +35,30 @@ import {
 
 ---
 
+## 引入示例 / Import example
+
+```ts
+import {
+  normalizeAddress,
+  getApiErrorMessage,
+  mergeById,
+  toRgbaWithAlpha,
+  isValidEmail,
+  ok,
+  err,
+  withRetryResult,
+  formatDisplayDate,
+} from "nfx-ui";
+
+normalizeAddress("  北京 朝阳  ");           // 地址规范化
+getApiErrorMessage(e, "请求失败");          // 解析 API 错误文案
+mergeById(list, added, (x) => x.id, "append", "upsert");
+toRgbaWithAlpha("#ff0000", 0.5);            // "rgba(255,0,0,0.5)"
+isValidEmail("a@b.com");                    // true
+const [data, err] = await withRetryResult(fn, { retries: 3 });
+formatDisplayDate("2025-02-27");            // 展示日期
+```
+
 ## 文档（按模块）/ Docs by module
 
 | 模块 Module | 说明 Description | 文档 Doc |

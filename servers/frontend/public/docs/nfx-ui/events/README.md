@@ -1,21 +1,26 @@
 # Events 模块文档 / Events Module Documentation
 
-本模块仅提供通用 EventEmitter；各域发射器由应用自行基于 EventEmitter 实现。  
-This module provides only the generic EventEmitter; domain emitters are implemented by the app.
+本模块提供通用 EventEmitter、defineEvents；各域发射器由应用自行基于 EventEmitter 实现。  
+This module provides the generic EventEmitter and defineEvents; domain emitters are implemented by the app.
 
-**说明**：Events 未从 `nfx-ui` 主包导出，仅在本仓库或 monorepo 内从 `@/events` 引用。  
-Note: Events are not exported from the main `nfx-ui` package; use `@/events` only inside this repo or monorepo.
+**说明**：Events **从 nfx-ui 主包导出**，业务项目可直接从 `nfx-ui` 引用。  
+Note: Events **are exported from the main `nfx-ui` package**; use `import { EventEmitter, defineEvents } from "nfx-ui"` in your app.
 
 ---
 
 ## 入口 / Entry
 
-从 `@/events` 导出。  
-Exported from `@/events`.
+**从 nfx-ui 引用（业务项目）/ From nfx-ui (consuming app):**
+
+```ts
+import type { EventCallback, EventNamesOf, DefinedEvents } from "nfx-ui";
+import { defineEvents, EventEmitter } from "nfx-ui";
+```
+
+**本仓库内 / In this repo:**
 
 ```ts
 import type { EventCallback, EventNamesOf } from "@/events";
-
 import { defineEvents, EventEmitter } from "@/events";
 ```
 

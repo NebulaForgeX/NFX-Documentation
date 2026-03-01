@@ -10,8 +10,8 @@ Modules map to **16 folders under src/**; each component/export has its own doc 
 
 ## 文档规范 / Doc standard
 
-各子文档均包含**中英文说明**、**标准参数表**（参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description），以及 **Input / Output 示例**与代码示例。  
-All sub-docs include **Chinese & English descriptions**, **parameter tables** (Parameter | Type | Required | Default | Description), and **Input/Output examples** with code samples.
+各子文档均包含**中英文说明**、**标准参数表**（参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description）、**Input / Output** 说明，以及 **示例 / Example**（每个函数、类型、工具均需有对应使用示例）。  
+All sub-docs include **Chinese & English descriptions**, **parameter tables** (Parameter | Type | Required | Default | Description), **Input/Output** description, and **Example** (every function, type, and utility must have a usage example).
 
 ---
 
@@ -20,15 +20,15 @@ All sub-docs include **Chinese & English descriptions**, **parameter tables** (P
 | 目录 | 说明 | 主包导出 |
 |------|------|----------|
 | [animations](./animations/) | 动效与加载：ECGLoading、TruckLoading、WaveBackground、SquareBackground 等 | ✅ |
-| [apis](./apis/) | API 路径、端点、getAnalyticsLocaleJsonUrl | ❌ 仅 @/apis |
+| [apis](./apis/) | API 路径树：path、PathNode（业务项目用其构建 URL_PATHS / API_ENDPOINTS） | ✅ |
 | [components](./components/) | 基础组件：Button、Input、Dropdown、Icon、Slider、VirtualList 等 | ✅ |
 | [constants](./constants/) | 公用常量与 Query key：createKey、createListKey、createItemKey、defineEnum 等 | ✅ |
-| [events](./events/) | 通用 EventEmitter、defineEvents | ❌ 仅 @/events |
+| [events](./events/) | 通用 EventEmitter、defineEvents、EventNamesOf | ✅ |
 | [hooks](./hooks/) | makeUnifiedQuery、makeUnifiedInfiniteQuery、makeCursorFetchFunction 等 | ✅ |
 | [icons](./icons/) | Lucide 图标重导出 | ❌ 仅 @/icons |
 | [languages](./languages/) | LanguageProvider、LanguageSwitcher、getLocalLanguage | ✅ |
 | [layouts](./layouts/) | LayoutProvider、Sidebar、Header、Footer、Background 等 | ✅ |
-| [navigations](./navigations/) | defineRouter、createRouter、isActiveRoute、matchRoute | ❌ 仅 @/navigations |
+| [navigations](./navigations/) | defineRouter、createRouter、isActiveRoute、matchRoute、RouteKey、RoutePath | ✅ |
 | [preference](./preference/) | DashboardBackgroundEnum、parsePreferenceJson、getDefaultPreference | ✅ |
 | [services](./services/) | compressImage 等 | ❌ 仅 @/services |
 | [stores](./stores/) | makeStore、makePersistStore | ❌ 仅 @/stores |

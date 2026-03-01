@@ -12,6 +12,24 @@ import { makeStore, makePersistStore } from "@/stores";
 import type { SetState, GetState, MakePersistStoreOptions } from "@/stores";
 ```
 
+## 引入示例 / Import example
+
+```ts
+import { makeStore, makePersistStore } from "@/stores";
+
+const { useStore } = makeStore(
+  { count: 0 },
+  (set) => ({ increment: () => set((s) => ({ count: s.count + 1 })) })
+);
+const count = useStore((s) => s.count);
+
+const { useStore: useAuth } = makePersistStore({
+  name: "auth",
+  initialState: { token: null },
+  actions: (set) => ({ setToken: (t) => set({ token: t }) }),
+});
+```
+
 ## 文档 / Docs
 
 | 文件 File | 说明 Description |

@@ -13,6 +13,22 @@ import type { ApiErrorBody, ListDTOWithTotalNumber, ListDTOWithNextCursor, Nulla
 
 ---
 
+## 引入示例 / Import example
+
+```ts
+import type { ApiErrorBody, ListDTOWithTotalNumber, Nullable, Maybe } from "nfx-ui";
+import { ok, err } from "nfx-ui";
+
+// 类型注解 / Type annotations
+const errorBody: ApiErrorBody = { status: 400, message: "Bad request" };
+const list: ListDTOWithTotalNumber<{ id: string }> = { items: [], total: 0 };
+const name: Nullable<string> = "Alice";
+
+// Result 构造 / Result constructors
+const [data, error] = ok(42);   // [42, null]
+const [d2, e2] = err(new Error("x")); // [null, Error]
+```
+
 ## 文档 / Docs
 
 | 文件 File | 说明 Description |

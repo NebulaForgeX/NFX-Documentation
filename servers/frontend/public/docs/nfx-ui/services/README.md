@@ -11,6 +11,16 @@ Shared services (e.g. image compress). **Not exported from nfx-ui**; use `@/serv
 import { compressImage } from "@/services";
 ```
 
+## 引入示例 / Import example
+
+```ts
+import { compressImage } from "@/services";
+
+const file = event.target.files[0];
+const blob = await compressImage(file, { maxWidth: 800, quality: 0.8 });
+// 用于上传或预览 / Use for upload or preview
+```
+
 ## 文档 / Docs
 
 | 文件 File | 说明 Description |

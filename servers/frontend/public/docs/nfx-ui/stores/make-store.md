@@ -43,4 +43,34 @@ import type { SetState, GetState, MakePersistStoreOptions } from "@/stores";
 - **GetState&lt;S&gt;** — () => S.  
 - **MakePersistStoreOptions&lt;S, A&gt;** — makePersistStore 的配置类型。Config type for makePersistStore.
 
+---
+
+## 示例 / Example
+
+```ts
+// makeStore — 普通 Store，不持久化
+const { store, useStore } = makeStore(
+  { count: 0 },
+  (set) => ({
+    increment: () => set((s) => ({ count: s.count + 1 })),
+    reset: () => set({ count: 0 }),
+  })
+);
+// 在组件中使用 / In component
+const count = useStore((s) => s.count);
+const increment = useStore((s) => s.increment);
+
+// makePersistStore — 带 localStorage 持久化
+const { store, useStore } = makePersistStore({
+  name: "auth-storage",
+  initialState: { token: null as string | null },
+  actions: (set) => ({
+    setToken: (t: string | null) => set({ token: t }),
+  }),
+  partialize: (state) => ({ token: state.token }), // 只持久化 token / persist token only
+});
+const token = useStore((s) => s.token);
+const setToken = useStore((s) => s.setToken);
+```
+
 详见 `src/stores/makeStore.ts`. See `src/stores/makeStore.ts` for full API.

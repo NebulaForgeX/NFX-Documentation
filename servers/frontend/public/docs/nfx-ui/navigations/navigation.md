@@ -8,8 +8,8 @@ Type-safe router definition and matching. Parameters and Input/Output below.
 ## 引入 / Import
 
 ```ts
-import { defineRouter, createRouter, isActiveRoute, matchRoute } from "@/navigations";
-import type { DefinedRouter, RouteKey, RoutePath } from "@/navigations";
+import { defineRouter, createRouter, isActiveRoute, matchRoute } from "nfx-ui";
+import type { DefinedRouter, RouteKey, RoutePath } from "nfx-ui";
 ```
 
 ---
@@ -36,5 +36,44 @@ import type { DefinedRouter, RouteKey, RoutePath } from "@/navigations";
   Input: two path strings. Output: boolean.
 - **matchRoute(pathname, route)** — Input: pathname、route 模式。Output: boolean.  
   Input: pathname, route pattern. Output: boolean.
+
+---
+
+## 示例 / Example
+
+```ts
+import { defineRouter, createRouter, isActiveRoute, matchRoute } from "nfx-ui";
+import type { DefinedRouter, RouteKey, RoutePath } from "nfx-ui";
+
+// 1. 定义路由表（仅 defineRouter 返回值可传入 createRouter）
+const routeMap = defineRouter({
+  HOME: "/",
+  LOGIN: "/login",
+  USER: "/user/:id",
+  SETTINGS: "/user/:id/settings",
+});
+
+// 2. 创建 router，得到 ROUTES 与 typed 方法
+const router = createRouter(routeMap);
+
+router.ROUTES.HOME;        // "/"
+router.ROUTES.USER;        // "/user/:id"
+router.getRouteByKey("LOGIN"); // "/login"
+
+// 3. 精确匹配：当前路径是否等于目标（用于高亮）
+const pathname = "/login";
+isActiveRoute(pathname, router.ROUTES.LOGIN);   // true
+isActiveRoute(pathname, router.ROUTES.HOME);    // false
+
+// 4. 模式匹配：pathname 是否匹配带 :param 的路由
+matchRoute("/user/123", router.ROUTES.USER);           // true
+matchRoute("/user/123/settings", router.ROUTES.SETTINGS); // true
+matchRoute("/user/123/other", router.ROUTES.USER);      // false
+
+// 类型：RouteKey<typeof routeMap> => "HOME" | "LOGIN" | "USER" | "SETTINGS"
+// 类型：RoutePath<typeof routeMap> => "/" | "/login" | "/user/:id" | "/user/:id/settings"
+type Keys = RouteKey<typeof routeMap>;
+type Paths = RoutePath<typeof routeMap>;
+```
 
 详见 `src/navigations/navigation.ts`. See `src/navigations/navigation.ts` for full API.

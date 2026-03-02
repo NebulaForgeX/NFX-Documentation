@@ -1,6 +1,7 @@
 /**
  * Doc slugs per section (filename without .md).
  * Used to build sidebar sub-links and /ui-api/:section/:doc routes.
+ * When adding new docs under public/docs/nfx-ui/<section>/, add the slug here.
  */
 export const sectionDocs: Record<string, string[]> = {
   apis: ['ip'],
@@ -17,7 +18,6 @@ export const sectionDocs: Record<string, string[]> = {
     'button',
     'dropdown',
     'icon',
-    'icon-button',
     'input',
     'key-value-editor',
     'search-input',
@@ -30,7 +30,7 @@ export const sectionDocs: Record<string, string[]> = {
     'virtual-window-list',
   ],
   constants: [],
-  events: [],
+  events: ['define-events', 'event-emitter'],
   hooks: [
     'make-cursor-fetch-function',
     'make-string-cursor-fetch-function',
@@ -38,7 +38,7 @@ export const sectionDocs: Record<string, string[]> = {
     'make-unified-query',
   ],
   icons: ['lucide'],
-  languages: ['get-local-language', 'language-provider', 'language-switcher'],
+  languages: ['get-local-language', 'language-provider', 'language-switcher', 'label-hooks'],
   layouts: [
     'background',
     'footer',
@@ -66,6 +66,7 @@ export const sectionDocs: Record<string, string[]> = {
     'colors',
     'email',
     'form',
+    'lstorage',
     'object',
     'phone',
     'polling',
@@ -79,6 +80,26 @@ export const sectionDocs: Record<string, string[]> = {
     'types',
   ],
 }
+
+/** Sidebar section order (must match keys in sectionDocs). */
+export const sectionIds = [
+  'apis',
+  'animations',
+  'components',
+  'constants',
+  'events',
+  'hooks',
+  'icons',
+  'languages',
+  'layouts',
+  'navigations',
+  'preference',
+  'services',
+  'stores',
+  'themes',
+  'types',
+  'utils',
+] as const
 
 /** Human-readable label for doc slug (e.g. button -> Button) */
 export function docSlugToTitle(slug: string): string {

@@ -69,7 +69,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { reactive, watch } from 'vue'
 import { PanelLeftClose, PanelLeftOpen, ChevronDown } from 'lucide-vue-next'
-import { sectionDocs, docSlugToTitle } from '../../config/sectionDocs'
+import { sectionDocs, sectionIds, docSlugToTitle } from '../../config/sectionDocs'
 import styles from './styles.module.css'
 
 defineProps<{ collapsed: boolean }>()
@@ -77,25 +77,6 @@ defineEmits<{ toggle: [] }>()
 
 const route = useRoute()
 const { t } = useI18n()
-
-const sectionIds = [
-  'apis',
-  'animations',
-  'components',
-  'constants',
-  'events',
-  'hooks',
-  'icons',
-  'languages',
-  'layouts',
-  'navigations',
-  'preference',
-  'services',
-  'stores',
-  'themes',
-  'types',
-  'utils',
-] as const
 
 const expandedSections = reactive<Record<string, boolean>>({})
 

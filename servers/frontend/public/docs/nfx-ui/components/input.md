@@ -1,11 +1,10 @@
-# Input / 输入框
+# Input
 
-输入框，支持 label、错误信息、辅助文案、左右图标与可点击右侧图标。  
 Input with label, error, helper text, left/right icons and optional clickable right icon.
 
 ---
 
-## 引入 / Import
+## Import
 
 ```tsx
 import { Input } from "nfx-ui/components";
@@ -14,43 +13,41 @@ import type { InputProps } from "nfx-ui/components";
 
 ---
 
-## 参数 / Parameters
+## Parameters
 
-继承 `InputHTMLAttributes`（除 `size` 被覆盖）。Extends input HTML attributes (except `size`).
+Extends input HTML attributes (except `size`).
 
-| 参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description |
-|----------------|-----------|---------------|--------------|------------------|
-| label | string | No | — | 标签文案。Label text. |
-| error | string | No | — | 错误信息（展示错误样式与文案）。Error message (shows error state). |
-| helperText | string | No | — | 辅助说明（无 error 时显示）。Helper text (when no error). |
-| leftIcon | ReactNode | No | — | 左侧图标。Left icon. |
-| rightIcon | ReactNode | No | — | 右侧图标。Right icon. |
-| rightIconInteractive | boolean | No | false | 为 true 时右侧图标可点击（如清除、密码切换）。When true, right icon is clickable. |
-| size | `"small"` \| `"medium"` \| `"large"` | No | `"medium"` | 尺寸。Size. |
-| variant | `"default"` \| `"filled"` | No | `"default"` | 视觉变体。Variant. |
-| fullWidth | boolean | No | false | 是否占满宽度。Full width. |
-
----
-
-## 输入 Input / 输出 Output
-
-- **Input**：上述 props + value/onChange 等原生 input 属性。Props above plus value/onChange and native input props.
-- **Output**：渲染带 label/错误/辅助文案的输入框；error 时显示错误样式。Renders input with label/error/helper; error state when `error` is set.
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| label | string | No | — | Label text. |
+| error | string | No | — | Error message (shows error state). |
+| helperText | string | No | — | Helper text (when no error). |
+| leftIcon | ReactNode | No | — | Left icon. |
+| rightIcon | ReactNode | No | — | Right icon. |
+| rightIconInteractive | boolean | No | false | When true, right icon is clickable. |
+| size | `"small"` \| `"medium"` \| `"large"` | No | `"medium"` | Size. |
+| variant | `"default"` \| `"filled"` | No | `"default"` | Variant. |
+| fullWidth | boolean | No | false | Full width. |
 
 ---
 
-## 示例 / Example
+## Input / Output
+
+- **Input:** Props above plus value/onChange and native input props.
+- **Output:** Renders input with label/error/helper; error state when `error` is set.
+
+---
+
+## Example
 
 ```tsx
-// 带标签与错误 / With label and error
 <Input
-  label="用户名 / Username"
+  label="Username"
   error={errors.name?.message}
   value={name}
   onChange={(e) => setName(e.target.value)}
 />
 
-// 右侧可点击图标（如清除）/ Clickable right icon (e.g. clear)
 <Input
   value={keyword}
   onChange={(e) => setKeyword(e.target.value)}
@@ -59,6 +56,70 @@ import type { InputProps } from "nfx-ui/components";
   onRightIconClick={clearKeyword}
 />
 
-// 辅助文案 / Helper text
-<Input label="邮箱 / Email" helperText="我们不会公开你的邮箱。We won't share your email." />
+<Input label="Email" helperText="We won't share your email." />
+```
+
+---
+
+---
+
+# Input — 输入框
+
+输入框，支持 label、错误信息、辅助文案、左右图标与可点击右侧图标。
+
+---
+
+## 引入
+
+```tsx
+import { Input } from "nfx-ui/components";
+import type { InputProps } from "nfx-ui/components";
+```
+
+---
+
+## 参数
+
+继承 `InputHTMLAttributes`（除 `size` 被覆盖）。
+
+| 参数 | 类型 | 必填 | 默认 | 说明 |
+|------|------|------|------|------|
+| label | string | 否 | — | 标签文案。 |
+| error | string | 否 | — | 错误信息（展示错误样式与文案）。 |
+| helperText | string | 否 | — | 辅助说明（无 error 时显示）。 |
+| leftIcon | ReactNode | 否 | — | 左侧图标。 |
+| rightIcon | ReactNode | 否 | — | 右侧图标。 |
+| rightIconInteractive | boolean | 否 | false | 为 true 时右侧图标可点击（如清除、密码切换）。 |
+| size | `"small"` \| `"medium"` \| `"large"` | 否 | `"medium"` | 尺寸。 |
+| variant | `"default"` \| `"filled"` | 否 | `"default"` | 视觉变体。 |
+| fullWidth | boolean | 否 | false | 是否占满宽度。 |
+
+---
+
+## 输入 / 输出
+
+- **输入：** 上述 props + value/onChange 等原生 input 属性。
+- **输出：** 渲染带 label/错误/辅助文案的输入框；error 时显示错误样式。
+
+---
+
+## 示例
+
+```tsx
+<Input
+  label="用户名"
+  error={errors.name?.message}
+  value={name}
+  onChange={(e) => setName(e.target.value)}
+/>
+
+<Input
+  value={keyword}
+  onChange={(e) => setKeyword(e.target.value)}
+  rightIcon={<X size={16} />}
+  rightIconInteractive
+  onRightIconClick={clearKeyword}
+/>
+
+<Input label="邮箱" helperText="我们不会公开你的邮箱。" />
 ```

@@ -1,11 +1,10 @@
-# Button / 按钮
+# Button
 
-按钮组件：变体、尺寸、四向图标、仅图标（iconOnly）、loading、fullWidth。  
 Button with variants, sizes, top/right/bottom/left icons, icon-only mode, loading, full width.
 
 ---
 
-## 引入 / Import
+## Import
 
 ```tsx
 import { Button } from "nfx-ui/components";
@@ -14,58 +13,125 @@ import type { ButtonProps } from "nfx-ui/components";
 
 ---
 
-## 参数 / Parameters
+## Parameters
 
-继承 `ButtonHTMLAttributes`（除 `size` 被覆盖）。Extends button HTML attributes (except `size`).
+Extends button HTML attributes (except `size`).
 
-| 参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description |
-|----------------|-----------|---------------|--------------|------------------|
-| variant | `"primary"` \| `"secondary"` \| `"outline"` \| `"ghost"` \| `"danger"` | No | `"primary"` | 视觉变体。Visual variant. |
-| size | `"small"` \| `"medium"` \| `"large"` | No | `"medium"` | 尺寸。Size. |
-| fullWidth | boolean | No | false | 是否占满宽度。Full width. |
-| leftIcon | ReactNode | No | — | 左侧图标。Left icon. |
-| rightIcon | ReactNode | No | — | 右侧图标。Right icon. |
-| topIcon | ReactNode | No | — | 上方图标。Top icon. |
-| bottomIcon | ReactNode | No | — | 下方图标。Bottom icon. |
-| iconOnly | boolean | No | false | 仅图标无文案（方形按钮）。Icon only, no text. |
-| iconSize | number | No | — | 图标尺寸覆盖。Override icon size. |
-| loading | boolean | No | false | 加载中（显示 spinner，禁用点击）。Loading state. |
-
----
-
-## 输入 Input / 输出 Output
-
-- **Input**：上述 props + 子节点 `children`。Props above plus `children`.
-- **Output**：渲染为 `<button>`；loading 时显示 spinner、禁用点击；iconOnly 时为方形图标按钮。Renders `<button>`; when loading shows spinner and is disabled; when iconOnly renders square icon button.
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| variant | `"primary"` \| `"secondary"` \| `"outline"` \| `"ghost"` \| `"danger"` | No | `"primary"` | Visual variant. |
+| size | `"small"` \| `"medium"` \| `"large"` | No | `"medium"` | Size. |
+| fullWidth | boolean | No | false | Full width. |
+| leftIcon | ReactNode | No | — | Left icon. |
+| rightIcon | ReactNode | No | — | Right icon. |
+| topIcon | ReactNode | No | — | Top icon. |
+| bottomIcon | ReactNode | No | — | Bottom icon. |
+| iconOnly | boolean | No | false | Icon only, no text. |
+| iconSize | number | No | — | Override icon size. |
+| loading | boolean | No | false | Loading state (spinner, disabled). |
 
 ---
 
-## 示例 / Example
+## Input / Output
+
+- **Input:** Props above plus `children`.
+- **Output:** Renders `<button>`; when loading shows spinner and is disabled; when iconOnly renders square icon button.
+
+---
+
+## Example
 
 ```tsx
-// 基础 / Basic
-<Button onClick={handleSave}>保存 / Save</Button>
+<Button onClick={handleSave}>Save</Button>
 
-// 带图标与 loading / With icon and loading
 <Button
   leftIcon={<Save size={16} />}
   loading={isSubmitting}
   onClick={handleSubmit}
 >
-  提交 / Submit
+  Submit
 </Button>
 
-// 仅图标（原 IconButton 用法）/ Icon only
 <Button
   variant="outline"
   iconOnly
   leftIcon={<X size={18} />}
-  aria-label="关闭 / Close"
+  aria-label="Close"
   onClick={onClose}
 />
 
-// 不同变体与尺寸 / Variants and sizes
-<Button variant="outline" size="small">取消 / Cancel</Button>
-<Button variant="danger" size="large">删除 / Delete</Button>
-<Button fullWidth>占满一行 / Full width</Button>
+<Button variant="outline" size="small">Cancel</Button>
+<Button variant="danger" size="large">Delete</Button>
+<Button fullWidth>Full width</Button>
+```
+
+---
+
+---
+
+# Button — 按钮
+
+按钮组件：变体、尺寸、四向图标、仅图标（iconOnly）、loading、fullWidth。
+
+---
+
+## 引入
+
+```tsx
+import { Button } from "nfx-ui/components";
+import type { ButtonProps } from "nfx-ui/components";
+```
+
+---
+
+## 参数
+
+继承 `ButtonHTMLAttributes`（除 `size` 被覆盖）。
+
+| 参数 | 类型 | 必填 | 默认 | 说明 |
+|------|------|------|------|------|
+| variant | `"primary"` \| `"secondary"` \| `"outline"` \| `"ghost"` \| `"danger"` | 否 | `"primary"` | 视觉变体。 |
+| size | `"small"` \| `"medium"` \| `"large"` | 否 | `"medium"` | 尺寸。 |
+| fullWidth | boolean | 否 | false | 是否占满宽度。 |
+| leftIcon | ReactNode | 否 | — | 左侧图标。 |
+| rightIcon | ReactNode | 否 | — | 右侧图标。 |
+| topIcon | ReactNode | 否 | — | 上方图标。 |
+| bottomIcon | ReactNode | 否 | — | 下方图标。 |
+| iconOnly | boolean | 否 | false | 仅图标无文案（方形按钮）。 |
+| iconSize | number | 否 | — | 图标尺寸覆盖。 |
+| loading | boolean | 否 | false | 加载中（显示 spinner，禁用点击）。 |
+
+---
+
+## 输入 / 输出
+
+- **输入：** 上述 props + 子节点 `children`。
+- **输出：** 渲染为 `<button>`；loading 时显示 spinner、禁用点击；iconOnly 时为方形图标按钮。
+
+---
+
+## 示例
+
+```tsx
+<Button onClick={handleSave}>保存</Button>
+
+<Button
+  leftIcon={<Save size={16} />}
+  loading={isSubmitting}
+  onClick={handleSubmit}
+>
+  提交
+</Button>
+
+<Button
+  variant="outline"
+  iconOnly
+  leftIcon={<X size={18} />}
+  aria-label="关闭"
+  onClick={onClose}
+/>
+
+<Button variant="outline" size="small">取消</Button>
+<Button variant="danger" size="large">删除</Button>
+<Button fullWidth>占满一行</Button>
 ```

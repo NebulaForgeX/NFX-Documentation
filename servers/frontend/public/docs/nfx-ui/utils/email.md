@@ -1,11 +1,10 @@
-# isValidEmail / 邮箱校验
+# isValidEmail
 
-校验邮箱格式是否有效。  
 Validate email format.
 
 ---
 
-## 引入 / Import
+## Import
 
 ```ts
 import { isValidEmail } from "nfx-ui/utils";
@@ -13,24 +12,64 @@ import { isValidEmail } from "nfx-ui/utils";
 
 ---
 
-## 参数 / Parameters
+## Parameters
 
-| 参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description |
-|----------------|-----------|---------------|--------------|------------------|
-| email | string | Yes | — | 待校验的邮箱字符串。Email string to validate. |
-
----
-
-## 输入 Input / 输出 Output
-
-- **Input**：email — 例如 `"user@example.com"`。
-- **Output**：boolean — 格式有效为 true，否则 false。True if valid format.
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| email | string | Yes | — | Email string to validate. |
 
 ---
 
-## 示例 / Example
+## Input / Output
+
+- **Input:** email — e.g. `"user@example.com"`.
+- **Output:** boolean — true if valid format.
+
+---
+
+## Example
 
 ```ts
-isValidEmail("user@example.com");  // => true
-isValidEmail("invalid");           // => false
+isValidEmail("user@example.com");
+isValidEmail("invalid");
+```
+
+---
+
+---
+
+# isValidEmail — 邮箱校验
+
+校验邮箱格式是否有效。
+
+---
+
+## 引入
+
+```ts
+import { isValidEmail } from "nfx-ui/utils";
+```
+
+---
+
+## 参数
+
+| 参数 | 类型 | 必填 | 默认 | 说明 |
+|------|------|------|------|------|
+| email | string | 是 | — | 待校验的邮箱字符串。 |
+
+---
+
+## 输入 / 输出
+
+- **输入：** email — 例如 `"user@example.com"`。
+- **输出：** boolean — 格式有效为 true，否则 false。
+
+---
+
+## 示例
+
+```ts
+isValidEmail("user@example.com");
+isValidEmail("invalid");
 ```

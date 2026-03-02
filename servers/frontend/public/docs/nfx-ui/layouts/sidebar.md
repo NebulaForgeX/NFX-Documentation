@@ -1,11 +1,10 @@
-# Sidebar / 侧边栏
+# Sidebar
 
-侧边栏容器，常与 `react-pro-sidebar` 或自定义菜单配合。  
 Sidebar container; often used with react-pro-sidebar or custom menu.
 
 ---
 
-## 引入 / Import
+## Import
 
 ```tsx
 import { Sidebar } from "nfx-ui/layouts";
@@ -13,22 +12,66 @@ import { Sidebar } from "nfx-ui/layouts";
 
 ---
 
-## 参数 / Parameters
+## Parameters
 
-| 参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description |
-|----------------|-----------|---------------|--------------|------------------|
-| children | ReactNode | No | — | 菜单等内容。Menu content etc. |
-
----
-
-## 输入 Input / 输出 Output
-
-- **Input**：children（导航、菜单等）。children (nav, menu, etc.).
-- **Output**：渲染侧栏；显隐由布局上下文控制。Renders sidebar; visibility from layout context.
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| children | ReactNode | No | — | Menu content etc. |
 
 ---
 
-## 示例 / Example
+## Input / Output
+
+- **Input:** children (nav, menu, etc.).
+- **Output:** Renders sidebar; visibility from layout context.
+
+---
+
+## Example
+
+```tsx
+<SideShowLayout>
+  <Sidebar>
+    <Menu>...</Menu>
+  </Sidebar>
+  <MainWrapper>...</MainWrapper>
+</SideShowLayout>
+```
+
+---
+
+---
+
+# Sidebar — 侧边栏
+
+侧边栏容器，常与 `react-pro-sidebar` 或自定义菜单配合。
+
+---
+
+## 引入
+
+```tsx
+import { Sidebar } from "nfx-ui/layouts";
+```
+
+---
+
+## 参数
+
+| 参数 | 类型 | 必填 | 默认 | 说明 |
+|------|------|------|------|------|
+| children | ReactNode | 否 | — | 菜单等内容。 |
+
+---
+
+## 输入 / 输出
+
+- **输入：** children（导航、菜单等）。
+- **输出：** 渲染侧栏；显隐由布局上下文控制。
+
+---
+
+## 示例
 
 ```tsx
 <SideShowLayout>

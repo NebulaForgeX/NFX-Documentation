@@ -1,11 +1,10 @@
-# ThemeSwitcher / 主题切换
+# ThemeSwitcher
 
-主题切换控件（如下拉或按钮组），在 `ThemeProvider` 下使用，切换当前主题。  
 Theme switcher (e.g. dropdown or button group); use inside ThemeProvider to change theme.
 
 ---
 
-## 引入 / Import
+## Import
 
 ```tsx
 import { ThemeSwitcher } from "nfx-ui/themes";
@@ -14,24 +13,70 @@ import type { ThemeSwitcherProps } from "nfx-ui/themes";
 
 ---
 
-## 参数 / Parameters
+## Parameters
 
-见 `ThemeSwitcherProps`，可包含样式、展示模式等。See `ThemeSwitcherProps`; may include style, display mode, etc.
+See `ThemeSwitcherProps`; may include style, display mode, etc.
 
-| 参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description |
-|----------------|-----------|---------------|--------------|------------------|
-| （见类型） | ThemeSwitcherProps | No | — | 样式、展示模式等。Style, display mode, etc. |
-
----
-
-## 输入 Input / 输出 Output
-
-- **Input**：ThemeSwitcherProps（可选）。Optional props.
-- **Output**：渲染切换控件；用户选择后更新 ThemeProvider 内主题。Renders switcher; selection updates theme in ThemeProvider.
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| (see type) | ThemeSwitcherProps | No | — | Style, display mode, etc. |
 
 ---
 
-## 示例 / Example
+## Input / Output
+
+- **Input:** ThemeSwitcherProps (optional).
+- **Output:** Renders switcher; selection updates theme in ThemeProvider.
+
+---
+
+## Example
+
+```tsx
+<ThemeProvider>
+  <Header>
+    <ThemeSwitcher />
+  </Header>
+</ThemeProvider>
+```
+
+---
+
+---
+
+# ThemeSwitcher — 主题切换
+
+主题切换控件（如下拉或按钮组），在 `ThemeProvider` 下使用，切换当前主题。
+
+---
+
+## 引入
+
+```tsx
+import { ThemeSwitcher } from "nfx-ui/themes";
+import type { ThemeSwitcherProps } from "nfx-ui/themes";
+```
+
+---
+
+## 参数
+
+见 `ThemeSwitcherProps`，可包含样式、展示模式等。
+
+| 参数 | 类型 | 必填 | 默认 | 说明 |
+|------|------|------|------|------|
+| （见类型） | ThemeSwitcherProps | 否 | — | 样式、展示模式等。 |
+
+---
+
+## 输入 / 输出
+
+- **输入：** ThemeSwitcherProps（可选）。
+- **输出：** 渲染切换控件；用户选择后更新 ThemeProvider 内主题。
+
+---
+
+## 示例
 
 ```tsx
 <ThemeProvider>

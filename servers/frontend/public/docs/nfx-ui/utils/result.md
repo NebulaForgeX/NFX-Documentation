@@ -1,11 +1,10 @@
-# Result / ok / err / 结果类型
+# Result / ok / err
 
-Result 类型表示成功或失败；ok/err 为构造函数。  
 Result type for success or failure; ok/err are constructors.
 
 ---
 
-## 引入 / Import
+## Import
 
 ```ts
 import { ok, err } from "nfx-ui/utils";
@@ -14,39 +13,85 @@ import type { Result } from "nfx-ui/utils";
 
 ---
 
-## 类型 / Type
+## Type
 
-- **Result&lt;T&gt;** = `[T, null] | [null, Error]` — 成功为 [data, null]，失败为 [null, Error].  
-  Success: [data, null]; failure: [null, Error].
-
----
-
-## 参数 / Parameters
-
-| 函数 Function | 参数 Parameter | 类型 Type | 说明 Description |
-|---------------|----------------|-----------|------------------|
-| ok | v | T | 成功值。Success value. |
-| err | e | unknown | 错误（会转为 Error）。Error (converted to Error). |
+- **Result&lt;T&gt;** = `[T, null] | [null, Error]` — success: [data, null]; failure: [null, Error].
 
 ---
 
-## 输入 Input / 输出 Output
+## Parameters
 
-- **ok(v)**  
-  - Input：成功值 v。Success value v.  
-  - Output：Result&lt;T&gt;，即 [v, null]. [v, null].
-
-- **err(e)**  
-  - Input：任意异常 e。Any exception e.  
-  - Output：Result&lt;never&gt;，即 [null, Error]. [null, Error].
+| Function | Parameter | Type | Description |
+|----------|------------|------|-------------|
+| ok | v | T | Success value. |
+| err | e | unknown | Error (converted to Error). |
 
 ---
 
-## 示例 / Example
+## Input / Output
+
+- **ok(v)** — Input: success value v. Output: Result&lt;T&gt;, i.e. [v, null].
+- **err(e)** — Input: any exception e. Output: Result&lt;never&gt;, i.e. [null, Error].
+
+---
+
+## Example
 
 ```ts
-const success = ok(42);       // => [42, null]
-const failure = err(new Error("x")); // => [null, Error]
+const success = ok(42);
+const failure = err(new Error("x"));
+
+const [data, error] = await fetchData().then(ok).catch(err);
+if (error) console.error(error);
+else console.log(data);
+```
+
+---
+
+---
+
+# Result / ok / err — 结果类型
+
+Result 类型表示成功或失败；ok/err 为构造函数。
+
+---
+
+## 引入
+
+```ts
+import { ok, err } from "nfx-ui/utils";
+import type { Result } from "nfx-ui/utils";
+```
+
+---
+
+## 类型
+
+- **Result&lt;T&gt;** = `[T, null] | [null, Error]` — 成功为 [data, null]，失败为 [null, Error]。
+
+---
+
+## 参数
+
+| 函数 | 参数 | 类型 | 说明 |
+|------|------|------|------|
+| ok | v | T | 成功值。 |
+| err | e | unknown | 错误（会转为 Error）。 |
+
+---
+
+## 输入 / 输出
+
+- **ok(v)** — 输入：成功值 v。输出：Result&lt;T&gt;，即 [v, null]。
+- **err(e)** — 输入：任意异常 e。输出：Result&lt;never&gt;，即 [null, Error]。
+
+---
+
+## 示例
+
+```ts
+const success = ok(42);
+const failure = err(new Error("x"));
 
 const [data, error] = await fetchData().then(ok).catch(err);
 if (error) console.error(error);

@@ -1,11 +1,10 @@
-# singleton / 单例包装
+# singleton
 
-类单例包装：同一构造函数多次 new 得到同一实例。  
 Singleton wrapper: multiple new of same constructor return same instance.
 
 ---
 
-## 引入 / Import
+## Import
 
 ```ts
 import { singleton } from "nfx-ui/utils";
@@ -13,22 +12,65 @@ import { singleton } from "nfx-ui/utils";
 
 ---
 
-## 参数 / Parameters
+## Parameters
 
-| 参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description |
-|----------------|-----------|---------------|--------------|------------------|
-| className | Constructor&lt;T&gt; | Yes | — | 要包装的类（构造函数）。Class (constructor) to wrap. |
-
----
-
-## 输入 Input / 输出 Output
-
-- **Input**：className — 一个类（构造函数）。A class (constructor).
-- **Output**：包装后的构造函数；首次 new 创建实例，之后 new 返回同一实例。Wrapped constructor; first new creates instance, later new return same instance.
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| className | Constructor&lt;T&gt; | Yes | — | Class (constructor) to wrap. |
 
 ---
 
-## 示例 / Example
+## Input / Output
+
+- **Input:** A class (constructor).
+- **Output:** Wrapped constructor; first new creates instance, later new return same instance.
+
+---
+
+## Example
+
+```ts
+class MyService {}
+const SingleMyService = singleton(MyService);
+const a = new SingleMyService();
+const b = new SingleMyService();
+// a === b
+```
+
+---
+
+---
+
+# singleton — 单例包装
+
+类单例包装：同一构造函数多次 new 得到同一实例。
+
+---
+
+## 引入
+
+```ts
+import { singleton } from "nfx-ui/utils";
+```
+
+---
+
+## 参数
+
+| 参数 | 类型 | 必填 | 默认 | 说明 |
+|------|------|------|------|------|
+| className | Constructor&lt;T&gt; | 是 | — | 要包装的类（构造函数）。 |
+
+---
+
+## 输入 / 输出
+
+- **输入：** className — 一个类（构造函数）。
+- **输出：** 包装后的构造函数；首次 new 创建实例，之后 new 返回同一实例。
+
+---
+
+## 示例
 
 ```ts
 class MyService {}

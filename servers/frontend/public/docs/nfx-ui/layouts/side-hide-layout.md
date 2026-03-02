@@ -1,11 +1,10 @@
-# SideHideLayout / 侧栏隐藏布局
+# SideHideLayout
 
-侧栏隐藏时的布局容器，主内容占满可用宽度。  
 Layout when sidebar is hidden; main content takes full width.
 
 ---
 
-## 引入 / Import
+## Import
 
 ```tsx
 import { SideHideLayout } from "nfx-ui/layouts";
@@ -13,22 +12,22 @@ import { SideHideLayout } from "nfx-ui/layouts";
 
 ---
 
-## 参数 / Parameters
+## Parameters
 
-| 参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description |
-|----------------|-----------|---------------|--------------|------------------|
-| children | ReactNode | Yes | — | 通常为 Sidebar + MainWrapper。Usually Sidebar + MainWrapper. |
-
----
-
-## 输入 Input / 输出 Output
-
-- **Input**：children。Children.
-- **Output**：渲染侧栏隐藏时的布局（主内容全宽）。Renders layout with sidebar hidden.
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| children | ReactNode | Yes | — | Usually Sidebar + MainWrapper. |
 
 ---
 
-## 示例 / Example
+## Input / Output
+
+- **Input:** children.
+- **Output:** Renders layout with sidebar hidden.
+
+---
+
+## Example
 
 ```tsx
 <SideHideLayout>
@@ -37,4 +36,48 @@ import { SideHideLayout } from "nfx-ui/layouts";
 </SideHideLayout>
 ```
 
-与 SideShowLayout 二选一，由布局状态决定。 Use with SideShowLayout based on layout state.
+Use with SideShowLayout based on layout state.
+
+---
+
+---
+
+# SideHideLayout — 侧栏隐藏布局
+
+侧栏隐藏时的布局容器，主内容占满可用宽度。
+
+---
+
+## 引入
+
+```tsx
+import { SideHideLayout } from "nfx-ui/layouts";
+```
+
+---
+
+## 参数
+
+| 参数 | 类型 | 必填 | 默认 | 说明 |
+|------|------|------|------|------|
+| children | ReactNode | 是 | — | 通常为 Sidebar + MainWrapper。 |
+
+---
+
+## 输入 / 输出
+
+- **输入：** children。
+- **输出：** 渲染侧栏隐藏时的布局（主内容全宽）。
+
+---
+
+## 示例
+
+```tsx
+<SideHideLayout>
+  <Sidebar>...</Sidebar>
+  <MainWrapper>...</MainWrapper>
+</SideHideLayout>
+```
+
+与 SideShowLayout 二选一，由布局状态决定。

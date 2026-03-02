@@ -1,11 +1,10 @@
-# Textarea / 多行输入框
+# Textarea
 
-多行文本输入框，支持 label、错误信息、必填标记等。  
 Multiline text input with label, error, required indicator, etc.
 
 ---
 
-## 引入 / Import
+## Import
 
 ```tsx
 import { Textarea } from "nfx-ui/components";
@@ -14,36 +13,89 @@ import type { TextareaProps } from "nfx-ui/components";
 
 ---
 
-## 参数 / Parameters
+## Parameters
 
-继承 `TextareaHTMLAttributes`。常用与 Input 类似。Extends textarea HTML attributes; common props similar to Input.
+Extends textarea HTML attributes; common props similar to Input.
 
-| 参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description |
-|----------------|-----------|---------------|--------------|------------------|
-| label | string | No | — | 标签文案。Label text. |
-| error | string | No | — | 错误信息。Error message. |
-| helperText | string | No | — | 辅助说明。Helper text. |
-| required | boolean | No | — | 是否必填（显示 *）。Required (shows *). |
-| rows | number | No | — | 行数。Number of rows. |
-| placeholder | string | No | — | 占位符。Placeholder. |
-
----
-
-## 输入 Input / 输出 Output
-
-- **Input**：value、onChange、label、error、rows 等。value, onChange, label, error, rows, etc.
-- **Output**：渲染带 label/错误/辅助文案的 `<textarea>`。Renders `<textarea>` with label/error/helper.
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| label | string | No | — | Label text. |
+| error | string | No | — | Error message. |
+| helperText | string | No | — | Helper text. |
+| required | boolean | No | — | Required (shows *). |
+| rows | number | No | — | Number of rows. |
+| placeholder | string | No | — | Placeholder. |
 
 ---
 
-## 示例 / Example
+## Input / Output
+
+- **Input:** value, onChange, label, error, rows, etc.
+- **Output:** Renders `<textarea>` with label/error/helper.
+
+---
+
+## Example
 
 ```tsx
 <Textarea
-  label="备注 / Notes"
+  label="Notes"
   value={note}
   onChange={(e) => setNote(e.target.value)}
   rows={4}
-  placeholder="选填 / Optional"
+  placeholder="Optional"
+/>
+```
+
+---
+
+---
+
+# Textarea — 多行输入框
+
+多行文本输入框，支持 label、错误信息、必填标记等。
+
+---
+
+## 引入
+
+```tsx
+import { Textarea } from "nfx-ui/components";
+import type { TextareaProps } from "nfx-ui/components";
+```
+
+---
+
+## 参数
+
+继承 `TextareaHTMLAttributes`。常用与 Input 类似。
+
+| 参数 | 类型 | 必填 | 默认 | 说明 |
+|------|------|------|------|------|
+| label | string | 否 | — | 标签文案。 |
+| error | string | 否 | — | 错误信息。 |
+| helperText | string | 否 | — | 辅助说明。 |
+| required | boolean | 否 | — | 是否必填（显示 *）。 |
+| rows | number | 否 | — | 行数。 |
+| placeholder | string | 否 | — | 占位符。 |
+
+---
+
+## 输入 / 输出
+
+- **输入：** value、onChange、label、error、rows 等。
+- **输出：** 渲染带 label/错误/辅助文案的 `<textarea>`。
+
+---
+
+## 示例
+
+```tsx
+<Textarea
+  label="备注"
+  value={note}
+  onChange={(e) => setNote(e.target.value)}
+  rows={4}
+  placeholder="选填"
 />
 ```

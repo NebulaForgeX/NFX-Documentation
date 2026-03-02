@@ -1,11 +1,10 @@
-# Slider / 滑块
+# Slider
 
-滑块，用于选择数值范围。  
 Slider for selecting a numeric value or range.
 
 ---
 
-## 引入 / Import
+## Import
 
 ```tsx
 import { Slider } from "nfx-ui/components";
@@ -14,32 +13,84 @@ import type { SliderProps } from "nfx-ui/components";
 
 ---
 
-## 参数 / Parameters
+## Parameters
 
-| 参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description |
-|----------------|-----------|---------------|--------------|------------------|
-| value | number \| [number, number] | No | — | 当前值或范围。Current value or range. |
-| onChange | (value) => void | No | — | 值变化回调。Change callback. |
-| min | number | No | — | 最小值。Minimum. |
-| max | number | No | — | 最大值。Maximum. |
-| step | number | No | — | 步长。Step. |
-| label | string | No | — | 标签。Label. |
-| disabled | boolean | No | false | 是否禁用。Disabled. |
-
----
-
-## 输入 Input / 输出 Output
-
-- **Input**：value、onChange、min、max、step、label。value, onChange, min, max, step, label.
-- **Output**：用户拖动后 `onChange(newValue)` 被调用。On drag, `onChange(newValue)` is called.
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| value | number \| [number, number] | No | — | Current value or range. |
+| onChange | (value) => void | No | — | Change callback. |
+| min | number | No | — | Minimum. |
+| max | number | No | — | Maximum. |
+| step | number | No | — | Step. |
+| label | string | No | — | Label. |
+| disabled | boolean | No | false | Disabled. |
 
 ---
 
-## 示例 / Example
+## Input / Output
+
+- **Input:** value, onChange, min, max, step, label.
+- **Output:** On drag, `onChange(newValue)` is called.
+
+---
+
+## Example
 
 ```tsx
 <Slider
-  label="音量 / Volume"
+  label="Volume"
+  min={0}
+  max={100}
+  value={volume}
+  onChange={setVolume}
+/>
+```
+
+---
+
+---
+
+# Slider — 滑块
+
+滑块，用于选择数值范围。
+
+---
+
+## 引入
+
+```tsx
+import { Slider } from "nfx-ui/components";
+import type { SliderProps } from "nfx-ui/components";
+```
+
+---
+
+## 参数
+
+| 参数 | 类型 | 必填 | 默认 | 说明 |
+|------|------|------|------|------|
+| value | number \| [number, number] | 否 | — | 当前值或范围。 |
+| onChange | (value) => void | 否 | — | 值变化回调。 |
+| min | number | 否 | — | 最小值。 |
+| max | number | 否 | — | 最大值。 |
+| step | number | 否 | — | 步长。 |
+| label | string | 否 | — | 标签。 |
+| disabled | boolean | 否 | false | 是否禁用。 |
+
+---
+
+## 输入 / 输出
+
+- **输入：** value、onChange、min、max、step、label。
+- **输出：** 用户拖动后 `onChange(newValue)` 被调用。
+
+---
+
+## 示例
+
+```tsx
+<Slider
+  label="音量"
   min={0}
   max={100}
   value={volume}

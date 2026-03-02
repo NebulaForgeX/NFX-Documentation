@@ -1,11 +1,10 @@
-# ThemeProvider / 主题上下文
+# ThemeProvider
 
-提供主题上下文，子组件可通过 `useTheme()`、`useThemeVariables()` 读取当前主题与 CSS 变量。  
 Provides theme context; children use useTheme(), useThemeVariables() for current theme and CSS variables.
 
 ---
 
-## 引入 / Import
+## Import
 
 ```tsx
 import { ThemeProvider } from "nfx-ui/themes";
@@ -13,24 +12,23 @@ import { ThemeProvider } from "nfx-ui/themes";
 
 ---
 
-## 参数 / Parameters
+## Parameters
 
-| 参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description |
-|----------------|-----------|---------------|--------------|------------------|
-| children | ReactNode | Yes | — | 子节点。Children. |
-| （其他） | 见类型 | No | — | 默认主题等（见 ThemeProvider 类型）。Default theme etc. |
-
----
-
-## 输入 Input / 输出 Output
-
-- **Input**：children；可选默认主题等 props。children; optional default theme etc.
-- **Output**：提供主题上下文；子组件内 `useTheme()` 得 currentTheme，`useThemeVariables()` 得 CSS 变量。  
-  Provides theme context; children get currentTheme and CSS variables.
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| children | ReactNode | Yes | — | Children. |
+| (others) | see type | No | — | Default theme etc. |
 
 ---
 
-## 示例 / Example
+## Input / Output
+
+- **Input:** children; optional default theme etc.
+- **Output:** Provides theme context; children get currentTheme and CSS variables.
+
+---
+
+## Example
 
 ```tsx
 <ThemeProvider>
@@ -38,4 +36,48 @@ import { ThemeProvider } from "nfx-ui/themes";
 </ThemeProvider>
 ```
 
-通常放在最外层或与 LanguageProvider 并列。 Usually at root or next to LanguageProvider.
+Usually at root or next to LanguageProvider.
+
+---
+
+---
+
+# ThemeProvider — 主题上下文
+
+提供主题上下文，子组件可通过 `useTheme()`、`useThemeVariables()` 读取当前主题与 CSS 变量。
+
+---
+
+## 引入
+
+```tsx
+import { ThemeProvider } from "nfx-ui/themes";
+```
+
+---
+
+## 参数
+
+| 参数 | 类型 | 必填 | 默认 | 说明 |
+|------|------|------|------|------|
+| children | ReactNode | 是 | — | 子节点。 |
+| （其他） | 见类型 | 否 | — | 默认主题等（见 ThemeProvider 类型）。 |
+
+---
+
+## 输入 / 输出
+
+- **输入：** children；可选默认主题等 props。
+- **输出：** 提供主题上下文；子组件内 `useTheme()` 得 currentTheme，`useThemeVariables()` 得 CSS 变量。
+
+---
+
+## 示例
+
+```tsx
+<ThemeProvider>
+  <App />
+</ThemeProvider>
+```
+
+通常放在最外层或与 LanguageProvider 并列。

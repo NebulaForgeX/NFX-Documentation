@@ -1,11 +1,10 @@
-# imageService / 图片服务
+# imageService
 
-图片压缩等处理。参数与 Input/Output 见下表。  
 Image compression and related helpers. Parameters and Input/Output below.
 
 ---
 
-## 引入 / Import
+## Import
 
 ```ts
 import { compressImage } from "nfx-ui/services";
@@ -15,24 +14,64 @@ import { compressImage } from "nfx-ui/services";
 
 ## compressImage
 
-| 参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description |
-|----------------|-----------|---------------|--------------|------------------|
-| file | File | Yes | — | 原始图片文件。Original image file. |
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| file | File | Yes | — | Original image file. |
 
 ---
 
-## 输入 Input / 输出 Output
+## Input / Output
 
-- **Input**：file — 浏览器 File 对象。Browser File object.
-- **Output**：Promise&lt;File&gt; — 压缩后的新 File（如用于上传前减小体积）。Compressed File (e.g. for upload).
+- **Input:** file — browser File object.
+- **Output:** Promise&lt;File&gt; — compressed File (e.g. for upload).
 
 ---
 
-## 示例 / Example
+## Example
 
 ```ts
 const compressed = await compressImage(originalFile);
-// 使用 compressed 上传 / Use compressed for upload
 ```
 
-具体压缩参数见 `src/services/imageService.ts`. See `src/services/imageService.ts` for options.
+See `src/services/imageService.ts` for options.
+
+---
+
+---
+
+# imageService — 图片服务
+
+图片压缩等处理。参数与 Input/Output 见下表。
+
+---
+
+## 引入
+
+```ts
+import { compressImage } from "nfx-ui/services";
+```
+
+---
+
+## compressImage
+
+| 参数 | 类型 | 必填 | 默认 | 说明 |
+|------|------|------|------|------|
+| file | File | 是 | — | 原始图片文件。 |
+
+---
+
+## 输入 / 输出
+
+- **输入：** file — 浏览器 File 对象。
+- **输出：** Promise&lt;File&gt; — 压缩后的新 File（如用于上传前减小体积）。
+
+---
+
+## 示例
+
+```ts
+const compressed = await compressImage(originalFile);
+```
+
+具体压缩参数见 `src/services/imageService.ts`。

@@ -1,11 +1,10 @@
-# LetterGlitchBackground / 字母故障背景
+# LetterGlitchBackground
 
-字母故障（Glitch）风格背景，随机字符网格带颜色与渐变变化。  
 Letter glitch-style background with random character grid and color shifts.
 
 ---
 
-## 引入 / Import
+## Import
 
 ```tsx
 import { LetterGlitchBackground } from "nfx-ui/animations";
@@ -13,41 +12,94 @@ import { LetterGlitchBackground } from "nfx-ui/animations";
 
 ---
 
-## 参数 / Parameters
+## Parameters
 
-| 参数 Parameter | 类型 Type | 必填 Required | 默认 Default | 说明 Description |
-|----------------|-----------|---------------|--------------|------------------|
-| glitchColors | string[] | No | `["#2b4539", "#61dca3", "#61b3dc"]` | 故障色列表。Glitch color palette. |
-| glitchSpeed | number | No | 500 | 颜色/字符变化间隔（ms）。Color/char change interval (ms). |
-| centerVignette | boolean | No | false | 是否启用中心暗角。Enable center vignette. |
-| outerVignette | boolean | No | true | 是否启用外圈暗角。Enable outer vignette. |
-| smooth | boolean | No | true | 是否平滑过渡。Smooth transitions. |
-| characters | string | No | 字母数字符号串 | 参与随机的字符集。Character set for random. |
-| className | string | No | — | 容器类名。Container class. |
-| style | CSSProperties | No | — | 容器样式。Container style. |
-
----
-
-## 输入 Input / 输出 Output
-
-- **Input**：上述 props（可选）。Optional props above.
-- **Output**：渲染 Canvas 字母故障动画。Renders a canvas letter glitch animation.
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| glitchColors | string[] | No | `["#2b4539", "#61dca3", "#61b3dc"]` | Glitch color palette. |
+| glitchSpeed | number | No | 500 | Color/char change interval (ms). |
+| centerVignette | boolean | No | false | Enable center vignette. |
+| outerVignette | boolean | No | true | Enable outer vignette. |
+| smooth | boolean | No | true | Smooth transitions. |
+| characters | string | No | alphanumeric set | Character set for random. |
+| className | string | No | — | Container class. |
+| style | CSSProperties | No | — | Container style. |
 
 ---
 
-## 示例 / Example
+## Input / Output
+
+- **Input:** Optional props above.
+- **Output:** Renders a canvas letter glitch animation.
+
+---
+
+## Example
 
 ```tsx
-// 默认 / Default
 <LetterGlitchBackground />
 
-// 自定义颜色与速度 / Custom colors and speed
 <LetterGlitchBackground
   glitchColors={["#1a1a2e", "#16213e", "#0f3460"]}
   glitchSpeed={300}
 />
 
-// 全屏背景 / Full-screen background
+<div style={{ position: "relative", minHeight: "100vh" }}>
+  <LetterGlitchBackground className="absolute inset-0" style={{ opacity: 0.6 }} />
+  <main>...</main>
+</div>
+```
+
+---
+
+---
+
+# LetterGlitchBackground — 字母故障背景
+
+字母故障（Glitch）风格背景，随机字符网格带颜色与渐变变化。
+
+---
+
+## 引入
+
+```tsx
+import { LetterGlitchBackground } from "nfx-ui/animations";
+```
+
+---
+
+## 参数
+
+| 参数 | 类型 | 必填 | 默认 | 说明 |
+|------|------|------|------|------|
+| glitchColors | string[] | 否 | `["#2b4539", "#61dca3", "#61b3dc"]` | 故障色列表。 |
+| glitchSpeed | number | 否 | 500 | 颜色/字符变化间隔（ms）。 |
+| centerVignette | boolean | 否 | false | 是否启用中心暗角。 |
+| outerVignette | boolean | 否 | true | 是否启用外圈暗角。 |
+| smooth | boolean | 否 | true | 是否平滑过渡。 |
+| characters | string | 否 | 字母数字符号串 | 参与随机的字符集。 |
+| className | string | 否 | — | 容器类名。 |
+| style | CSSProperties | 否 | — | 容器样式。 |
+
+---
+
+## 输入 / 输出
+
+- **输入：** 上述 props（可选）。
+- **输出：** 渲染 Canvas 字母故障动画。
+
+---
+
+## 示例
+
+```tsx
+<LetterGlitchBackground />
+
+<LetterGlitchBackground
+  glitchColors={["#1a1a2e", "#16213e", "#0f3460"]}
+  glitchSpeed={300}
+/>
+
 <div style={{ position: "relative", minHeight: "100vh" }}>
   <LetterGlitchBackground className="absolute inset-0" style={{ opacity: 0.6 }} />
   <main>...</main>

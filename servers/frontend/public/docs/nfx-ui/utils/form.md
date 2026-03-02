@@ -1,11 +1,10 @@
-# toTextInputValue / toNumberInputValue / 表单值转换
+# toTextInputValue / toNumberInputValue
 
-将值转为受控 input/textarea 的 value 字符串（文本或数字）。  
 Convert value to controlled input/textarea value string (text or number).
 
 ---
 
-## 引入 / Import
+## Import
 
 ```ts
 import { toTextInputValue, toNumberInputValue } from "nfx-ui/utils";
@@ -13,27 +12,70 @@ import { toTextInputValue, toNumberInputValue } from "nfx-ui/utils";
 
 ---
 
-## 参数 / Parameters
+## Parameters
 
-| 函数 Function | 参数 Parameter | 类型 Type | 说明 Description |
-|---------------|----------------|-----------|------------------|
-| toTextInputValue | value | unknown | 任意值转文本 input 的 value。Any value to text input value. |
-| toNumberInputValue | value | unknown | 任意值转数字 input 的 value 字符串。Any value to number input value string. |
-
----
-
-## 输入 Input / 输出 Output
-
-- **Input**：value（number、string、null、undefined 等）。value (number, string, null, undefined, etc.).
-- **Output**：string — 可直接用于 `<input value={...} />` 或 `<input type="number" value={...} />`。String for input value.
+| Function | Parameter | Type | Description |
+|----------|------------|------|-------------|
+| toTextInputValue | value | unknown | Any value to text input value. |
+| toNumberInputValue | value | unknown | Any value to number input value string. |
 
 ---
 
-## 示例 / Example
+## Input / Output
+
+- **Input:** value (number, string, null, undefined, etc.).
+- **Output:** string — for `<input value={...} />` or `<input type="number" value={...} />`.
+
+---
+
+## Example
 
 ```ts
-toTextInputValue(123);     // => "123"
-toTextInputValue(null);    // => "" (或项目约定 / or project default)
-toNumberInputValue(99.5);  // => "99.5"
-toNumberInputValue(null);  // => ""
+toTextInputValue(123);
+toTextInputValue(null);
+toNumberInputValue(99.5);
+toNumberInputValue(null);
+```
+
+---
+
+---
+
+# toTextInputValue / toNumberInputValue — 表单值转换
+
+将值转为受控 input/textarea 的 value 字符串（文本或数字）。
+
+---
+
+## 引入
+
+```ts
+import { toTextInputValue, toNumberInputValue } from "nfx-ui/utils";
+```
+
+---
+
+## 参数
+
+| 函数 | 参数 | 类型 | 说明 |
+|------|------|------|------|
+| toTextInputValue | value | unknown | 任意值转文本 input 的 value。 |
+| toNumberInputValue | value | unknown | 任意值转数字 input 的 value 字符串。 |
+
+---
+
+## 输入 / 输出
+
+- **输入：** value（number、string、null、undefined 等）。
+- **输出：** string — 可直接用于 `<input value={...} />` 或 `<input type="number" value={...} />`。
+
+---
+
+## 示例
+
+```ts
+toTextInputValue(123);
+toTextInputValue(null);
+toNumberInputValue(99.5);
+toNumberInputValue(null);
 ```

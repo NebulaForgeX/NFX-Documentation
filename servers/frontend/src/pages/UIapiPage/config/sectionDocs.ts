@@ -74,6 +74,7 @@ export const sectionDocs: Record<string, string[]> = {
     'promise',
     'result',
     'retry',
+    'safe',
     'singleton',
     'suspense',
     'time',

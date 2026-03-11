@@ -1,6 +1,6 @@
 # Utils — utility functions
 
-Exported utilities from **`nfx-ui/utils`**: address, array, API error, colors, email, form, object, phone, polling, price, promise, result, retry, singleton, suspense, time, etc.
+Exported utilities from **`nfx-ui/utils`**: address, array, API error, colors, email, form, object, phone, polling, price, promise, result, retry, safe, singleton, suspense, time, etc.
 
 ---
 
@@ -32,6 +32,10 @@ import {
   getItem,
   setItem,
   removeItem,
+  safe,
+  safeOr,
+  safeDef,
+  safeNum,
 } from "nfx-ui/utils";
 ```
 
@@ -78,6 +82,7 @@ formatDisplayDate("2025-02-27");
 | promise | onceAsync, onceAsyncByKey | [promise.md](./promise.md) |
 | result | Result, ok, err | [result.md](./result.md) |
 | retry | withRetryResult | [retry.md](./retry.md) |
+| safe | safe, safeOr, safeDef, safeNum | [safe.md](./safe.md) |
 | singleton | Singleton wrapper | [singleton.md](./singleton.md) |
 | suspense | suspenseIfNull | [suspense.md](./suspense.md) |
 | time | Date/time format | [time.md](./time.md) |
@@ -90,7 +95,7 @@ formatDisplayDate("2025-02-27");
 
 # 工具函数
 
-从 **`nfx-ui/utils`** 子路径导出的工具函数：地址、数组、API 错误、颜色、邮箱、表单、对象、电话、轮询、价格、Promise、Result、重试、单例、Suspense、时间等。
+从 **`nfx-ui/utils`** 子路径导出的工具函数：地址、数组、API 错误、颜色、邮箱、表单、对象、电话、轮询、价格、Promise、Result、重试、safe、单例、Suspense、时间等。
 
 ---
 
@@ -122,6 +127,10 @@ import {
   getItem,
   setItem,
   removeItem,
+  safe,
+  safeOr,
+  safeDef,
+  safeNum,
 } from "nfx-ui/utils";
 ```
 
@@ -168,6 +177,7 @@ formatDisplayDate("2025-02-27");
 | promise | onceAsync、onceAsyncByKey | [promise.md](./promise.md) |
 | result | Result、ok、err | [result.md](./result.md) |
 | retry | withRetryResult | [retry.md](./retry.md) |
+| safe | safe、safeOr、safeDef、safeNum | [safe.md](./safe.md) |
 | singleton | 单例包装 | [singleton.md](./singleton.md) |
 | suspense | suspenseIfNull | [suspense.md](./suspense.md) |
 | time | 日期时间格式化 | [time.md](./time.md) |

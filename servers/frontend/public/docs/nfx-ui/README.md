@@ -29,7 +29,7 @@ All sub-docs include **descriptions**, **parameter tables** (Parameter | Type | 
 | [stores](./stores/) | makeStore, makePersistStore | `nfx-ui/stores` |
 | [themes](./themes/) | ThemeProvider, useTheme, theme enums and variables | `nfx-ui/themes` |
 | [types](./types/) | API and utility types: ApiErrorBody, ListDTO, Nullable, Result, etc. | `nfx-ui/types` |
-| [utils](./utils/) | address, array, colors, email, phone, price, time, Result, retry, singleton, etc. | `nfx-ui/utils` |
+| [utils](./utils/) | address, array, colors, email, phone, price, safe, time, Result, retry, singleton, etc. | `nfx-ui/utils` |
 
 ---
 
@@ -72,7 +72,7 @@ This package **only exposes subpath exports**; import from the relevant subpath 
 | `nfx-ui/services` | compressImage, etc. |
 | `nfx-ui/navigations` | defineRouter, createRouter, isActiveRoute, matchRoute |
 | `nfx-ui/types` | ApiErrorBody, ListDTO, Nullable, Maybe, Result, ok, err, etc. |
-| `nfx-ui/utils` | address, array, colors, email, phone, price, time, retry, singleton, etc. |
+| `nfx-ui/utils` | address, array, colors, email, phone, price, safe, time, retry, singleton, etc. |
 | `nfx-ui/constants` | createKey, createListKey, defineEnum, etc. |
 | `nfx-ui/languages` | LanguageProvider, getLocalLanguage, LanguageEnum |
 | `nfx-ui/icons` | Lucide icon re-exports |
@@ -157,7 +157,7 @@ UNLICENSED (private use). Change the license in `package.json` if you publish.
 | [stores](./stores/) | makeStore、makePersistStore | `nfx-ui/stores` |
 | [themes](./themes/) | ThemeProvider、useTheme、主题枚举与变量 | `nfx-ui/themes` |
 | [types](./types/) | API 类型、工具类型：ApiErrorBody、ListDTO、Nullable、Result 等 | `nfx-ui/types` |
-| [utils](./utils/) | 地址、数组、颜色、邮箱、电话、价格、时间、Result、retry、singleton 等 | `nfx-ui/utils` |
+| [utils](./utils/) | 地址、数组、颜色、邮箱、电话、价格、safe、时间、Result、retry、singleton 等 | `nfx-ui/utils` |
 
 ---
 

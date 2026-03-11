@@ -32,9 +32,13 @@ import {
   getItem,
   setItem,
   removeItem,
-  safe,
+  safeNullable,
+  safeMaybe,
+  safeNilable,
+  safeArray,
+  safeZeroable,
+  safeStringable,
   safeOr,
-  safeDef,
   safeNum,
 } from "nfx-ui/utils";
 ```
@@ -82,7 +86,7 @@ formatDisplayDate("2025-02-27");
 | promise | onceAsync, onceAsyncByKey | [promise.md](./promise.md) |
 | result | Result, ok, err | [result.md](./result.md) |
 | retry | withRetryResult | [retry.md](./retry.md) |
-| safe | safe, safeOr, safeDef, safeNum | [safe.md](./safe.md) |
+| safe | safeNullable, safeMaybe, safeNilable, safeArray, safeZeroable, safeStringable, safeOr, safeNum | [safe.md](./safe.md) |
 | singleton | Singleton wrapper | [singleton.md](./singleton.md) |
 | suspense | suspenseIfNull | [suspense.md](./suspense.md) |
 | time | Date/time format | [time.md](./time.md) |
@@ -127,9 +131,13 @@ import {
   getItem,
   setItem,
   removeItem,
-  safe,
+  safeNullable,
+  safeMaybe,
+  safeNilable,
+  safeArray,
+  safeZeroable,
+  safeStringable,
   safeOr,
-  safeDef,
   safeNum,
 } from "nfx-ui/utils";
 ```
@@ -177,7 +185,7 @@ formatDisplayDate("2025-02-27");
 | promise | onceAsync、onceAsyncByKey | [promise.md](./promise.md) |
 | result | Result、ok、err | [result.md](./result.md) |
 | retry | withRetryResult | [retry.md](./retry.md) |
-| safe | safe、safeOr、safeDef、safeNum | [safe.md](./safe.md) |
+| safe | safeNullable、safeMaybe、safeNilable、safeArray、safeZeroable、safeStringable、safeOr、safeNum | [safe.md](./safe.md) |
 | singleton | 单例包装 | [singleton.md](./singleton.md) |
 | suspense | suspenseIfNull | [suspense.md](./suspense.md) |
 | time | 日期时间格式化 | [time.md](./time.md) |

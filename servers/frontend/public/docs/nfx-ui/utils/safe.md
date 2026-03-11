@@ -1,13 +1,22 @@
 # Safe utils
 
-Normalize `null`/`undefined` to `undefined` (or a default), so you can write `safe(product.price)` instead of `product.price ?? undefined`.
+Normalize `Nilable` / `Emptyable` / array to `Nullable`, `Maybe`, `Zeroable`, `Stringable`, `Array`. Use `safeMaybe(product.price)` instead of `product.price ?? undefined`, `safeZeroable(product.stock)` instead of `product.stock ?? 0`, etc. Return types align with `nfx-ui/types` (Nullable, Maybe, Nilable, Zeroable, Stringable, Array).
 
 ---
 
 ## Import
 
 ```ts
-import { safe, safeOr, safeDef, safeNum } from "nfx-ui/utils";
+import {
+  safeNullable,
+  safeMaybe,
+  safeNilable,
+  safeArray,
+  safeZeroable,
+  safeStringable,
+  safeOr,
+  safeNum,
+} from "nfx-ui/utils";
 ```
 
 ---
@@ -16,21 +25,30 @@ import { safe, safeOr, safeDef, safeNum } from "nfx-ui/utils";
 
 | Function | Parameters | Output |
 |----------|------------|--------|
-| safe | value: T \| null \| undefined | T \| undefined — same as `value ?? undefined`. |
-| safeOr | value: T \| null \| undefined, defaultValue: D | T \| D — same as `value ?? defaultValue`. |
-| safeDef | value: string \| null \| undefined | string \| undefined — also treats `""` as empty. |
-| safeNum | value: number \| null \| undefined | number \| undefined — NaN becomes undefined. |
+| safeNullable | value: Nilable\<T\> | Nullable\<T\> — undefined → null. |
+| safeMaybe | value: Nilable\<T\> | Maybe\<T\> — null → undefined; same as `value ?? undefined`. |
+| safeNilable | value: Emptyable\<T\> (T extends string) | Nilable\<T\> — "" → undefined. |
+| safeArray | value: Nilable\<Array\<T\>\>, defaultValue?: Array\<T\> | Array\<T\> — null/undefined → [] or defaultValue. |
+| safeZeroable | value: Nilable\<number\> | Zeroable\<number\> — null/undefined → 0. |
+| safeStringable | value: Emptyable\<T\> (T extends string) | Stringable\<T\> — null/undefined/"" → "". |
+| safeOr | value: Nilable\<T\>, defaultValue: D | T \| D — same as `value ?? defaultValue`. |
+| safeNum | value: number \| null \| undefined | Maybe\<number\> — null/undefined/NaN → undefined. |
 
 ---
 
 ## Example
 
 ```ts
-safe(product.price);           // instead of product.price ?? undefined
+safeNullable(apiResponse.data);   // undefined → null
+safeMaybe(product.price);         // instead of product.price ?? undefined
+safeNilable(product.remark);       // "" → undefined
+safeArray(product.tags);          // product.tags ?? []
+safeArray(product.tags, ["default"]);
+safeZeroable(product.stock);      // instead of product.stock ?? 0
+safeStringable(product.name);     // instead of product.name ?? ""
 safeOr(product.stock, 0);
 safeOr(product.name, "");
-safeDef(product.remark);       // "" → undefined
-safeNum(product.price);
+safeNum(product.price);          // strict: only number or undefined
 ```
 
 ---
@@ -40,20 +58,28 @@ safeNum(product.price);
 ```vue
 <script setup lang="ts">
 import { computed } from "vue";
-import { safe, safeOr, safeDef, safeNum } from "nfx-ui/utils";
+import {
+  safeMaybe,
+  safeZeroable,
+  safeStringable,
+  safeNilable,
+  safeArray,
+  safeNum,
+} from "nfx-ui/utils";
 
 const props = defineProps<{
   price?: number | null;
   stock?: number | null;
   name?: string | null;
   remark?: string | null;
+  tags?: string[] | null;
 }>();
 
-// Use in template or computed — avoid writing props.price ?? undefined
-const displayPrice = computed(() => safe(props.price));
-const displayStock = computed(() => safeOr(props.stock, 0));
-const displayName = computed(() => safeOr(props.name, ""));
-const displayRemark = computed(() => safeDef(props.remark));
+const displayPrice = computed(() => safeMaybe(props.price));
+const displayStock = computed(() => safeZeroable(props.stock));
+const displayName = computed(() => safeStringable(props.name));
+const displayRemark = computed(() => safeNilable(props.remark));
+const displayTags = computed(() => safeArray(props.tags));
 const validPrice = computed(() => safeNum(props.price));
 </script>
 
@@ -62,7 +88,8 @@ const validPrice = computed(() => safeNum(props.price));
     <span>{{ displayPrice }}</span>
     <span>{{ displayStock }}</span>
     <span>{{ displayName }}</span>
-    <span>{{ displayRemark ?? '-' }}</span>
+    <span>{{ displayRemark ?? "-" }}</span>
+    <span>{{ displayTags.join(", ") }}</span>
   </div>
 </template>
 ```
@@ -73,14 +100,23 @@ const validPrice = computed(() => safeNum(props.price));
 
 # Safe 工具
 
-将 `null`/`undefined` 规范为 `undefined`（或默认值），可写 `safe(product.price)` 代替 `product.price ?? undefined`。
+将 `Nilable` / `Emptyable` / 数组等规范为 `Nullable`、`Maybe`、`Zeroable`、`Stringable`、`Array`。用 `safeMaybe(product.price)` 代替 `product.price ?? undefined`，用 `safeZeroable(product.stock)` 代替 `product.stock ?? 0` 等。返回类型与 `nfx-ui/types` 一致（Nullable、Maybe、Nilable、Zeroable、Stringable、Array）。
 
 ---
 
 ## 引入
 
 ```ts
-import { safe, safeOr, safeDef, safeNum } from "nfx-ui/utils";
+import {
+  safeNullable,
+  safeMaybe,
+  safeNilable,
+  safeArray,
+  safeZeroable,
+  safeStringable,
+  safeOr,
+  safeNum,
+} from "nfx-ui/utils";
 ```
 
 ---
@@ -89,21 +125,30 @@ import { safe, safeOr, safeDef, safeNum } from "nfx-ui/utils";
 
 | 函数 | 参数 | 输出 |
 |------|------|------|
-| safe | value: T \| null \| undefined | T \| undefined — 等同 `value ?? undefined`。 |
-| safeOr | value, defaultValue | T \| D — 等同 `value ?? defaultValue`。 |
-| safeDef | value: string \| null \| undefined | string \| undefined — 空串 `""` 也视为无值。 |
-| safeNum | value: number \| null \| undefined | number \| undefined — NaN 转为 undefined。 |
+| safeNullable | value: Nilable\<T\> | Nullable\<T\> — undefined 转为 null。 |
+| safeMaybe | value: Nilable\<T\> | Maybe\<T\> — null 转为 undefined；等同 `value ?? undefined`。 |
+| safeNilable | value: Emptyable\<T\>（T extends string） | Nilable\<T\> — 空串 "" 转为 undefined。 |
+| safeArray | value: Nilable\<Array\<T\>\>，defaultValue?: Array\<T\> | Array\<T\> — null/undefined 转为 [] 或 defaultValue。 |
+| safeZeroable | value: Nilable\<number\> | Zeroable\<number\> — null/undefined 转为 0。 |
+| safeStringable | value: Emptyable\<T\>（T extends string） | Stringable\<T\> — null/undefined/"" 转为 ""。 |
+| safeOr | value: Nilable\<T\>，defaultValue: D | T \| D — 等同 `value ?? defaultValue`。 |
+| safeNum | value: number \| null \| undefined | Maybe\<number\> — null/undefined/NaN 转为 undefined。 |
 
 ---
 
 ## 示例
 
 ```ts
-safe(product.price);           // 代替 product.price ?? undefined
+safeNullable(apiResponse.data);   // undefined → null
+safeMaybe(product.price);         // 代替 product.price ?? undefined
+safeNilable(product.remark);      // "" → undefined
+safeArray(product.tags);         // product.tags ?? []
+safeArray(product.tags, ["default"]);
+safeZeroable(product.stock);     // 代替 product.stock ?? 0
+safeStringable(product.name);    // 代替 product.name ?? ""
 safeOr(product.stock, 0);
 safeOr(product.name, "");
-safeDef(product.remark);       // "" → undefined
-safeNum(product.price);
+safeNum(product.price);         // 严格：仅 number 或 undefined
 ```
 
 ---
@@ -113,20 +158,28 @@ safeNum(product.price);
 ```vue
 <script setup lang="ts">
 import { computed } from "vue";
-import { safe, safeOr, safeDef, safeNum } from "nfx-ui/utils";
+import {
+  safeMaybe,
+  safeZeroable,
+  safeStringable,
+  safeNilable,
+  safeArray,
+  safeNum,
+} from "nfx-ui/utils";
 
 const props = defineProps<{
   price?: number | null;
   stock?: number | null;
   name?: string | null;
   remark?: string | null;
+  tags?: string[] | null;
 }>();
 
-// 用 safe 系列替代 props.xxx ?? undefined
-const displayPrice = computed(() => safe(props.price));
-const displayStock = computed(() => safeOr(props.stock, 0));
-const displayName = computed(() => safeOr(props.name, ""));
-const displayRemark = computed(() => safeDef(props.remark));
+const displayPrice = computed(() => safeMaybe(props.price));
+const displayStock = computed(() => safeZeroable(props.stock));
+const displayName = computed(() => safeStringable(props.name));
+const displayRemark = computed(() => safeNilable(props.remark));
+const displayTags = computed(() => safeArray(props.tags));
 const validPrice = computed(() => safeNum(props.price));
 </script>
 
@@ -135,7 +188,8 @@ const validPrice = computed(() => safeNum(props.price));
     <span>{{ displayPrice }}</span>
     <span>{{ displayStock }}</span>
     <span>{{ displayName }}</span>
-    <span>{{ displayRemark ?? '-' }}</span>
+    <span>{{ displayRemark ?? "-" }}</span>
+    <span>{{ displayTags.join(", ") }}</span>
   </div>
 </template>
 ```

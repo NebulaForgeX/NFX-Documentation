@@ -1,5 +1,8 @@
 # NFX-UI — Component and module docs
 
+[![npm version](https://img.shields.io/npm/v/nfx-ui.svg)](https://www.npmjs.com/package/nfx-ui)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue.svg)](https://www.typescriptlang.org/)
+
 **NFX-UI** is the shared frontend UI library of the NebulaForgeX ecosystem (React components, design tokens, theme, layouts, i18n, utilities). Modules map to **16 folders under src/**; each component/export has its own doc for usage and props.
 
 ---
@@ -127,6 +130,9 @@ UNLICENSED (private use). Change the license in `package.json` if you publish.
 ---
 
 # NFX-UI — 组件与模块文档
+
+[![npm version](https://img.shields.io/npm/v/nfx-ui.svg)](https://www.npmjs.com/package/nfx-ui)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue.svg)](https://www.typescriptlang.org/)
 
 **NFX-UI** 是 NebulaForgeX 生态的统一前端 UI 库，提供 React 组件、设计令牌、主题系统、布局基元、多语言与工具函数。按模块划分，与 **src 下 16 个文件夹** 一一对应；每个组件/导出有单独说明文件，便于查阅用法与 Props。
 

@@ -77,6 +77,7 @@ formatDisplayDate("2025-02-27");
 | apiError | API error parse | [api-error.md](./api-error.md) |
 | array | Array merge/prune | [array.md](./array.md) |
 | colors | Color convert/interpolate | [colors.md](./colors.md) |
+| random | Random helpers | [random.md](./random.md) |
 | email | Email validate | [email.md](./email.md) |
 | form | Form value convert | [form.md](./form.md) |
 | object | Object utils (omit) | [object.md](./object.md) |
@@ -176,6 +177,7 @@ formatDisplayDate("2025-02-27");
 | apiError | API 错误解析 | [api-error.md](./api-error.md) |
 | array | 数组合并、裁剪 | [array.md](./array.md) |
 | colors | 颜色转换、插值 | [colors.md](./colors.md) |
+| random | 随机工具 | [random.md](./random.md) |
 | email | 邮箱校验 | [email.md](./email.md) |
 | form | 表单值转换 | [form.md](./form.md) |
 | object | omit 等对象工具 | [object.md](./object.md) |

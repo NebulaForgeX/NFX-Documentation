@@ -93,6 +93,7 @@ formatDisplayDate("2025-02-27");
 | time | Date/time format | [time.md](./time.md) |
 | types | createMap and type/runtime utils | [types.md](./types.md) |
 | lstorage | getItem / setItem / removeItem | [lstorage.md](./lstorage.md) |
+| idle | scheduleBrowserIdleTask | [idle.md](./idle.md) |
 
 ---
 
@@ -193,3 +194,4 @@ formatDisplayDate("2025-02-27");
 | time | 日期时间格式化 | [time.md](./time.md) |
 | types | createMap 等类型/运行时工具 | [types.md](./types.md) |
 | lstorage | 本地存储封装 getItem / setItem / removeItem | [lstorage.md](./lstorage.md) |
+| idle | scheduleBrowserIdleTask | [idle.md](./idle.md) |

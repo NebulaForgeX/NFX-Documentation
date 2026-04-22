@@ -31,7 +31,7 @@ Theme Provider, useTheme, theme enums, CSS variables, and color tokens. Paramete
 | **Forest** | Light | `#15803D` Green | Organic nature green + emerald |
 | **Coffee** | Dark | `#C49A6C` Caramel | Warm earth brown + cream |
 | **Wine** | Dark | `#9F1239` Rose | Burgundy/rose + deep red |
-| **Wheat** | Light | `#B45309` Amber | Golden harvest + warm cream |
+| **Wheat** | Light | `#A16207` Yellow | Same white/gray base as Default; yellow primary |
 
 ---
 
@@ -199,7 +199,7 @@ const primary = currentTheme.colors.variables.primary;
 | **Forest** | 浅色 | `#15803D` 翠绿 | 自然有机绿 + 翡翠渐变 |
 | **Coffee** | 深色 | `#C49A6C` 拿铁 | 暖棕大地色 + 奶油文字 |
 | **Wine** | 深色 | `#9F1239` 酒红 | 勃艮第/玫瑰 + 深红背景 |
-| **Wheat** | 浅色 | `#B45309` 琥珀 | 丰收金黄 + 暖奶油底 |
+| **Wheat** | 浅色 | `#A16207` 黄 | 与 Default 相同白底灰阶；主色为黄 |
 
 ---
 

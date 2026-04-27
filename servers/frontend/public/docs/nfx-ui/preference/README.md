@@ -14,7 +14,6 @@ Constants, types and helpers for user preference (e.g. dashboard background, par
 | Preference | Preference type |
 | parsePreferenceJson | Parse preference from JSON |
 | preferenceToJson | Serialize preference to JSON |
-| getDefaultPreference | Get default preference object |
 
 ---
 
@@ -24,7 +23,7 @@ Constants, types and helpers for user preference (e.g. dashboard background, par
 import {
   DashboardBackgroundEnum,
   parsePreferenceJson,
-  getDefaultPreference,
+  preferenceToJson,
   type Preference,
 } from "nfx-ui/preference";
 ```
@@ -49,7 +48,6 @@ import {
 | Preference | 偏好对象类型 |
 | parsePreferenceJson | 从 JSON 字符串解析偏好 |
 | preferenceToJson | 将偏好序列化为 JSON |
-| getDefaultPreference | 获取默认偏好对象 |
 
 ---
 
@@ -59,7 +57,7 @@ import {
 import {
   DashboardBackgroundEnum,
   parsePreferenceJson,
-  getDefaultPreference,
+  preferenceToJson,
   type Preference,
 } from "nfx-ui/preference";
 ```

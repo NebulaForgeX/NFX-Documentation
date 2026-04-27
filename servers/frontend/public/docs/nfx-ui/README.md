@@ -27,7 +27,7 @@ All sub-docs include **descriptions**, **parameter tables** (Parameter | Type | 
 | [languages](./languages/) | LanguageProvider, getLocalLanguage, LanguageEnum, useLanguageLabel, useThemeLabel | `nfx-ui/languages` |
 | [layouts](./layouts/) | LayoutProvider, Sidebar, Header, Footer, Background, etc. | `nfx-ui/layouts` |
 | [navigations](./navigations/) | defineRouter, createRouter, isActiveRoute, matchRoute, RouteKey, RoutePath | `nfx-ui/navigations` |
-| [preference](./preference/) | DashboardBackgroundEnum, parsePreferenceJson, getDefaultPreference | `nfx-ui/preference` |
+| [preference](./preference/) | DashboardBackgroundEnum, parsePreferenceJson, preferenceToJson | `nfx-ui/preference` |
 | [services](./services/) | compressImage, etc. | `nfx-ui/services` |
 | [stores](./stores/) | makeStore, makePersistStore | `nfx-ui/stores` |
 | [themes](./themes/) | ThemeProvider, useTheme, theme enums and variables | `nfx-ui/themes` |
@@ -68,7 +68,7 @@ This package **only exposes subpath exports**; import from the relevant subpath 
 | `nfx-ui/components` | Button, Input, Dropdown, Icon, Slider, VirtualList, SlideDownSwitcher, etc. |
 | `nfx-ui/animations` | ECGLoading, TruckLoading, WaveBackground, SquareBackground, etc. |
 | `nfx-ui/hooks` | makeUnifiedQuery, makeUnifiedInfiniteQuery, makeCursorFetchFunction, etc. |
-| `nfx-ui/preference` | DashboardBackgroundEnum, parsePreferenceJson, getDefaultPreference |
+| `nfx-ui/preference` | DashboardBackgroundEnum, parsePreferenceJson, preferenceToJson |
 | `nfx-ui/stores` | makeStore, makePersistStore |
 | `nfx-ui/apis` | path, PathNode |
 | `nfx-ui/events` | EventEmitter, defineEvents |
@@ -158,7 +158,7 @@ UNLICENSED (private use). Change the license in `package.json` if you publish.
 | [languages](./languages/) | LanguageProvider、getLocalLanguage、LanguageEnum、useLanguageLabel、useThemeLabel | `nfx-ui/languages` |
 | [layouts](./layouts/) | LayoutProvider、Sidebar、Header、Footer、Background 等 | `nfx-ui/layouts` |
 | [navigations](./navigations/) | defineRouter、createRouter、isActiveRoute、matchRoute、RouteKey、RoutePath | `nfx-ui/navigations` |
-| [preference](./preference/) | DashboardBackgroundEnum、parsePreferenceJson、getDefaultPreference | `nfx-ui/preference` |
+| [preference](./preference/) | DashboardBackgroundEnum、parsePreferenceJson、preferenceToJson | `nfx-ui/preference` |
 | [services](./services/) | compressImage 等 | `nfx-ui/services` |
 | [stores](./stores/) | makeStore、makePersistStore | `nfx-ui/stores` |
 | [themes](./themes/) | ThemeProvider、useTheme、主题枚举与变量 | `nfx-ui/themes` |

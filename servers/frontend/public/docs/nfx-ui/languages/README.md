@@ -1,6 +1,6 @@
 # Languages — i18n
 
-i18n Provider, label hooks and helpers. Parameters and examples in sub-docs.
+i18n Provider, setup helpers, label hooks and storage utils. Parameters and examples in sub-docs.
 
 ---
 
@@ -8,12 +8,22 @@ i18n Provider, label hooks and helpers. Parameters and examples in sub-docs.
 
 | Name | Description | Doc |
 |------|-------------|-----|
-| LanguageProvider | i18n context and resources; sync init on first render; merges built-in theme/language/layout/preference | [language-provider.md](./language-provider.md) |
-| LanguageSwitcher | Language switcher (use SlideDownSwitcher with useLanguageLabel) | [language-switcher.md](./language-switcher.md) |
+| LanguageProvider | i18n context; sync init on first render | [language-provider.md](./language-provider.md) |
+| Language switcher recipe | SlideDownSwitcher + useLanguageLabel + changeLanguage | [language-switcher.md](./language-switcher.md) |
+
+## Setup
+
+| API | Description | Doc |
+|-----|-------------|-----|
+| `createI18nResources` | Build `RESOURCES` / `NAME_SPACES` from your JSON | [i18n-setup.md](./i18n-setup.md) |
+| `initI18n` | Initialize i18next (called by LanguageProvider) | [i18n-setup.md](./i18n-setup.md) |
+| `changeLanguage` | Switch language and persist to storage | [i18n-setup.md](./i18n-setup.md) |
+| `getDefaultNfxBundles` | Built-in theme/language/layout/preference bundles | [i18n-setup.md](./i18n-setup.md) |
+| `i18n` | i18next singleton instance | [i18n-setup.md](./i18n-setup.md) |
 
 ## Built-in namespaces
 
-On init, LanguageProvider merges built-in **theme**, **language**, **layout**, **preference** bundles. You only pass your own bundles; theme/language/layout switcher labels work out of the box.
+`NFX_NAMESPACES`: `theme`, `language`, `layout`, `preference` (en / zh / fr). Merged automatically on `initI18n`; switcher labels work out of the box.
 
 ## Label hooks
 
@@ -21,16 +31,29 @@ On init, LanguageProvider merges built-in **theme**, **language**, **layout**, *
 |-----------------|-------------|-----|
 | useLanguageLabel / getLanguageDisplayName | Language enum display name | [label-hooks.md](./label-hooks.md) |
 | useLayoutLabel / getLayoutDisplayName | Layout mode display name | [label-hooks.md](./label-hooks.md) |
-| usePreferenceLabel / getPreferenceDisplayName | Preference/Base display name | [label-hooks.md](./label-hooks.md) |
+| usePreferenceLabel / getPreferenceDisplayName | Base/preference display name | [label-hooks.md](./label-hooks.md) |
 | useThemeLabel / getThemeDisplayName | Theme enum display name | [label-hooks.md](./label-hooks.md) |
 
 ## Utils
 
-- `getLocalLanguage`: get local language. See [get-local-language.md](./get-local-language.md).
+| Function | Description | Doc |
+|----------|-------------|-----|
+| `getLocalLanguage` | Resolve language from storage → navigator → default | [get-local-language.md](./get-local-language.md) |
+| `getLanguageStorage` | Read `language-storage` | below |
+| `setLanguageStorage` | Write `language-storage` | below |
+| `removeLanguageStorage` | Clear `language-storage` | below |
+
+```tsx
+import {
+  getLanguageStorage,
+  setLanguageStorage,
+  removeLanguageStorage,
+} from "nfx-ui/languages";
+```
 
 ## Types
 
-- `LanguageEnum`, `CreateI18nResourcesResult`, `ExtraBundleItem`, and other i18n types from `nfx-ui/languages`.
+`LanguageEnum`, `LanguageProviderProps`, `LanguageSwitcherProps`, `CreateI18nResourcesResult`, `InitI18nOptions`, `ExtraBundleItem`, `onLoadExtraBundles`, etc. from `nfx-ui/languages`.
 
 ---
 
@@ -39,16 +62,19 @@ On init, LanguageProvider merges built-in **theme**, **language**, **layout**, *
 ```tsx
 import {
   LanguageProvider,
-  getLocalLanguage,
   LanguageEnum,
+  createI18nResources,
+  changeLanguage,
+  initI18n,
+  i18n,
+  getDefaultNfxBundles,
+  NFX_NAMESPACES,
+  getLocalLanguage,
+  getLanguageStorage,
   useLanguageLabel,
   useLayoutLabel,
   usePreferenceLabel,
   useThemeLabel,
-  getLanguageDisplayName,
-  getLayoutDisplayName,
-  getPreferenceDisplayName,
-  getThemeDisplayName,
 } from "nfx-ui/languages";
 ```
 
@@ -58,7 +84,7 @@ import {
 
 # 语言与 i18n
 
-多语言 Provider、展示名 Hooks 与工具方法。参数与示例见子文档。
+多语言 Provider、初始化工具、展示名 Hooks 与存储工具。参数与示例见子文档。
 
 ---
 
@@ -66,29 +92,52 @@ import {
 
 | 名称 | 说明 | 文档 |
 |------|------|------|
-| LanguageProvider | i18n 上下文与资源；首次渲染同步初始化；自动合并内置 theme/language/layout/preference | [language-provider.md](./language-provider.md) |
-| LanguageSwitcher | 语言切换（使用 SlideDownSwitcher + useLanguageLabel） | [language-switcher.md](./language-switcher.md) |
+| LanguageProvider | i18n 上下文；首次渲染同步初始化 | [language-provider.md](./language-provider.md) |
+| 语言切换配方 | SlideDownSwitcher + useLanguageLabel + changeLanguage | [language-switcher.md](./language-switcher.md) |
+
+## 初始化
+
+| API | 说明 | 文档 |
+|-----|------|------|
+| `createI18nResources` | 从自建 JSON 生成 `RESOURCES` / `NAME_SPACES` | [i18n-setup.md](./i18n-setup.md) |
+| `initI18n` | 初始化 i18next（由 LanguageProvider 调用） | [i18n-setup.md](./i18n-setup.md) |
+| `changeLanguage` | 切换语言并持久化 | [i18n-setup.md](./i18n-setup.md) |
+| `getDefaultNfxBundles` | 内置 theme/language/layout/preference 文案包 | [i18n-setup.md](./i18n-setup.md) |
+| `i18n` | i18next 单例实例 | [i18n-setup.md](./i18n-setup.md) |
 
 ## 内置命名空间
 
-LanguageProvider 初始化时会自动合并 NFX-UI 自带的四类 JSON：**theme**、**language**、**layout**、**preference**。使用方只需传入自己的 `bundles`；主题/语言/布局切换器文案无需额外配置。
+`NFX_NAMESPACES`：`theme`、`language`、`layout`、`preference`（en / zh / fr）。`initI18n` 时自动合并；切换器文案开箱即用。
 
-## Hooks（展示名）
+## 展示名 Hooks
 
 | Hook / 函数 | 说明 | 文档 |
 |-------------|------|------|
 | useLanguageLabel / getLanguageDisplayName | 语言枚举展示名 | [label-hooks.md](./label-hooks.md) |
 | useLayoutLabel / getLayoutDisplayName | 布局模式展示名 | [label-hooks.md](./label-hooks.md) |
-| usePreferenceLabel / getPreferenceDisplayName | 偏好/Base 展示名 | [label-hooks.md](./label-hooks.md) |
+| usePreferenceLabel / getPreferenceDisplayName | Base/偏好展示名 | [label-hooks.md](./label-hooks.md) |
 | useThemeLabel / getThemeDisplayName | 主题枚举展示名 | [label-hooks.md](./label-hooks.md) |
 
 ## 工具
 
-- `getLocalLanguage`：获取本地语言。见 [get-local-language.md](./get-local-language.md)。
+| 函数 | 说明 | 文档 |
+|------|------|------|
+| `getLocalLanguage` | 存储 → 浏览器 → 默认 解析语言 | [get-local-language.md](./get-local-language.md) |
+| `getLanguageStorage` | 读取 `language-storage` | 见下 |
+| `setLanguageStorage` | 写入 `language-storage` | 见下 |
+| `removeLanguageStorage` | 清除 `language-storage` | 见下 |
+
+```tsx
+import {
+  getLanguageStorage,
+  setLanguageStorage,
+  removeLanguageStorage,
+} from "nfx-ui/languages";
+```
 
 ## 类型
 
-- `LanguageEnum`、`CreateI18nResourcesResult`、`ExtraBundleItem` 等 i18n 相关类型从 `nfx-ui/languages` 引入。
+`LanguageEnum`、`LanguageProviderProps`、`LanguageSwitcherProps`、`CreateI18nResourcesResult`、`InitI18nOptions`、`ExtraBundleItem`、`onLoadExtraBundles` 等从 `nfx-ui/languages` 引入。
 
 ---
 
@@ -97,15 +146,18 @@ LanguageProvider 初始化时会自动合并 NFX-UI 自带的四类 JSON：**the
 ```tsx
 import {
   LanguageProvider,
-  getLocalLanguage,
   LanguageEnum,
+  createI18nResources,
+  changeLanguage,
+  initI18n,
+  i18n,
+  getDefaultNfxBundles,
+  NFX_NAMESPACES,
+  getLocalLanguage,
+  getLanguageStorage,
   useLanguageLabel,
   useLayoutLabel,
   usePreferenceLabel,
   useThemeLabel,
-  getLanguageDisplayName,
-  getLayoutDisplayName,
-  getPreferenceDisplayName,
-  getThemeDisplayName,
 } from "nfx-ui/languages";
 ```

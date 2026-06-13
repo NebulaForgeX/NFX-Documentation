@@ -15,14 +15,14 @@ Import by name from **`nfx-ui/components`**; no separate CSS. All components sup
 | Icon | Icon wrapper | [icon.md](./icon.md) |
 | SearchInput | Search input | [search-input.md](./search-input.md) |
 | ShowFilter | Filter/visibility control | [show-filter.md](./show-filter.md) |
-| SlideDownSwitcher | Collapsible toggle | [slide-down-switcher.md](./slide-down-switcher.md) |
+| SlideDownSwitcher | Dropdown value switcher | [slide-down-switcher.md](./slide-down-switcher.md) |
 | Slider | Slider | [slider.md](./slider.md) |
 | Suspense | Suspense boundary and error UI | [suspense.md](./suspense.md) |
 | KeyValueEditor | Key-value editor | [key-value-editor.md](./key-value-editor.md) |
 | VirtualList | Virtual list | [virtual-list.md](./virtual-list.md) |
-| VirtualWindowList | Virtual list in container | [virtual-window-list.md](./virtual-window-list.md) |
-
-*Note: Theme and layout switchers are also available; see [themes](../themes/) and [layouts](../layouts/) for details.*
+| VirtualWindowList | Virtual list in window scroll | [virtual-window-list.md](./virtual-window-list.md) |
+| ThemeSwitcher | Theme switcher (requires ThemeProvider) | [theme-switcher.md](./theme-switcher.md) |
+| LayoutSwitcher | Layout mode switcher (requires LayoutProvider) | [layout-switcher.md](./layout-switcher.md) |
 
 ---
 
@@ -43,6 +43,8 @@ import {
   KeyValueEditor,
   VirtualList,
   VirtualWindowList,
+  ThemeSwitcher,
+  LayoutSwitcher,
 } from "nfx-ui/components";
 ```
 
@@ -67,14 +69,14 @@ import {
 | Icon | 图标封装 | [icon.md](./icon.md) |
 | SearchInput | 搜索输入框 | [search-input.md](./search-input.md) |
 | ShowFilter | 筛选展示控件 | [show-filter.md](./show-filter.md) |
-| SlideDownSwitcher | 折叠切换 | [slide-down-switcher.md](./slide-down-switcher.md) |
+| SlideDownSwitcher | 下拉取值切换器 | [slide-down-switcher.md](./slide-down-switcher.md) |
 | Slider | 滑块 | [slider.md](./slider.md) |
 | Suspense | 统一 Suspense 边界与错误态 | [suspense.md](./suspense.md) |
 | KeyValueEditor | 键值对编辑 | [key-value-editor.md](./key-value-editor.md) |
 | VirtualList | 虚拟列表 | [virtual-list.md](./virtual-list.md) |
-| VirtualWindowList | 窗口内虚拟列表 | [virtual-window-list.md](./virtual-window-list.md) |
-
-**说明**：主题/布局切换器亦可从相关模块引入，详见 [themes](../themes/)、[layouts](../layouts/) 文档。
+| VirtualWindowList | 窗口滚动虚拟列表 | [virtual-window-list.md](./virtual-window-list.md) |
+| ThemeSwitcher | 主题切换（需 ThemeProvider） | [theme-switcher.md](./theme-switcher.md) |
+| LayoutSwitcher | 布局模式切换（需 LayoutProvider） | [layout-switcher.md](./layout-switcher.md) |
 
 ---
 
@@ -95,5 +97,7 @@ import {
   KeyValueEditor,
   VirtualList,
   VirtualWindowList,
+  ThemeSwitcher,
+  LayoutSwitcher,
 } from "nfx-ui/components";
 ```

@@ -1,15 +1,22 @@
 # Hooks module
 
-Unified query Hook factories (single-item, infinite list), cursor fetch, and type definitions. Exported from `nfx-ui/hooks` (external); types from `nfx-ui/types`. In repo: `@/hooks`.
+Unified query Hook factories (single-item, infinite list), cursor fetch, query mode constants, and hook-specific type definitions. Exported from `nfx-ui/hooks`. List DTO and offset/limit types from `nfx-ui/types`. In repo: `@/hooks`.
 
 ---
 
 ## Entry
 
 ```ts
-import type { FetchNumberListParams, InfiniteQueryOptions, SuspenseInfiniteQueryOptions } from "nfx-ui/types";
-import type { ListDTOWithNextCursor, ListDTOWithTotalNumber } from "nfx-ui/types";
-import { makeCursorFetchFunction, makeStringCursorFetchFunction, makeUnifiedInfiniteQuery, makeUnifiedQuery } from "nfx-ui/hooks";
+import type { ListDTOWithNextCursor, ListDTOWithTotalNumber, OffsetLimitNumber, OffsetLimitString } from "nfx-ui/types";
+import type { FetchNumberListParams, FetchStringListParams, InfiniteQueryOptions, SuspenseInfiniteQueryOptions } from "nfx-ui/hooks";
+import {
+  NORMAL,
+  SUSPENSE,
+  makeCursorFetchFunction,
+  makeStringCursorFetchFunction,
+  makeUnifiedInfiniteQuery,
+  makeUnifiedQuery,
+} from "nfx-ui/hooks";
 ```
 
 ---
@@ -125,16 +132,37 @@ See [make-string-cursor-fetch-function.md](./make-string-cursor-fetch-function.m
 
 ---
 
+## Query mode constants
+
+| Name | Value | Description |
+|------|-------|-------------|
+| NORMAL | `"normal"` | useQuery mode; supports `enabled`, etc. |
+| SUSPENSE | `"suspense"` | useSuspenseQuery mode. |
+
+**Example**
+
+```ts
+import { NORMAL, SUSPENSE, makeUnifiedQuery } from "nfx-ui/hooks";
+
+const useProfile = makeUnifiedQuery(fetchProfile, NORMAL);
+const useProfileSuspense = makeUnifiedQuery(fetchProfile, SUSPENSE);
+```
+
+---
+
 ## Type reference
 
-| Type | Description |
-|------|-------------|
-| FetchNumberListParams&lt;F&gt; | F & OffsetLimitNumber (nfx-ui/types). |
-| FetchStringListParams&lt;F&gt; | F & OffsetLimitString (nfx-ui/types). |
-| ListDTOWithTotalNumber&lt;T&gt; | { items: T[], total: number }. |
-| ListDTOWithNextCursor&lt;T&gt; | { items: T[], nextCursor: string }. |
-| InfiniteQueryOptions&lt;T&gt; / SuspenseInfiniteQueryOptions&lt;T&gt; | Infinite query options (no queryKey/queryFn/getNextPageParam/initialPageParam). |
-| NormalUnifiedQueryOptions&lt;T&gt; / SuspenseUnifiedQueryOptions&lt;T&gt; | Single-item query options. |
+| Type | Import from | Description |
+|------|-------------|-------------|
+| FetchNumberListParams&lt;F&gt; | nfx-ui/hooks | F & OffsetLimitNumber. |
+| FetchStringListParams&lt;F&gt; | nfx-ui/hooks | F & OffsetLimitString. |
+| OffsetLimitNumber | nfx-ui/types | { offset: number, limit: number }. |
+| OffsetLimitString | nfx-ui/types | { offset: string, limit: number }. |
+| ListDTOWithTotalNumber&lt;T&gt; | nfx-ui/types | { items: T[], total: number }. |
+| ListDTOWithNextCursor&lt;T&gt; | nfx-ui/types | { items: T[], nextCursor: string }. |
+| InfiniteQueryOptions&lt;T&gt; / SuspenseInfiniteQueryOptions&lt;T&gt; | nfx-ui/hooks | Infinite query options (no queryKey/queryFn/getNextPageParam/initialPageParam). |
+| NormalUnifiedQueryOptions&lt;T&gt; / SuspenseUnifiedQueryOptions&lt;T&gt; | nfx-ui/hooks | Single-item query options. |
+| QueryMode | nfx-ui/hooks | `"normal" \| "suspense"`. |
 
 ---
 
@@ -142,16 +170,23 @@ See [make-string-cursor-fetch-function.md](./make-string-cursor-fetch-function.m
 
 # Hooks 模块文档
 
-统一 Query Hook 工厂（单条查询、无限列表）、游标分页与类型定义。从 `nfx-ui/hooks` 导出（外部使用）；类型从 `nfx-ui/types`。本仓库内可从 `@/hooks` 引用。
+统一 Query Hook 工厂（单条查询、无限列表）、游标分页、查询模式常量与 hooks 专用类型。从 `nfx-ui/hooks` 导出；列表 DTO 与 offset/limit 类型从 `nfx-ui/types`。本仓库内可从 `@/hooks` 引用。
 
 ---
 
 ## 入口
 
 ```ts
-import type { FetchNumberListParams, InfiniteQueryOptions, SuspenseInfiniteQueryOptions } from "nfx-ui/types";
-import type { ListDTOWithNextCursor, ListDTOWithTotalNumber } from "nfx-ui/types";
-import { makeCursorFetchFunction, makeStringCursorFetchFunction, makeUnifiedInfiniteQuery, makeUnifiedQuery } from "nfx-ui/hooks";
+import type { ListDTOWithNextCursor, ListDTOWithTotalNumber, OffsetLimitNumber, OffsetLimitString } from "nfx-ui/types";
+import type { FetchNumberListParams, FetchStringListParams, InfiniteQueryOptions, SuspenseInfiniteQueryOptions } from "nfx-ui/hooks";
+import {
+  NORMAL,
+  SUSPENSE,
+  makeCursorFetchFunction,
+  makeStringCursorFetchFunction,
+  makeUnifiedInfiniteQuery,
+  makeUnifiedQuery,
+} from "nfx-ui/hooks";
 ```
 
 ---
@@ -267,13 +302,34 @@ function makeStringCursorFetchFunction<T, F extends object = Record<string, unkn
 
 ---
 
+## 查询模式常量
+
+| 名称 | 值 | 说明 |
+|------|-----|------|
+| NORMAL | `"normal"` | useQuery 模式，支持 `enabled` 等。 |
+| SUSPENSE | `"suspense"` | useSuspenseQuery 模式。 |
+
+**示例**
+
+```ts
+import { NORMAL, SUSPENSE, makeUnifiedQuery } from "nfx-ui/hooks";
+
+const useProfile = makeUnifiedQuery(fetchProfile, NORMAL);
+const useProfileSuspense = makeUnifiedQuery(fetchProfile, SUSPENSE);
+```
+
+---
+
 ## 类型速查
 
-| 类型 | 说明 |
-|------|------|
-| FetchNumberListParams&lt;F&gt; | F & OffsetLimitNumber（nfx-ui/types）。 |
-| FetchStringListParams&lt;F&gt; | F & OffsetLimitString（nfx-ui/types）。 |
-| ListDTOWithTotalNumber&lt;T&gt; | { items: T[], total: number }。 |
-| ListDTOWithNextCursor&lt;T&gt; | { items: T[], nextCursor: string }。 |
-| InfiniteQueryOptions&lt;T&gt; / SuspenseInfiniteQueryOptions&lt;T&gt; | 无限查询 options（不含 queryKey/queryFn/getNextPageParam/initialPageParam）。 |
-| NormalUnifiedQueryOptions&lt;T&gt; / SuspenseUnifiedQueryOptions&lt;T&gt; | 单条查询 options。 |
+| 类型 | 引入自 | 说明 |
+|------|--------|------|
+| FetchNumberListParams&lt;F&gt; | nfx-ui/hooks | F & OffsetLimitNumber。 |
+| FetchStringListParams&lt;F&gt; | nfx-ui/hooks | F & OffsetLimitString。 |
+| OffsetLimitNumber | nfx-ui/types | { offset: number, limit: number }。 |
+| OffsetLimitString | nfx-ui/types | { offset: string, limit: number }。 |
+| ListDTOWithTotalNumber&lt;T&gt; | nfx-ui/types | { items: T[], total: number }。 |
+| ListDTOWithNextCursor&lt;T&gt; | nfx-ui/types | { items: T[], nextCursor: string }。 |
+| InfiniteQueryOptions&lt;T&gt; / SuspenseInfiniteQueryOptions&lt;T&gt; | nfx-ui/hooks | 无限查询 options。 |
+| NormalUnifiedQueryOptions&lt;T&gt; / SuspenseUnifiedQueryOptions&lt;T&gt; | nfx-ui/hooks | 单条查询 options。 |
+| QueryMode | nfx-ui/hooks | `"normal" \| "suspense"`。 |

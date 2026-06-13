@@ -1,6 +1,6 @@
 # singleton
 
-Singleton wrapper: multiple new of same constructor return same instance.
+Singleton factory: wrap a constructor so multiple `new` calls return the same instance. Throws if later `new` uses different constructor args.
 
 ---
 
@@ -16,14 +16,14 @@ import { singleton } from "nfx-ui/utils";
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| className | Constructor&lt;T&gt; | Yes | — | Class (constructor) to wrap. |
+| className | Constructor&lt;T&gt; | Yes | — | Class (constructor) to wrap; T must extend object. |
 
 ---
 
 ## Input / Output
 
-- **Input:** A class (constructor).
-- **Output:** Wrapped constructor; first new creates instance, later new return same instance.
+- **Input:** A class constructor.
+- **Output:** Proxied constructor; first `new` creates instance, later `new` with same args returns same instance; different args throw.
 
 ---
 
@@ -43,7 +43,7 @@ const b = new SingleMyService();
 
 # singleton — 单例包装
 
-类单例包装：同一构造函数多次 new 得到同一实例。
+单例工厂：包装构造函数，多次 `new` 返回同一实例。若后续 `new` 传入不同参数则 throw。
 
 ---
 
@@ -59,14 +59,14 @@ import { singleton } from "nfx-ui/utils";
 
 | 参数 | 类型 | 必填 | 默认 | 说明 |
 |------|------|------|------|------|
-| className | Constructor&lt;T&gt; | 是 | — | 要包装的类（构造函数）。 |
+| className | Constructor&lt;T&gt; | 是 | — | 要包装的类（构造函数）；T 须为 object。 |
 
 ---
 
 ## 输入 / 输出
 
-- **输入：** className — 一个类（构造函数）。
-- **输出：** 包装后的构造函数；首次 new 创建实例，之后 new 返回同一实例。
+- **输入：** 类构造函数。
+- **输出：** 代理后的构造函数；首次 `new` 创建实例，相同参数再次 `new` 返回同一实例；参数不同则 throw。
 
 ---
 

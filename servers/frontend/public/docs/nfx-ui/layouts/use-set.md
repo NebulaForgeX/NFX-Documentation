@@ -1,71 +1,95 @@
 # useSet
 
-Use inside LayoutProvider to get setter for layout state.
+Internal hook used by `LayoutProvider` to manage `layoutMode` and persist state to `layout-storage`. Not intended for direct use in app code — prefer `useLayout().setLayoutMode`.
 
 ---
 
 ## Import
 
 ```tsx
-import { useSet } from "nfx-ui/layouts";
+import useSet from "nfx-ui/layouts/hooks/useSet"; // internal; prefer useLayout
 ```
 
 ---
 
 ## Parameters
 
-No parameters.
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| defaultLayoutMode | LayoutModeEnum | Yes | — | Fallback when storage is empty or invalid. |
+| sidebarOpen | boolean | Yes | — | Current sidebar open state (synced to storage). |
 
 ---
 
-## Input / Output
+## Return value
 
-- **Input:** None.
-- **Output:** Object with methods to update layout state; see type.
+| Field | Type | Description |
+|-------|------|-------------|
+| layoutMode | LayoutModeEnum | Current layout mode (`SHOW` / `HIDE`). |
+| setLayoutMode | `(mode: LayoutModeEnum) => void` | Update layout mode. |
 
 ---
 
-## Example
+## Behavior
+
+- On mount: reads `getLayoutStorage()`, parses `{ state: { layoutMode, sidebarOpen } }` (legacy `layoutMode` / `sidebarOpen` at root also supported).
+- On change: writes `{ state: { sidebarOpen, layoutMode } }` to `layout-storage` via `setLayoutStorage`.
+
+---
+
+## Example (internal usage in LayoutProvider)
 
 ```tsx
-const setLayout = useSet();
-setLayout({ sidebarVisible: false });
+const { sidebarOpen } = useAction();
+const { layoutMode, setLayoutMode } = useSet({ defaultLayoutMode, sidebarOpen });
 ```
 
 ---
 
 ---
 
-# useSet — 布局更新
+# useSet — 布局模式持久化
 
-在 `LayoutProvider` 下使用，获取用于更新布局状态的 set 方法。
+`LayoutProvider` 内部使用的 Hook，管理 `layoutMode` 并持久化到 `layout-storage`。业务代码请使用 `useLayout().setLayoutMode`，勿直接调用。
 
 ---
 
 ## 引入
 
 ```tsx
-import { useSet } from "nfx-ui/layouts";
+import useSet from "nfx-ui/layouts/hooks/useSet"; // 内部实现；请优先 useLayout
 ```
 
 ---
 
 ## 参数
 
-无参数。
+| 参数 | 类型 | 必填 | 默认 | 说明 |
+|------|------|------|------|------|
+| defaultLayoutMode | LayoutModeEnum | 是 | — | 存储为空或无效时的回退值。 |
+| sidebarOpen | boolean | 是 | — | 当前侧栏开关状态（一并写入存储）。 |
 
 ---
 
-## 输入 / 输出
+## 返回值
 
-- **输入：** 无。
-- **输出：** 包含更新布局状态的方法（如 setLayout({ sidebarVisible })），具体见类型。
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| layoutMode | LayoutModeEnum | 当前布局模式（`SHOW` / `HIDE`）。 |
+| setLayoutMode | `(mode: LayoutModeEnum) => void` | 更新布局模式。 |
 
 ---
 
-## 示例
+## 行为
+
+- 挂载时：读取 `getLayoutStorage()`，解析 `{ state: { layoutMode, sidebarOpen } }`（也兼容根级 `layoutMode` / `sidebarOpen`）。
+- 变更时：通过 `setLayoutStorage` 写入 `{ state: { sidebarOpen, layoutMode } }` 到 `layout-storage`。
+
+---
+
+## 示例（LayoutProvider 内部用法）
 
 ```tsx
-const setLayout = useSet();
-setLayout({ sidebarVisible: false });
+const { sidebarOpen } = useAction();
+const { layoutMode, setLayoutMode } = useSet({ defaultLayoutMode, sidebarOpen });
 ```

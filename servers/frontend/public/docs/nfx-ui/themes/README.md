@@ -9,13 +9,34 @@ Theme Provider, useTheme, theme enums, CSS variables, and color tokens. Paramete
 | Name | Description | Doc |
 |------|-------------|-----|
 | ThemeProvider | Theme context | [theme-provider.md](./theme-provider.md) |
-| ThemeSwitcher | Theme switcher (wraps SlideDownSwitcher) | [theme-switcher.md](./theme-switcher.md) |
+| ThemeSwitcher | Theme switcher (wraps SlideDownSwitcher) | [../components/theme-switcher.md](../components/theme-switcher.md) |
 
 ## Theme data and hooks
 
-- **Data:** themes, defaultTheme, lightTheme, darkTheme, cosmicTheme, corporateTheme, forestTheme, coffeeTheme, wineTheme, wheatTheme, bases (iOS/Android/Windows/Linux, etc.).
-- **Hooks:** useTheme, useThemeVariables (from `nfx-ui/themes`).
-- **Types:** ThemeEnum, BaseEnum, Theme, BaseTheme, ColorVariables, etc.
+- **Data:** `themes` (record keyed by `ThemeEnum`), `bases` (iOS/Android/Windows/Linux), named exports: `defaultTheme`, `darkTheme`, `cosmicTheme`, `corporateTheme`, `forestTheme`, `coffeeTheme`, `wineTheme`.
+- **Access by enum:** `lightTheme` and `wheatTheme` are available via `themes[ThemeEnum.LIGHT]` and `themes[ThemeEnum.WHEAT]` (not separate named exports).
+- **Hooks:** [theme-hooks.md](./theme-hooks.md) — `useTheme`, `useThemeVariables`, `useVariables`, `useBaseVariables`.
+- **Types:** `ThemeEnum`, `BaseEnum`, `Theme`, `ColorVariables`, `BaseVariables`, etc.
+
+## Storage utils
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `getThemeColorStorage` | `() => Nilable<ThemeEnum>` | Read persisted color theme from `theme-color`. |
+| `setThemeColorStorage` | `(value: ThemeEnum) => void` | Write color theme. |
+| `getThemeBaseStorage` | `() => Nilable<BaseEnum>` | Read persisted base theme from `theme-base`. |
+| `setThemeBaseStorage` | `(value: BaseEnum) => void` | Write base theme. |
+| `removeThemeStorage` | `() => void` | Clear both color and base keys. |
+
+```tsx
+import {
+  getThemeColorStorage,
+  setThemeColorStorage,
+  getThemeBaseStorage,
+  setThemeBaseStorage,
+  removeThemeStorage,
+} from "nfx-ui/themes";
+```
 
 ---
 
@@ -33,11 +54,19 @@ Theme Provider, useTheme, theme enums, CSS variables, and color tokens. Paramete
 | **Wine** | Dark | `#9F1239` Rose | Burgundy/rose + deep red |
 | **Wheat** | Light | `#A16207` Yellow | Same white/gray base as Default; yellow primary |
 
+```tsx
+import { themes, ThemeEnum, lightTheme } from "nfx-ui/themes";
+
+// Named exports (subset)
+const light = lightTheme; // or themes[ThemeEnum.LIGHT]
+const wheat = themes[ThemeEnum.WHEAT]; // no wheatTheme named export
+```
+
 ---
 
 ## CSS Variables Reference
 
-All variables are injected into `:root` by `useThemeVariables` and can be used in any CSS file.
+All color variables are injected into `:root` by `useThemeVariables`; base tokens (radius, spacing, typography, etc.) by `useBaseVariables`. See [theme-hooks.md](./theme-hooks.md).
 
 ### Primary
 
@@ -125,19 +154,24 @@ All variables are injected into `:root` by `useThemeVariables` and can be used i
 
 ### Base Variables (non-color)
 
-| CSS Variable | TS Field | Usage |
+Injected by `useBaseVariables`. Examples:
+
+| CSS Variable | TS path | Usage |
 |---|---|---|
-| `--radius-button` | `buttonRadius` | Button border-radius |
-| `--radius-card` | `cardRadius` | Card border-radius |
-| `--radius-input` | `inputRadius` | Input border-radius |
+| `--radius-button` | `radius.button` | Button border-radius |
+| `--radius-card` | `radius.card` | Card border-radius |
+| `--radius-input` | `radius.input` | Input border-radius |
+| `--space-md` | `spacing.md` | Medium spacing |
+| `--font-family-base` | `typography.fontFamilyBase` | Base font family |
+| `--z-modal` | `zIndex.modal` | Modal stacking |
 
 ---
 
 ## Import example
 
 ```tsx
-import { ThemeProvider, useTheme } from "nfx-ui/themes";
-import type { ThemeEnum, ColorVariables, Theme } from "nfx-ui/themes";
+import { ThemeProvider, useTheme, themes, ThemeEnum } from "nfx-ui/themes";
+import type { ColorVariables, Theme } from "nfx-ui/themes";
 ```
 
 ### Access theme in JS
@@ -145,6 +179,9 @@ import type { ThemeEnum, ColorVariables, Theme } from "nfx-ui/themes";
 ```tsx
 const { currentTheme } = useTheme();
 const primary = currentTheme.colors.variables.primary;
+
+// Or directly from themes record
+const wheat = themes[ThemeEnum.WHEAT];
 ```
 
 ### Use in CSS
@@ -155,10 +192,7 @@ const primary = currentTheme.colors.variables.primary;
   border: 1px solid var(--color-border-3);
   box-shadow: 0 2px 8px var(--color-shadow);
   color: var(--color-fg-text);
-}
-
-.card:focus-visible {
-  outline: 2px solid var(--color-ring);
+  border-radius: var(--radius-card);
 }
 ```
 
@@ -177,13 +211,34 @@ const primary = currentTheme.colors.variables.primary;
 | 名称 | 说明 | 文档 |
 |------|------|------|
 | ThemeProvider | 主题上下文 | [theme-provider.md](./theme-provider.md) |
-| ThemeSwitcher | 主题切换控件（封装 SlideDownSwitcher） | [theme-switcher.md](./theme-switcher.md) |
+| ThemeSwitcher | 主题切换控件（封装 SlideDownSwitcher） | [../components/theme-switcher.md](../components/theme-switcher.md) |
 
 ## 主题数据与 Hooks
 
-- **数据**：themes、defaultTheme、lightTheme、darkTheme、cosmicTheme、corporateTheme、forestTheme、coffeeTheme、wineTheme、wheatTheme、bases（iOS/Android/Windows/Linux 等基础主题）。
-- **Hooks**：useTheme、useThemeVariables（从 `nfx-ui/themes` 引入）。
-- **类型**：ThemeEnum、BaseEnum、Theme、BaseTheme、ColorVariables 等。
+- **数据：** `themes`（以 `ThemeEnum` 为键）、`bases`（iOS/Android/Windows/Linux）、命名导出：`defaultTheme`、`darkTheme`、`cosmicTheme`、`corporateTheme`、`forestTheme`、`coffeeTheme`、`wineTheme`。
+- **按枚举访问：** `lightTheme`、`wheatTheme` 通过 `themes[ThemeEnum.LIGHT]`、`themes[ThemeEnum.WHEAT]` 获取（无 `wheatTheme` 命名导出）。
+- **Hooks：** [theme-hooks.md](./theme-hooks.md) — `useTheme`、`useThemeVariables`、`useVariables`、`useBaseVariables`。
+- **类型：** `ThemeEnum`、`BaseEnum`、`Theme`、`ColorVariables`、`BaseVariables` 等。
+
+## 存储工具
+
+| 函数 | 签名 | 说明 |
+|------|------|------|
+| `getThemeColorStorage` | `() => Nilable<ThemeEnum>` | 从 `theme-color` 读取已保存的颜色主题。 |
+| `setThemeColorStorage` | `(value: ThemeEnum) => void` | 写入颜色主题。 |
+| `getThemeBaseStorage` | `() => Nilable<BaseEnum>` | 从 `theme-base` 读取已保存的基础主题。 |
+| `setThemeBaseStorage` | `(value: BaseEnum) => void` | 写入基础主题。 |
+| `removeThemeStorage` | `() => void` | 清除颜色与基础两个键。 |
+
+```tsx
+import {
+  getThemeColorStorage,
+  setThemeColorStorage,
+  getThemeBaseStorage,
+  setThemeBaseStorage,
+  removeThemeStorage,
+} from "nfx-ui/themes";
+```
 
 ---
 
@@ -201,11 +256,18 @@ const primary = currentTheme.colors.variables.primary;
 | **Wine** | 深色 | `#9F1239` 酒红 | 勃艮第/玫瑰 + 深红背景 |
 | **Wheat** | 浅色 | `#A16207` 黄 | 与 Default 相同白底灰阶；主色为黄 |
 
+```tsx
+import { themes, ThemeEnum, lightTheme } from "nfx-ui/themes";
+
+const light = lightTheme; // 或 themes[ThemeEnum.LIGHT]
+const wheat = themes[ThemeEnum.WHEAT]; // 无 wheatTheme 命名导出
+```
+
 ---
 
 ## CSS 变量参考
 
-所有变量由 `useThemeVariables` 注入到 `:root`，可在任意 CSS 文件中使用。
+颜色变量由 `useThemeVariables` 注入 `:root`；基础 token（圆角、间距、字号等）由 `useBaseVariables` 注入。详见 [theme-hooks.md](./theme-hooks.md)。
 
 ### 主色
 
@@ -293,19 +355,24 @@ const primary = currentTheme.colors.variables.primary;
 
 ### 基础变量（非颜色）
 
-| CSS 变量 | TS 字段 | 用途 |
+由 `useBaseVariables` 注入。示例：
+
+| CSS 变量 | TS 路径 | 用途 |
 |----------|---------|------|
-| `--radius-button` | `buttonRadius` | 按钮圆角 |
-| `--radius-card` | `cardRadius` | 卡片圆角 |
-| `--radius-input` | `inputRadius` | 输入框圆角 |
+| `--radius-button` | `radius.button` | 按钮圆角 |
+| `--radius-card` | `radius.card` | 卡片圆角 |
+| `--radius-input` | `radius.input` | 输入框圆角 |
+| `--space-md` | `spacing.md` | 中等间距 |
+| `--font-family-base` | `typography.fontFamilyBase` | 基础字体 |
+| `--z-modal` | `zIndex.modal` | Modal 层级 |
 
 ---
 
 ## 引入示例
 
 ```tsx
-import { ThemeProvider, useTheme } from "nfx-ui/themes";
-import type { ThemeEnum, ColorVariables, Theme } from "nfx-ui/themes";
+import { ThemeProvider, useTheme, themes, ThemeEnum } from "nfx-ui/themes";
+import type { ColorVariables, Theme } from "nfx-ui/themes";
 ```
 
 ### JS 中访问主题
@@ -313,6 +380,8 @@ import type { ThemeEnum, ColorVariables, Theme } from "nfx-ui/themes";
 ```tsx
 const { currentTheme } = useTheme();
 const primary = currentTheme.colors.variables.primary;
+
+const wheat = themes[ThemeEnum.WHEAT];
 ```
 
 ### CSS 中使用
@@ -323,9 +392,6 @@ const primary = currentTheme.colors.variables.primary;
   border: 1px solid var(--color-border-3);
   box-shadow: 0 2px 8px var(--color-shadow);
   color: var(--color-fg-text);
-}
-
-.card:focus-visible {
-  outline: 2px solid var(--color-ring);
+  border-radius: var(--radius-card);
 }
 ```

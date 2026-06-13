@@ -1,6 +1,6 @@
 # SlideDownSwitcher
 
-Collapsible block with title/trigger; content expands or collapses downward. Also used as a value switcher (e.g. theme, layout, language) with `value`, `options`, `getDisplayName`, `onChange`.
+Dropdown value switcher with generic `T extends string` (e.g. enum); used by ThemeSwitcher and LayoutSwitcher.
 
 ---
 
@@ -15,43 +15,48 @@ import type { SlideDownSwitcherProps } from "nfx-ui/components";
 
 ## Parameters
 
+Generic component: `SlideDownSwitcher<T extends string>`.
+
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| title | ReactNode | No | — | Title or trigger text. |
-| open | boolean | No | — | Whether expanded. |
-| onToggle | () => void | No | — | Toggle callback. |
-| children | ReactNode | No | — | Collapsed content. |
-
-When used as value switcher: `value`, `options`, `getDisplayName`, `onChange`, `status`.
+| value | T | Yes | — | Current selected value. |
+| options | readonly T[] | Yes | — | Option list (e.g. `Object.values(SomeEnum)`). |
+| getDisplayName | (value: T) => string | Yes | — | Display label for each option. |
+| onChange | (value: T) => void | Yes | — | Selection callback. |
+| status | `"primary"` \| `"default"` | No | `"primary"` | Visual status. |
 
 ---
 
 ## Input / Output
 
-- **Input:** title, open, onToggle, children (or value, options, getDisplayName, onChange).
-- **Output:** Clicking title/trigger calls onToggle; open controls visibility. Or: displays current value and options, onChange on select.
+- **Input:** value, options, getDisplayName, onChange, status.
+- **Output:** Renders dropdown button showing current label; opens panel with options; calls `onChange` on select and closes panel.
 
 ---
 
 ## Example
 
 ```tsx
-<SlideDownSwitcher
-  title="Advanced options"
-  open={advancedOpen}
-  onToggle={() => setAdvancedOpen((v) => !v)}
->
-  <div>... advanced form ...</div>
-</SlideDownSwitcher>
+type Status = "all" | "active" | "archived";
+
+const [filter, setFilter] = useState<Status>("all");
+
+<SlideDownSwitcher<Status>
+  value={filter}
+  options={["all", "active", "archived"]}
+  getDisplayName={(v) => ({ all: "All", active: "Active", archived: "Archived" }[v])}
+  onChange={setFilter}
+  status="default"
+/>
 ```
 
 ---
 
 ---
 
-# SlideDownSwitcher — 折叠切换
+# SlideDownSwitcher — 下拉切换器
 
-可折叠/展开的区块，带标题或触发区域，内容向下展开或收起。也可作为取值切换器（如主题、布局、语言）使用，配合 `value`、`options`、`getDisplayName`、`onChange`。
+泛型 `T extends string` 的下拉取值切换器（如 enum）；ThemeSwitcher、LayoutSwitcher 基于此组件。
 
 ---
 
@@ -66,32 +71,37 @@ import type { SlideDownSwitcherProps } from "nfx-ui/components";
 
 ## 参数
 
+泛型组件：`SlideDownSwitcher<T extends string>`。
+
 | 参数 | 类型 | 必填 | 默认 | 说明 |
 |------|------|------|------|------|
-| title | ReactNode | 否 | — | 标题或触发区文案。 |
-| open | boolean | 否 | — | 是否展开。 |
-| onToggle | () => void | 否 | — | 切换展开/收起。 |
-| children | ReactNode | 否 | — | 折叠内容。 |
-
-作为取值切换器时：`value`、`options`、`getDisplayName`、`onChange`、`status`。
+| value | T | 是 | — | 当前选中值。 |
+| options | readonly T[] | 是 | — | 可选项列表（如 `Object.values(SomeEnum)`）。 |
+| getDisplayName | (value: T) => string | 是 | — | 各选项展示文案。 |
+| onChange | (value: T) => void | 是 | — | 选中回调。 |
+| status | `"primary"` \| `"default"` | 否 | `"primary"` | 视觉状态。 |
 
 ---
 
 ## 输入 / 输出
 
-- **输入：** title、open、onToggle、children（或 value、options、getDisplayName、onChange）。
-- **输出：** 点击标题/触发区时 onToggle 被调用，open 控制内容显隐。或：展示当前值与选项，选择时触发 onChange。
+- **输入：** value、options、getDisplayName、onChange、status。
+- **输出：** 渲染显示当前文案的下拉按钮；展开选项面板；选择后调用 `onChange` 并关闭面板。
 
 ---
 
 ## 示例
 
 ```tsx
-<SlideDownSwitcher
-  title="高级选项"
-  open={advancedOpen}
-  onToggle={() => setAdvancedOpen((v) => !v)}
->
-  <div>... 高级表单 ...</div>
-</SlideDownSwitcher>
+type Status = "all" | "active" | "archived";
+
+const [filter, setFilter] = useState<Status>("all");
+
+<SlideDownSwitcher<Status>
+  value={filter}
+  options={["all", "active", "archived"]}
+  getDisplayName={(v) => ({ all: "全部", active: "启用", archived: "归档" }[v])}
+  onChange={setFilter}
+  status="default"
+/>
 ```

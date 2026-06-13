@@ -1,6 +1,6 @@
 # Apis module
 
-API path tree: `path`, `PathNode`. Exported from **`nfx-ui/apis`**; consuming apps use `path` to build their own URL_PATHS and API_ENDPOINTS.
+API path tree utilities: `path`, `PathNode`. Exported from **`nfx-ui/apis`** (currently only `ip.ts`). Consuming apps use `path` to build their own URL_PATHS and API_ENDPOINTS.
 
 ---
 
@@ -40,7 +40,7 @@ const URL_PATHS = {
 
 # Apis 模块
 
-API 路径树工具：`path`、`PathNode`。从 **`nfx-ui/apis`** 子路径导出，业务项目用 `path` 构建自己的 URL_PATHS、API_ENDPOINTS。
+API 路径树工具：`path`、`PathNode`。从 **`nfx-ui/apis`** 子路径导出（当前仅 `ip.ts`）。业务项目用 `path` 构建自己的 URL_PATHS、API_ENDPOINTS。
 
 ---
 

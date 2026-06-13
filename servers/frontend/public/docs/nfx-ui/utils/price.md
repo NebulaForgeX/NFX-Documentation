@@ -1,6 +1,6 @@
 # Price utils
 
-Convert between stored and display price; abbreviate numbers.
+Convert between display price (yuan) and database price (cents); format abbreviated numbers.
 
 ---
 
@@ -16,20 +16,21 @@ import { toDatabasePrice, toDisplayPrice, toDisplayPriceNumber, formatNumberAbbr
 
 | Function | Parameters | Output |
 |----------|------------|--------|
-| toDatabasePrice | displayPrice: number | number — value for DB. |
-| toDisplayPrice | databasePrice: number | string — display string. |
-| toDisplayPriceNumber | databasePrice: number | number — display number. |
-| formatNumberAbbreviated | num: number | string — e.g. "1k", "1M". |
+| toDatabasePrice | (displayPrice: number) | number — cents for DB (Math.round(display * 100)). |
+| toDisplayPrice | (databasePrice: number) | string — e.g. `"12.34"` (2 decimal places). |
+| toDisplayPriceNumber | (databasePrice: number) | number — yuan as number. |
+| formatNumberAbbreviated | (num: number) | string — e.g. `"1500"`, `"1.5k+"`, `"3.5M+"`, `"1.1B+"`. |
 
 ---
 
 ## Example
 
 ```ts
-toDatabasePrice(99.99);
-toDisplayPrice(9999);
-toDisplayPriceNumber(9999);
-formatNumberAbbreviated(1500);
+toDatabasePrice(99.99);   // 9999
+toDisplayPrice(9999);     // "99.99"
+toDisplayPriceNumber(9999); // 99.99
+formatNumberAbbreviated(1500); // "1.5k+"
+formatNumberAbbreviated(999);  // "999"
 ```
 
 ---
@@ -38,7 +39,7 @@ formatNumberAbbreviated(1500);
 
 # 价格工具
 
-价格在「存储值」与「展示值」之间的转换与数字缩写。
+展示价（元）与存储价（分）互转，以及数字缩写。
 
 ---
 
@@ -54,18 +55,19 @@ import { toDatabasePrice, toDisplayPrice, toDisplayPriceNumber, formatNumberAbbr
 
 | 函数 | 参数 | 输出 |
 |------|------|------|
-| toDatabasePrice | displayPrice: number | number — 存储用数值。 |
-| toDisplayPrice | databasePrice: number | string — 展示用字符串。 |
-| toDisplayPriceNumber | databasePrice: number | number — 展示用数值。 |
-| formatNumberAbbreviated | num: number | string — 如 "1k", "1M"。 |
+| toDatabasePrice | (displayPrice: number) | number — 数据库存分（Math.round(元 * 100)）。 |
+| toDisplayPrice | (databasePrice: number) | string — 如 `"12.34"`（两位小数）。 |
+| toDisplayPriceNumber | (databasePrice: number) | number — 元为数字。 |
+| formatNumberAbbreviated | (num: number) | string — 如 `"1500"`、`"1.5k+"`、`"3.5M+"`、`"1.1B+"`。 |
 
 ---
 
 ## 示例
 
 ```ts
-toDatabasePrice(99.99);
-toDisplayPrice(9999);
-toDisplayPriceNumber(9999);
-formatNumberAbbreviated(1500);
+toDatabasePrice(99.99);   // 9999
+toDisplayPrice(9999);     // "99.99"
+toDisplayPriceNumber(9999); // 99.99
+formatNumberAbbreviated(1500); // "1.5k+"
+formatNumberAbbreviated(999);  // "999"
 ```

@@ -20,37 +20,28 @@ import {
 
 ---
 
-## Parameters (common)
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| dateString | string \| undefined \| null | Date string (e.g. ISO). |
-
-- **Input:** Date string or null/undefined.
-- **Output:** string — formatted display string.
-
----
-
 ## Functions
 
-| Function | Description |
-|----------|-------------|
-| formatDisplayDate | Display date. |
-| formatRelativeTime | Relative time (e.g. "3 min ago"). |
-| formatTickDate | Tick/chart date. |
-| formatDateTime | Date and time. |
-| formatMonthDayTime | Month/day and time. |
-| formatDate | Date. |
-| formatTime | Time. |
+| Function | Parameters | Output |
+|----------|------------|--------|
+| formatDisplayDate | (dateString?: string \| null) | `YYYY/MM/DD`; empty/invalid → `""`. |
+| formatRelativeTime | (dateString?: string \| null) | Relative English string; empty → `"Unknown"`, invalid → `"Invalid date"`. |
+| formatTickDate | (iso: string) | Locale short date+time for charts; parse fail → original iso. |
+| formatDateTime | (dateString: string) | `YYYY/MM/DD HH:mm`; invalid → original string. |
+| formatMonthDayTime | (dateString: string) | `MM/DD HH:mm`; invalid → original string. |
+| formatDate | (dateString: string) | `YYYY/MM/DD`; invalid → original string. |
+| formatTime | (dateString: string) | `HH:mm`; invalid → original string. |
 
 ---
 
 ## Example
 
 ```ts
-formatDisplayDate("2025-02-27");
-formatRelativeTime("2025-02-27T10:00:00Z");
-formatDateTime("2025-02-27T14:30:00Z");
+formatDisplayDate("2025-02-27");           // "2025/02/27"
+formatDisplayDate(null);                   // ""
+formatRelativeTime("2025-02-27T10:00:00Z"); // e.g. "3 days ago"
+formatDateTime("2025-02-27T14:30:00Z");    // "2025/02/27 14:30"
+formatTickDate("2025-02-27T14:30:00Z");    // locale-dependent
 ```
 
 ---
@@ -79,35 +70,26 @@ import {
 
 ---
 
-## 参数与 Input/Output（通用）
-
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| dateString | string \| undefined \| null | 日期字符串（如 ISO）。 |
-
-- **输入：** 日期字符串或 null/undefined。
-- **输出：** string — 格式化后的展示字符串。
-
----
-
 ## 函数说明
 
-| 函数 | 说明 |
-|------|------|
-| formatDisplayDate | 展示用日期。 |
-| formatRelativeTime | 相对时间（如「3 分钟前」）。 |
-| formatTickDate | 刻度/图表用日期。 |
-| formatDateTime | 日期+时间。 |
-| formatMonthDayTime | 月日+时间。 |
-| formatDate | 日期。 |
-| formatTime | 时间。 |
+| 函数 | 参数 | 输出 |
+|------|------|------|
+| formatDisplayDate | (dateString?: string \| null) | `YYYY/MM/DD`；空/无效 → `""`。 |
+| formatRelativeTime | (dateString?: string \| null) | 英文相对时间；空 → `"Unknown"`，无效 → `"Invalid date"`。 |
+| formatTickDate | (iso: string) | 图表轴/提示用短格式；解析失败 → 原 iso。 |
+| formatDateTime | (dateString: string) | `YYYY/MM/DD HH:mm`；无效 → 原字符串。 |
+| formatMonthDayTime | (dateString: string) | `MM/DD HH:mm`；无效 → 原字符串。 |
+| formatDate | (dateString: string) | `YYYY/MM/DD`；无效 → 原字符串。 |
+| formatTime | (dateString: string) | `HH:mm`；无效 → 原字符串。 |
 
 ---
 
 ## 示例
 
 ```ts
-formatDisplayDate("2025-02-27");
-formatRelativeTime("2025-02-27T10:00:00Z");
-formatDateTime("2025-02-27T14:30:00Z");
+formatDisplayDate("2025-02-27");           // "2025/02/27"
+formatDisplayDate(null);                   // ""
+formatRelativeTime("2025-02-27T10:00:00Z"); // 如 "3 days ago"
+formatDateTime("2025-02-27T14:30:00Z");    // "2025/02/27 14:30"
+formatTickDate("2025-02-27T14:30:00Z");    // 随 locale 变化
 ```

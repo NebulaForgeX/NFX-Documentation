@@ -1,11 +1,6 @@
 # LanguageProvider
 
-Provides i18n context and resources; children use `useTranslation` (react-i18next).
-
-**Behavior**
-
-- **Sync init:** i18n is initialized synchronously on first render before children mount, so any nested component (e.g. modals inside ModalProvider) can safely call `useTranslation`.
-- **Built-in namespaces:** Merges with NFX-UI's built-in theme, language, layout, preference bundles; you only pass your own bundles; ThemeSwitcher, LanguageSwitcher, LayoutSwitcher labels work out of the box.
+Provides i18n context; children use `useTranslation` (react-i18next). Calls `initI18n` synchronously on first render.
 
 ---
 
@@ -13,25 +8,42 @@ Provides i18n context and resources; children use `useTranslation` (react-i18nex
 
 ```tsx
 import { LanguageProvider, LanguageEnum } from "nfx-ui/languages";
+import type { LanguageProviderProps } from "nfx-ui/languages";
 ```
 
 ---
 
-## Parameters
+## Parameters (`LanguageProviderProps`)
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | children | ReactNode | Yes | — | Children. |
-| bundles | CreateI18nResourcesResult | Yes | — | Your bundles from createI18nResources or manual RESOURCES, NAME_SPACES_MAP, NAME_SPACES. |
-| fallbackLng | LanguageEnum | No | LanguageEnum.ZH | Fallback language. |
-| onLoadExtraBundles | (lng: string) => Promise<ExtraBundleItem \| ExtraBundleItem[] \| null \| undefined> | No | — | Fetch extra bundles (e.g. errors) per language; Provider injects them. |
+| bundles | CreateI18nResourcesResult | Yes | — | From `createI18nResources(resources, nameSpacesMap)`. |
+| fallbackLng | LanguageEnum | No | `LanguageEnum.ZH` | Fallback language. |
+| onLoadExtraBundles | `onLoadExtraBundles` | No | — | Fetch extra bundles per language; Provider injects via `addResourceBundle`. |
+
+### `onLoadExtraBundles` signature
+
+```ts
+(lng: LanguageEnum) => Promise<ExtraBundleItem | ExtraBundleItem[] | null | undefined>
+```
+
+Where `ExtraBundleItem = { namespace: string; bundle: Record<string, unknown> }`.
+
+---
+
+## Behavior
+
+- **Sync init:** `initI18n({ bundles, fallbackLng, onLoadExtraBundles })` runs on first render before children mount.
+- **Built-in merge:** `initI18n` merges NFX bundles (`theme`, `language`, `layout`, `preference`) with your `bundles`.
+- **Apply local language:** `useEffect` calls `getLocalLanguage()` → `setLanguageStorage` → `i18n.changeLanguage`.
 
 ---
 
 ## Input / Output
 
-- **Input:** children, bundles (required), fallbackLng, onLoadExtraBundles (optional).
-- **Output:** Initializes i18next (including merge with built-in theme/language/layout/preference); children can use `useTranslation()`; useEffect applies local language (getLocalLanguage + changeLanguage).
+- **Input:** `LanguageProviderProps`.
+- **Output:** i18next ready for `useTranslation`; language persisted on change.
 
 ---
 
@@ -39,11 +51,13 @@ import { LanguageProvider, LanguageEnum } from "nfx-ui/languages";
 
 ```tsx
 import { ThemeProvider, ThemeEnum } from "nfx-ui/themes";
-import { LanguageEnum, LanguageProvider } from "nfx-ui/languages";
+import { LanguageEnum, LanguageProvider, createI18nResources } from "nfx-ui/languages";
 import { LayoutProvider } from "nfx-ui/layouts";
-import { RESOURCES, NAME_SPACES_MAP, NAME_SPACES } from "@/assets/languages/i18nResources";
+import { RESOURCES, NAME_SPACES_MAP } from "@/assets/languages/i18nResources";
 
-async function onLoadExtraBundles(lng: string) {
+const bundles = createI18nResources(RESOURCES, NAME_SPACES_MAP);
+
+async function onLoadExtraBundles(lng: LanguageEnum) {
   const json = await fetch(`/api/locales/${lng}/errors`).then((r) => r.json());
   return json ? { namespace: "errors", bundle: json } : null;
 }
@@ -51,27 +65,25 @@ async function onLoadExtraBundles(lng: string) {
 createRoot(document.getElementById("root")!).render(
   <ThemeProvider defaultTheme={ThemeEnum.DEFAULT}>
     <LanguageProvider
-      bundles={{ RESOURCES, NAME_SPACES_MAP, NAME_SPACES }}
+      bundles={bundles}
       fallbackLng={LanguageEnum.ZH}
       onLoadExtraBundles={onLoadExtraBundles}
     >
       <LayoutProvider>
-        <ModalProvider>
-          <App />
-        </ModalProvider>
+        <App />
       </LayoutProvider>
     </LanguageProvider>
   </ThemeProvider>
 );
 ```
 
-Nested ModalProvider and its children (e.g. AvatarUploadModal in a modal) can use `useTranslation("components")` etc. without NO_I18NEXT_INSTANCE.
+See [i18n-setup.md](./i18n-setup.md) for `createI18nResources` / `initI18n` details.
 
 ---
 
 ## Order with ThemeProvider
 
-Usually ThemeProvider outside, LanguageProvider inside.
+Usually `ThemeProvider` outside, `LanguageProvider` inside.
 
 ---
 
@@ -79,12 +91,7 @@ Usually ThemeProvider outside, LanguageProvider inside.
 
 # LanguageProvider — 语言上下文
 
-提供 i18n 上下文与翻译资源；子组件通过 `useTranslation`（react-i18next）使用。
-
-**行为要点**
-
-- **同步初始化**：在首次渲染时同步执行 `initI18n`，再渲染子节点，因此内层任意深度（如 ModalProvider 内的弹窗）使用 `useTranslation` 时 i18n 已就绪，不会出现 `NO_I18NEXT_INSTANCE`。
-- **内置命名空间**：会与 NFX-UI 自带的四类 JSON（theme / language / layout / preference）自动合并，使用方只需传入自己的 `bundles`；ThemeSwitcher、LanguageSwitcher、LayoutSwitcher 的文案无需额外配置。
+提供 i18n 上下文；子组件通过 `useTranslation`（react-i18next）使用。首次渲染时同步调用 `initI18n`。
 
 ---
 
@@ -92,25 +99,42 @@ Usually ThemeProvider outside, LanguageProvider inside.
 
 ```tsx
 import { LanguageProvider, LanguageEnum } from "nfx-ui/languages";
+import type { LanguageProviderProps } from "nfx-ui/languages";
 ```
 
 ---
 
-## 参数
+## 参数（`LanguageProviderProps`）
 
 | 参数 | 类型 | 必填 | 默认 | 说明 |
 |------|------|------|------|------|
 | children | ReactNode | 是 | — | 子节点。 |
-| bundles | CreateI18nResourcesResult | 是 | — | 自建 JSON 通过 createI18nResources 得到，或手写 RESOURCES / NAME_SPACES_MAP / NAME_SPACES。 |
-| fallbackLng | LanguageEnum | 否 | LanguageEnum.ZH | 回退语言。 |
-| onLoadExtraBundles | (lng: string) => Promise<...> | 否 | — | 语言切换后拉取额外文案（如错误码）；返回 `{ namespace, bundle }` 或数组，由 Provider 内部 `addResourceBundle`。 |
+| bundles | CreateI18nResourcesResult | 是 | — | 来自 `createI18nResources(resources, nameSpacesMap)`。 |
+| fallbackLng | LanguageEnum | 否 | `LanguageEnum.ZH` | 回退语言。 |
+| onLoadExtraBundles | `onLoadExtraBundles` | 否 | — | 按语言拉取额外文案；Provider 通过 `addResourceBundle` 注入。 |
+
+### `onLoadExtraBundles` 签名
+
+```ts
+(lng: LanguageEnum) => Promise<ExtraBundleItem | ExtraBundleItem[] | null | undefined>
+```
+
+其中 `ExtraBundleItem = { namespace: string; bundle: Record<string, unknown> }`。
+
+---
+
+## 行为
+
+- **同步初始化：** 首次渲染时执行 `initI18n({ bundles, fallbackLng, onLoadExtraBundles })`，再渲染子节点。
+- **内置合并：** `initI18n` 将 NFX 文案包（`theme`、`language`、`layout`、`preference`）与你的 `bundles` 合并。
+- **应用本地语言：** `useEffect` 内 `getLocalLanguage()` → `setLanguageStorage` → `i18n.changeLanguage`。
 
 ---
 
 ## 输入 / 输出
 
-- **输入：** children、bundles（必填），fallbackLng、onLoadExtraBundles（可选）。
-- **输出：** 初始化 i18next（含与内置 theme/language/layout/preference 的合并），子组件可直接 `useTranslation()` 做翻译；useEffect 内会应用本地语言（getLocalLanguage + changeLanguage）。
+- **输入：** `LanguageProviderProps`。
+- **输出：** i18next 就绪，可使用 `useTranslation`；语言变更时自动持久化。
 
 ---
 
@@ -118,11 +142,13 @@ import { LanguageProvider, LanguageEnum } from "nfx-ui/languages";
 
 ```tsx
 import { ThemeProvider, ThemeEnum } from "nfx-ui/themes";
-import { LanguageEnum, LanguageProvider } from "nfx-ui/languages";
+import { LanguageEnum, LanguageProvider, createI18nResources } from "nfx-ui/languages";
 import { LayoutProvider } from "nfx-ui/layouts";
-import { RESOURCES, NAME_SPACES_MAP, NAME_SPACES } from "@/assets/languages/i18nResources";
+import { RESOURCES, NAME_SPACES_MAP } from "@/assets/languages/i18nResources";
 
-async function onLoadExtraBundles(lng: string) {
+const bundles = createI18nResources(RESOURCES, NAME_SPACES_MAP);
+
+async function onLoadExtraBundles(lng: LanguageEnum) {
   const json = await fetch(`/api/locales/${lng}/errors`).then((r) => r.json());
   return json ? { namespace: "errors", bundle: json } : null;
 }
@@ -130,24 +156,22 @@ async function onLoadExtraBundles(lng: string) {
 createRoot(document.getElementById("root")!).render(
   <ThemeProvider defaultTheme={ThemeEnum.DEFAULT}>
     <LanguageProvider
-      bundles={{ RESOURCES, NAME_SPACES_MAP, NAME_SPACES }}
+      bundles={bundles}
       fallbackLng={LanguageEnum.ZH}
       onLoadExtraBundles={onLoadExtraBundles}
     >
       <LayoutProvider>
-        <ModalProvider>
-          <App />
-        </ModalProvider>
+        <App />
       </LayoutProvider>
     </LanguageProvider>
   </ThemeProvider>
 );
 ```
 
-内层 ModalProvider 及其子组件（如弹窗里的 AvatarUploadModal）可直接 `useTranslation("components")` 等，无需担心 i18n 未初始化。
+`createI18nResources` / `initI18n` 详见 [i18n-setup.md](./i18n-setup.md)。
 
 ---
 
 ## 与 ThemeProvider 顺序
 
-通常外层 ThemeProvider，内层 LanguageProvider。
+通常外层 `ThemeProvider`，内层 `LanguageProvider`。

@@ -8,7 +8,7 @@ Creates a typed events object (one-level key-value, string values only). Return 
 
 ```ts
 import { defineEvents } from "nfx-ui/events";
-import type { DefinedEvents, EventNamesOf } from "nfx-ui/events";
+import type { DefinedEvents, EventNamesOf, EventCallback } from "nfx-ui/events";
 ```
 
 ---
@@ -33,17 +33,20 @@ import type { DefinedEvents, EventNamesOf } from "nfx-ui/events";
 | Type | Description |
 |------|-------------|
 | DefinedEvents&lt;T&gt; | Return type of defineEvents; only type accepted by EventEmitter constructor. |
-| EventNamesOf&lt;T&gt; | Derive event name union from events object (e.g. `"MY:FOO" \| "MY:BAR"`). |
-| EventCallback | `(...args: unknown[]) => void`; used for `on` / `off` callbacks. |
+| EventNamesOf&lt;T&gt; | Derive event name union from events object (e.g. `"MY:FOO" \| "MY:BAR"`). Excludes `__defineBrand`. |
+| EventCallback | `(...args: any[]) => void`; used for `on` / `off` callbacks. |
 
 ---
 
 ## Example
 
 ```ts
-const events = defineEvents({ FOO: "MY:FOO", BAR: "MY:BAR" });
-type MyEvent = EventNamesOf<typeof events>;
-// Use events in EventEmitter constructor: new EventEmitter(events)
+const routerEvents = defineEvents({
+  NAVIGATE: "ROUTER:NAVIGATE",
+  NAVIGATE_BACK: "ROUTER:NAVIGATE_BACK",
+});
+type RouterEvent = EventNamesOf<typeof routerEvents>;
+// Use routerEvents in EventEmitter constructor: new EventEmitter(routerEvents)
 ```
 
 ---
@@ -60,7 +63,7 @@ type MyEvent = EventNamesOf<typeof events>;
 
 ```ts
 import { defineEvents } from "nfx-ui/events";
-import type { DefinedEvents, EventNamesOf } from "nfx-ui/events";
+import type { DefinedEvents, EventNamesOf, EventCallback } from "nfx-ui/events";
 ```
 
 ---
@@ -85,15 +88,18 @@ import type { DefinedEvents, EventNamesOf } from "nfx-ui/events";
 | 类型 | 说明 |
 |------|------|
 | DefinedEvents&lt;T&gt; | defineEvents 的返回类型；EventEmitter 构造函数仅接受此类型。 |
-| EventNamesOf&lt;T&gt; | 从 events 对象推导事件名联合类型（如 `"MY:FOO" \| "MY:BAR"`）。 |
-| EventCallback | `(...args: unknown[]) => void`；用于 `on` / `off` 的回调。 |
+| EventNamesOf&lt;T&gt; | 从 events 对象推导事件名联合类型（如 `"MY:FOO" \| "MY:BAR"`）；排除 `__defineBrand`。 |
+| EventCallback | `(...args: any[]) => void`；用于 `on` / `off` 的回调。 |
 
 ---
 
 ## 示例
 
 ```ts
-const events = defineEvents({ FOO: "MY:FOO", BAR: "MY:BAR" });
-type MyEvent = EventNamesOf<typeof events>;
-// 将 events 传入 EventEmitter 构造函数：new EventEmitter(events)
+const routerEvents = defineEvents({
+  NAVIGATE: "ROUTER:NAVIGATE",
+  NAVIGATE_BACK: "ROUTER:NAVIGATE_BACK",
+});
+type RouterEvent = EventNamesOf<typeof routerEvents>;
+// 将 routerEvents 传入 EventEmitter 构造函数：new EventEmitter(routerEvents)
 ```

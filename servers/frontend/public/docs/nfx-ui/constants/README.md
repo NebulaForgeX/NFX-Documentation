@@ -7,7 +7,25 @@ Usage guide for shared constants and React Query key factories. Exported from **
 ## Entry
 
 ```ts
-import { CACHE_ITEM, CACHE_LIST, createItemKey, createKey, createListKey, createQueryKeys, defineEnum, enumPickMap } from "nfx-ui/constants";
+import {
+  CACHE_ITEM,
+  CACHE_LIST,
+  createItemKey,
+  createKey,
+  createListKey,
+  createQueryKeys,
+  defineEnum,
+  enumPickMap,
+} from "nfx-ui/constants";
+import type {
+  DefinedEnum,
+  EnumInferMeta,
+  EnumMetaMap,
+  EnumValue,
+  ItemKeyChainable,
+  ListKeyChainable,
+  QueryKeysBundle,
+} from "nfx-ui/constants";
 ```
 
 ---
@@ -45,6 +63,7 @@ function createKey(...segments: unknown[]): QueryKey;
 ```ts
 import { createKey } from "nfx-ui/constants";
 const key = createKey("catalog", "stats", "category", "count");
+// => ["catalog", "stats", "category", "count"]
 useQuery({ queryKey: createKey("auth", "me"), queryFn: fetchCurrentUser });
 ```
 
@@ -52,7 +71,7 @@ useQuery({ queryKey: createKey("auth", "me"), queryFn: fetchCurrentUser });
 
 ## 3. createListKey
 
-Creates a list query key with chainable `.withPrefix()`.
+Creates a list query key with chainable `.withPrefix()` and `.getPrefix`.
 
 **Signature**
 
@@ -67,14 +86,17 @@ Default key shape: `[domain, CACHE_LIST, subDomain]`.
 ```ts
 import { createListKey } from "nfx-ui/constants";
 const listKey = createListKey("catalog", "category");
-const versioned = createListKey("catalog", "category").withPrefix("api").withPrefix("v1");
+// => ["catalog", "list", "category"]
+listKey.getPrefix; // => ["catalog", "list", "category"]
+createListKey("catalog", "category").withPrefix("api").withPrefix("v1").getPrefix;
+// => ["v1", "api", "catalog", "list", "category"]
 ```
 
 ---
 
 ## 4. createItemKey
 
-Creates an item query key factory (one or more ids) with chainable `.withPrefix()`.
+Creates an item query key factory (one or more ids) with chainable `.withPrefix()` and `.getPrefix`.
 
 **Signature**
 
@@ -89,7 +111,8 @@ Key shape: `[domain, CACHE_ITEM, subDomain, ...ids]`.
 ```ts
 import { createItemKey } from "nfx-ui/constants";
 const itemKey = createItemKey("catalog", "category");
-itemKey("abc");
+itemKey("abc"); // => ["catalog", "item", "category", "abc"]
+itemKey.getPrefix; // => ["catalog", "item", "category"]
 itemKey("cat-1", "sub-2");
 ```
 
@@ -112,6 +135,9 @@ import { createQueryKeys } from "nfx-ui/constants";
 const { list, item } = createQueryKeys("catalog", "category");
 useQuery({ queryKey: list, queryFn: fetchCategories });
 useQuery({ queryKey: item(id), queryFn: () => fetchCategory(id) });
+const withApi = createQueryKeys("catalog", "category").withPrefix("api");
+withApi.list; // => ["api", "catalog", "list", "category"]
+withApi.item("id-1"); // => ["api", "catalog", "item", "category", "id-1"]
 ```
 
 ---
@@ -143,7 +169,7 @@ Status.pickMap("label");
 
 ## 7. enumPickMap
 
-Picks a map of one property from each enum entry.
+Picks a map of one property from each enum entry (equivalent to `e.pickMap(prop)`).
 
 **Example**
 
@@ -159,6 +185,8 @@ enumPickMap(Status, "label");
 
 The last `.withPrefix(...)` call appears at the front of the key array. E.g. `.withPrefix("api").withPrefix("v1")` → key starts with `["v1", "api", ...]`.
 
+`withPrefix` / `getPrefix` are non-enumerable so TanStack Query v5 `partialMatchKey` / `invalidateQueries` works correctly.
+
 ---
 
 ---
@@ -172,7 +200,25 @@ The last `.withPrefix(...)` call appears at the front of the key array. E.g. `.w
 ## 入口
 
 ```ts
-import { CACHE_ITEM, CACHE_LIST, createItemKey, createKey, createListKey, createQueryKeys, defineEnum, enumPickMap } from "nfx-ui/constants";
+import {
+  CACHE_ITEM,
+  CACHE_LIST,
+  createItemKey,
+  createKey,
+  createListKey,
+  createQueryKeys,
+  defineEnum,
+  enumPickMap,
+} from "nfx-ui/constants";
+import type {
+  DefinedEnum,
+  EnumInferMeta,
+  EnumMetaMap,
+  EnumValue,
+  ItemKeyChainable,
+  ListKeyChainable,
+  QueryKeysBundle,
+} from "nfx-ui/constants";
 ```
 
 ---
@@ -210,6 +256,7 @@ function createKey(...segments: unknown[]): QueryKey;
 ```ts
 import { createKey } from "nfx-ui/constants";
 const key = createKey("catalog", "stats", "category", "count");
+// => ["catalog", "stats", "category", "count"]
 useQuery({ queryKey: createKey("auth", "me"), queryFn: fetchCurrentUser });
 ```
 
@@ -217,7 +264,7 @@ useQuery({ queryKey: createKey("auth", "me"), queryFn: fetchCurrentUser });
 
 ## 3. createListKey
 
-创建「列表」query key，并支持链式 `.withPrefix()` 加前缀。
+创建「列表」query key，并支持链式 `.withPrefix()` 与 `.getPrefix`。
 
 **签名**
 
@@ -232,14 +279,17 @@ function createListKey(domain: string, subDomain: string): ListKeyChainable;
 ```ts
 import { createListKey } from "nfx-ui/constants";
 const listKey = createListKey("catalog", "category");
-const versioned = createListKey("catalog", "category").withPrefix("api").withPrefix("v1");
+// => ["catalog", "list", "category"]
+listKey.getPrefix; // => ["catalog", "list", "category"]
+createListKey("catalog", "category").withPrefix("api").withPrefix("v1").getPrefix;
+// => ["v1", "api", "catalog", "list", "category"]
 ```
 
 ---
 
 ## 4. createItemKey
 
-创建「单条」query key 工厂，支持一个或多个 id，并支持链式 `.withPrefix()`。
+创建「单条」query key 工厂，支持一个或多个 id，并支持链式 `.withPrefix()` 与 `.getPrefix`。
 
 **签名**
 
@@ -254,7 +304,8 @@ function createItemKey(domain: string, subDomain: string): ItemKeyChainable;
 ```ts
 import { createItemKey } from "nfx-ui/constants";
 const itemKey = createItemKey("catalog", "category");
-itemKey("abc");
+itemKey("abc"); // => ["catalog", "item", "category", "abc"]
+itemKey.getPrefix; // => ["catalog", "item", "category"]
 itemKey("cat-1", "sub-2");
 ```
 
@@ -277,6 +328,9 @@ import { createQueryKeys } from "nfx-ui/constants";
 const { list, item } = createQueryKeys("catalog", "category");
 useQuery({ queryKey: list, queryFn: fetchCategories });
 useQuery({ queryKey: item(id), queryFn: () => fetchCategory(id) });
+const withApi = createQueryKeys("catalog", "category").withPrefix("api");
+withApi.list; // => ["api", "catalog", "list", "category"]
+withApi.item("id-1"); // => ["api", "catalog", "item", "category", "id-1"]
 ```
 
 ---
@@ -308,7 +362,7 @@ Status.pickMap("label");
 
 ## 7. enumPickMap
 
-从已定义的枚举上按属性抽取 map（等价于 e.pickMap(prop)）。
+从已定义的枚举上按属性抽取 map（等价于 `e.pickMap(prop)`）。
 
 **示例**
 
@@ -323,3 +377,5 @@ enumPickMap(Status, "label");
 ## 前缀顺序说明
 
 最后调用的 `.withPrefix(...)` 会出现在 key 数组的最前面。例如：`.withPrefix("api").withPrefix("v1")` → key 以 `["v1", "api", ...]` 开头。
+
+`withPrefix` / `getPrefix` 为不可枚举属性，以保证 TanStack Query v5 的 `partialMatchKey` / `invalidateQueries` 能正确匹配带 filter 的缓存 key。

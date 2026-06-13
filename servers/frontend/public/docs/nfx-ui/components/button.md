@@ -29,12 +29,13 @@ Extends button HTML attributes (except `size`).
 | iconOnly | boolean | No | false | Icon only, no text. |
 | iconSize | number | No | — | Override icon size. |
 | loading | boolean | No | false | Loading state (spinner, disabled). |
+| children | ReactNode | No | — | Button label. |
 
 ---
 
 ## Input / Output
 
-- **Input:** Props above plus `children`.
+- **Input:** Props above plus standard button HTML attributes (`onClick`, `disabled`, `type`, etc.).
 - **Output:** Renders `<button>`; when loading shows spinner and is disabled; when iconOnly renders square icon button.
 
 ---
@@ -100,12 +101,13 @@ import type { ButtonProps } from "nfx-ui/components";
 | iconOnly | boolean | 否 | false | 仅图标无文案（方形按钮）。 |
 | iconSize | number | 否 | — | 图标尺寸覆盖。 |
 | loading | boolean | 否 | false | 加载中（显示 spinner，禁用点击）。 |
+| children | ReactNode | 否 | — | 按钮文案。 |
 
 ---
 
 ## 输入 / 输出
 
-- **输入：** 上述 props + 子节点 `children`。
+- **输入：** 上述 props + 标准 button HTML 属性（`onClick`、`disabled`、`type` 等）。
 - **输出：** 渲染为 `<button>`；loading 时显示 spinner、禁用点击；iconOnly 时为方形图标按钮。
 
 ---

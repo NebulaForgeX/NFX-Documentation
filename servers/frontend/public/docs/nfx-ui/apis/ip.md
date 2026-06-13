@@ -1,6 +1,6 @@
 # Path tree (path / PathNode)
 
-Generic API path tree: `path(base, children)` and type `PathNode<T>`. Consuming apps use them to build URL_PATHS and API_ENDPOINTS.
+Generic API path tree: `path(base, children)` and type `PathNode<T>`. Consuming apps use them to build URL_PATHS and API_ENDPOINTS. Supports string leaves, nested `path()` nodes, and dynamic segments `(id) => \`/${id}\``.
 
 ---
 
@@ -17,8 +17,8 @@ import type { PathNode } from "nfx-ui/apis";
 
 | Name | Type | Description |
 |------|------|-------------|
-| path | (base, children) => PathNode&lt;T&gt; | Build nested path tree; supports string leaves and dynamic segments. |
-| PathNode&lt;T&gt; | type | Path tree node type; child keys are string or (args) => string. |
+| path | (base, children) => PathNode&lt;T&gt; | Build nested path tree; supports string leaves, nested path(), and dynamic functions. |
+| PathNode&lt;T&gt; | type | Path tree node type; coerces to string via toString/valueOf; child keys are string, nested PathNode, or (...args) => string. |
 
 ---
 
@@ -27,7 +27,7 @@ import type { PathNode } from "nfx-ui/apis";
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | base | string | Yes | Path prefix for this node. |
-| children | Record&lt;string, string \| PathNode \| ((...args) => string)&gt; | Yes | Children: key = path name, value = string, nested path(), or dynamic fn. |
+| children | Record&lt;string, string \| PathNode \| ((...args) => string \| PathNode)&gt; | Yes | Children: key = path name, value = string, nested path(), or dynamic fn. |
 
 ---
 
@@ -61,8 +61,8 @@ When requesting: `${API_ENDPOINTS.PURE}${URL_PATHS.CATALOG.products.byId("123")}
 ## Input / Output
 
 - **path(base, children)**  
-  - **Input:** base — path string; children — object (key → string or nested path() or (arg) => string).  
-  - **Output:** PathNode&lt;T&gt;, chainable or call dynamic segments.  
+  - **Input:** base — path string; children — object (key → string, nested path(), or dynamic fn).  
+  - **Output:** PathNode&lt;T&gt; — coerces to base string; chainable child access or call dynamic segments.  
 See `src/apis/ip.ts` for implementation.
 
 ---
@@ -71,7 +71,7 @@ See `src/apis/ip.ts` for implementation.
 
 # 路径树（path / PathNode）
 
-通用 API 路径树：`path(base, children)` 与类型 `PathNode<T>`。业务项目用其构建自己的 URL_PATHS、API_ENDPOINTS。
+通用 API 路径树：`path(base, children)` 与类型 `PathNode<T>`。业务项目用其构建自己的 URL_PATHS、API_ENDPOINTS。支持字符串叶节点、嵌套 `path()` 与动态段 `(id) => \`/${id}\``。
 
 ---
 
@@ -88,8 +88,8 @@ import type { PathNode } from "nfx-ui/apis";
 
 | 名称 | 类型 | 说明 |
 |------|------|------|
-| path | (base, children) => PathNode&lt;T&gt; | 构建嵌套路径树，支持字符串叶节点与 (id) => path 动态段。 |
-| PathNode&lt;T&gt; | type | 路径树节点类型；子键为 string 或 (args) => string。 |
+| path | (base, children) => PathNode&lt;T&gt; | 构建嵌套路径树，支持字符串叶节点、嵌套 path() 与动态函数。 |
+| PathNode&lt;T&gt; | type | 路径树节点类型；可 toString/valueOf 为 base 字符串；子键为 string、嵌套 PathNode 或 (...args) => string。 |
 
 ---
 
@@ -98,7 +98,7 @@ import type { PathNode } from "nfx-ui/apis";
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | base | string | 是 | 当前节点路径前缀。 |
-| children | Record&lt;string, string \| PathNode \| ((...args) => string)&gt; | 是 | 子节点：键为路径名，值为字符串、嵌套 path() 返回值、或 (id) => `/${id}` 等动态函数。 |
+| children | Record&lt;string, string \| PathNode \| ((...args) => string \| PathNode)&gt; | 是 | 子节点：键为路径名，值为字符串、嵌套 path() 返回值、或动态函数。 |
 
 ---
 
@@ -132,6 +132,6 @@ export const API_ENDPOINTS = { PURE: HTTP_BASE_URL } as const;
 ## 输入 / 输出
 
 - **path(base, children)**  
-  - **输入：** base — 基础路径字符串；children — 子节点对象（键 → 字符串或嵌套 path() 或 (arg) => string）。  
-  - **输出：** PathNode&lt;T&gt;，可继续链式访问或调用动态段。  
+  - **输入：** base — 基础路径字符串；children — 子节点对象（键 → 字符串、嵌套 path() 或动态函数）。  
+  - **输出：** PathNode&lt;T&gt; — 可转为 base 字符串；可链式访问子键或调用动态段。  
 详见 `src/apis/ip.ts`。

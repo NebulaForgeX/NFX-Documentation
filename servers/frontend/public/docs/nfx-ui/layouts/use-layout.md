@@ -1,6 +1,6 @@
 # useLayout
 
-Use inside LayoutProvider to read layout state (e.g. sidebar visible).
+Consumer hook inside `LayoutProvider` to read and update layout state.
 
 ---
 
@@ -8,28 +8,50 @@ Use inside LayoutProvider to read layout state (e.g. sidebar visible).
 
 ```tsx
 import { useLayout } from "nfx-ui/layouts";
+import type { LayoutContextType } from "nfx-ui/layouts";
 ```
 
 ---
 
 ## Parameters
 
-No parameters.
+No parameters. Must be called inside `LayoutProvider`.
 
 ---
 
-## Input / Output
+## Return value (`LayoutContextType`)
 
-- **Input:** None (must be used inside LayoutProvider).
-- **Output:** Layout state object; see type for fields.
+| Field | Type | Description |
+|-------|------|-------------|
+| sidebarOpen | boolean | Whether sidebar overlay is open (hide mode) or collapsed (show mode). |
+| layoutMode | LayoutModeEnum | Current layout mode: `SHOW` or `HIDE`. |
+| setSidebarOpen | `(open: boolean) => void` | Set sidebar open state. |
+| toggleSidebar | `() => void` | Toggle sidebar open state. |
+| closeSidebar | `() => void` | Close sidebar. |
+| setLayoutMode | `(mode: LayoutModeEnum) => void` | Switch between show/hide layout modes. |
 
 ---
 
 ## Example
 
 ```tsx
-const layout = useLayout();
-if (layout.sidebarVisible) { /* show sidebar layout */ }
+import { useLayout, LayoutModeEnum } from "nfx-ui/layouts";
+
+function SidebarToggle() {
+  const { sidebarOpen, toggleSidebar, layoutMode, setLayoutMode } = useLayout();
+
+  return (
+    <>
+      <button onClick={toggleSidebar}>
+        {sidebarOpen ? "Close" : "Open"} sidebar
+      </button>
+      <button onClick={() => setLayoutMode(LayoutModeEnum.HIDE)}>
+        Hide sidebar layout
+      </button>
+      <span>Mode: {layoutMode}</span>
+    </>
+  );
+}
 ```
 
 ---
@@ -38,7 +60,7 @@ if (layout.sidebarVisible) { /* show sidebar layout */ }
 
 # useLayout — 布局状态
 
-在 `LayoutProvider` 下使用，读取当前布局状态（如侧栏是否可见等）。
+在 `LayoutProvider` 内使用的业务侧 Hook，读取与更新布局状态。
 
 ---
 
@@ -46,26 +68,48 @@ if (layout.sidebarVisible) { /* show sidebar layout */ }
 
 ```tsx
 import { useLayout } from "nfx-ui/layouts";
+import type { LayoutContextType } from "nfx-ui/layouts";
 ```
 
 ---
 
 ## 参数
 
-无参数。
+无参数。必须在 `LayoutProvider` 内调用。
 
 ---
 
-## 输入 / 输出
+## 返回值（`LayoutContextType`）
 
-- **输入：** 无（需在 LayoutProvider 内调用）。
-- **输出：** 布局状态对象（如 sidebarVisible、布局模式等），具体见类型。
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| sidebarOpen | boolean | 侧栏是否展开（hide 模式为 overlay；show 模式为折叠态）。 |
+| layoutMode | LayoutModeEnum | 当前布局模式：`SHOW` 或 `HIDE`。 |
+| setSidebarOpen | `(open: boolean) => void` | 设置侧栏开关。 |
+| toggleSidebar | `() => void` | 切换侧栏开关。 |
+| closeSidebar | `() => void` | 关闭侧栏。 |
+| setLayoutMode | `(mode: LayoutModeEnum) => void` | 切换侧栏显示/隐藏布局模式。 |
 
 ---
 
 ## 示例
 
 ```tsx
-const layout = useLayout();
-if (layout.sidebarVisible) { /* 显示侧栏布局 */ }
+import { useLayout, LayoutModeEnum } from "nfx-ui/layouts";
+
+function SidebarToggle() {
+  const { sidebarOpen, toggleSidebar, layoutMode, setLayoutMode } = useLayout();
+
+  return (
+    <>
+      <button onClick={toggleSidebar}>
+        {sidebarOpen ? "关闭" : "打开"}侧栏
+      </button>
+      <button onClick={() => setLayoutMode(LayoutModeEnum.HIDE)}>
+        隐藏侧栏布局
+      </button>
+      <span>模式：{layoutMode}</span>
+    </>
+  );
+}
 ```

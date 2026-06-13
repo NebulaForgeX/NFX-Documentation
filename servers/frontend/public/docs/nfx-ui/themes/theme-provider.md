@@ -1,6 +1,6 @@
 # ThemeProvider
 
-Provides theme context; children use useTheme(), useThemeVariables() for current theme and CSS variables.
+Provides theme context (color + base themes); children use `useTheme()` for current theme and setters. Internally calls `useVariables` to inject CSS custom properties.
 
 ---
 
@@ -8,35 +8,39 @@ Provides theme context; children use useTheme(), useThemeVariables() for current
 
 ```tsx
 import { ThemeProvider } from "nfx-ui/themes";
+import type { ThemeProviderProps } from "nfx-ui/themes";
 ```
 
 ---
 
-## Parameters
+## Parameters (`ThemeProviderProps`)
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | children | ReactNode | Yes | — | Children. |
-| (others) | see type | No | — | Default theme etc. |
+| defaultTheme | ThemeEnum | No | `ThemeEnum.DEFAULT` | Default color theme when storage is empty. |
+| defaultBase | BaseEnum | No | `BaseEnum.DEFAULT` | Default base theme (radius, spacing, etc.). |
 
 ---
 
 ## Input / Output
 
-- **Input:** children; optional default theme etc.
-- **Output:** Provides theme context; children get currentTheme and CSS variables.
+- **Input:** children; optional `defaultTheme` and `defaultBase`.
+- **Output:** Provides `ThemeContext`; restores color theme from `getThemeColorStorage()` and base from `getThemeBaseStorage()`; injects CSS variables via `useVariables(currentTheme, themeName)`.
 
 ---
 
 ## Example
 
 ```tsx
-<ThemeProvider>
+import { ThemeProvider, ThemeEnum, BaseEnum } from "nfx-ui/themes";
+
+<ThemeProvider defaultTheme={ThemeEnum.LIGHT} defaultBase={BaseEnum.IOS}>
   <App />
 </ThemeProvider>
 ```
 
-Usually at root or next to LanguageProvider.
+Usually at root or outside `LanguageProvider`.
 
 ---
 
@@ -44,7 +48,7 @@ Usually at root or next to LanguageProvider.
 
 # ThemeProvider — 主题上下文
 
-提供主题上下文，子组件可通过 `useTheme()`、`useThemeVariables()` 读取当前主题与 CSS 变量。
+提供主题上下文（颜色主题 + 基础主题）；子组件通过 `useTheme()` 读取当前主题与切换方法。内部调用 `useVariables` 注入 CSS 变量。
 
 ---
 
@@ -52,32 +56,36 @@ Usually at root or next to LanguageProvider.
 
 ```tsx
 import { ThemeProvider } from "nfx-ui/themes";
+import type { ThemeProviderProps } from "nfx-ui/themes";
 ```
 
 ---
 
-## 参数
+## 参数（`ThemeProviderProps`）
 
 | 参数 | 类型 | 必填 | 默认 | 说明 |
 |------|------|------|------|------|
 | children | ReactNode | 是 | — | 子节点。 |
-| （其他） | 见类型 | 否 | — | 默认主题等（见 ThemeProvider 类型）。 |
+| defaultTheme | ThemeEnum | 否 | `ThemeEnum.DEFAULT` | 存储为空时的默认颜色主题。 |
+| defaultBase | BaseEnum | 否 | `BaseEnum.DEFAULT` | 默认基础主题（圆角、间距等）。 |
 
 ---
 
 ## 输入 / 输出
 
-- **输入：** children；可选默认主题等 props。
-- **输出：** 提供主题上下文；子组件内 `useTheme()` 得 currentTheme，`useThemeVariables()` 得 CSS 变量。
+- **输入：** children；可选 `defaultTheme`、`defaultBase`。
+- **输出：** 提供 `ThemeContext`；从 `getThemeColorStorage()` / `getThemeBaseStorage()` 恢复；通过 `useVariables(currentTheme, themeName)` 注入 CSS 变量。
 
 ---
 
 ## 示例
 
 ```tsx
-<ThemeProvider>
+import { ThemeProvider, ThemeEnum, BaseEnum } from "nfx-ui/themes";
+
+<ThemeProvider defaultTheme={ThemeEnum.LIGHT} defaultBase={BaseEnum.IOS}>
   <App />
 </ThemeProvider>
 ```
 
-通常放在最外层或与 LanguageProvider 并列。
+通常放在最外层或 `LanguageProvider` 外侧。

@@ -1,6 +1,6 @@
 # mergeById / pruneArray
 
-Merge two arrays by id; remove items from array by id set.
+Merge items into array by id; remove items whose id is in a set. Returns original array reference when nothing changed (pruneArray).
 
 ---
 
@@ -19,11 +19,11 @@ import { mergeById, pruneArray } from "nfx-ui/utils";
 | arr | T[] | Yes | — | Original array. |
 | items | T[] | Yes | — | Items to merge. |
 | idOf | (x: T) => string | Yes | — | Function to get id. |
-| place | `"prepend"` \| `"append"` | Yes | — | Insert position. |
-| mode | `"insert"` \| `"upsert"` | Yes | — | Insert or upsert. |
+| place | `"prepend"` \| `"append"` | Yes | — | Where to insert new ids. |
+| mode | `"insert"` \| `"upsert"` | Yes | — | insert: skip existing ids; upsert: overwrite same id. |
 
 - **Input:** arr, items, idOf, place, mode.
-- **Output:** T[] — new merged array.
+- **Output:** T[] — new merged array (returns arr unchanged if items empty).
 
 ---
 
@@ -36,7 +36,7 @@ import { mergeById, pruneArray } from "nfx-ui/utils";
 | idOf | (x: T) => string | Yes | — | Function to get id. |
 
 - **Input:** arr, ids, idOf.
-- **Output:** T[] — new array with those ids removed.
+- **Output:** T[] — new array if any removed; otherwise same arr reference.
 
 ---
 
@@ -56,7 +56,7 @@ const pruned = pruneArray(list, new Set(["1"]), (x) => x.id);
 
 # mergeById / pruneArray — 数组合并与裁剪
 
-按 id 合并两个数组；按 id 集合从数组中移除项。
+按 id 合并项进数组；按 id 集合移除项。无变化时 pruneArray 返回原数组引用。
 
 ---
 
@@ -75,11 +75,11 @@ import { mergeById, pruneArray } from "nfx-ui/utils";
 | arr | T[] | 是 | — | 原数组。 |
 | items | T[] | 是 | — | 要合并的项。 |
 | idOf | (x: T) => string | 是 | — | 取 id 的函数。 |
-| place | `"prepend"` \| `"append"` | 是 | — | 插入位置。 |
-| mode | `"insert"` \| `"upsert"` | 是 | — | 插入或 upsert。 |
+| place | `"prepend"` \| `"append"` | 是 | — | 新 id 插入位置。 |
+| mode | `"insert"` \| `"upsert"` | 是 | — | insert 不覆盖已有 id；upsert 覆盖同 id。 |
 
 - **输入：** arr、items、idOf、place、mode。
-- **输出：** T[] — 合并后的新数组。
+- **输出：** T[] — 合并后的新数组（items 为空时返回 arr）。
 
 ---
 
@@ -92,7 +92,7 @@ import { mergeById, pruneArray } from "nfx-ui/utils";
 | idOf | (x: T) => string | 是 | — | 取 id 的函数。 |
 
 - **输入：** arr、ids、idOf。
-- **输出：** T[] — 移除指定 id 后的新数组。
+- **输出：** T[] — 有移除则新数组，否则原 arr 引用。
 
 ---
 

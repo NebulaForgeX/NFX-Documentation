@@ -11,6 +11,11 @@ import type {
   Nullable,
   Maybe,
   Nilable,
+  Emptyable,
+  Zeroable,
+  Stringable,
+  Objectable,
+  Arrayable,
   ExistenceResult,
   ValueOf,
   Defined,
@@ -27,21 +32,27 @@ import type {
 
 | Type | Description |
 |------|-------------|
-| Nullable&lt;T&gt; | T \| null. |
-| Maybe&lt;T&gt; | T \| undefined. |
-| Nilable&lt;T&gt; | T \| null \| undefined. |
-| ValueOf&lt;T&gt; | Union of object values. |
-| Defined&lt;T, K&gt; | Branded type. |
-| KeyOf&lt;R&gt; | Union of object keys. |
-| isOK | Type guard etc. |
-| Array&lt;T&gt; | Array type, same as T[]. |
-| ArrayOrSingle&lt;T&gt; | T[] \| T, array or single element. |
+| Array&lt;T&gt; | Array type, same as `T[]`. |
+| Nullable&lt;T&gt; | `T \| null`. |
+| Maybe&lt;T&gt; | `T \| undefined`. |
+| Nilable&lt;T&gt; | `T \| null \| undefined`. |
+| Emptyable&lt;T&gt; | `T \| null \| undefined \| ""`. |
+| Zeroable&lt;T extends number&gt; | `T \| 0`. |
+| Stringable&lt;T extends string&gt; | `T \| ""`. |
+| Objectable&lt;T extends Record&lt;string, unknown&gt;&gt; | `T \| {}`. |
+| Arrayable&lt;T&gt; | `T[] \| []`. |
+| ExistenceResult&lt;T&gt; | `[T, true] \| [null, false]`. |
+| ValueOf&lt;T&gt; | Union of object property value types. |
+| KeyOf&lt;T&gt; | `keyof T`. |
+| Defined&lt;T, Tag&gt; | Branded type for defineXxx/createXxx pairs. |
+| isOK&lt;T&gt; | Same tuple shape as ExistenceResult present branch. |
+| ArrayOrSingle&lt;T&gt; | `T[] \| T`. |
 
 ---
 
 ## Input–output usage
 
-- **Input:** Generic params T, R, etc.
+- **Input:** Generic params T, Tag, etc.
 - **Output:** Types used for variables and function signatures.
 
 ---
@@ -55,9 +66,8 @@ const empty: Nullable<string> = null;
 let count: Maybe<number> = 42;
 count = undefined;
 
-let value: Nilable<boolean> = true;
-value = null;
-value = undefined;
+let label: Emptyable<string> = "";
+label = null;
 
 type Config = { theme: "light" | "dark"; size: number };
 type ConfigValue = ValueOf<Config>;
@@ -93,6 +103,11 @@ import type {
   Nullable,
   Maybe,
   Nilable,
+  Emptyable,
+  Zeroable,
+  Stringable,
+  Objectable,
+  Arrayable,
   ExistenceResult,
   ValueOf,
   Defined,
@@ -109,21 +124,27 @@ import type {
 
 | 类型 | 说明 |
 |------|------|
-| Nullable&lt;T&gt; | T \| null。 |
-| Maybe&lt;T&gt; | T \| undefined。 |
-| Nilable&lt;T&gt; | T \| null \| undefined。 |
-| ValueOf&lt;T&gt; | 对象值的联合类型。 |
-| Defined&lt;T, K&gt; | 带品牌类型。 |
-| KeyOf&lt;R&gt; | 对象键的联合类型。 |
-| isOK | 类型守卫等。 |
-| Array&lt;T&gt; | 数组类型，等价 T[]。 |
-| ArrayOrSingle&lt;T&gt; | T[] \| T，数组或单元素。 |
+| Array&lt;T&gt; | 数组类型，等价 `T[]`。 |
+| Nullable&lt;T&gt; | `T \| null`。 |
+| Maybe&lt;T&gt; | `T \| undefined`。 |
+| Nilable&lt;T&gt; | `T \| null \| undefined`。 |
+| Emptyable&lt;T&gt; | `T \| null \| undefined \| ""`。 |
+| Zeroable&lt;T extends number&gt; | `T \| 0`。 |
+| Stringable&lt;T extends string&gt; | `T \| ""`。 |
+| Objectable&lt;T extends Record&lt;string, unknown&gt;&gt; | `T \| {}`。 |
+| Arrayable&lt;T&gt; | `T[] \| []`。 |
+| ExistenceResult&lt;T&gt; | `[T, true] \| [null, false]`。 |
+| ValueOf&lt;T&gt; | 对象属性值联合类型。 |
+| KeyOf&lt;T&gt; | `keyof T`。 |
+| Defined&lt;T, Tag&gt; | defineXxx/createXxx 配对用的品牌类型。 |
+| isOK&lt;T&gt; | 与 ExistenceResult 有值分支同形。 |
+| ArrayOrSingle&lt;T&gt; | `T[] \| T`。 |
 
 ---
 
 ## 输入 / 输出用法
 
-- **输入：** 泛型参数 T、R 等。
+- **输入：** 泛型参数 T、Tag 等。
 - **输出：** 类型用于变量、函数签名。
 
 ---
@@ -137,9 +158,8 @@ const empty: Nullable<string> = null;
 let count: Maybe<number> = 42;
 count = undefined;
 
-let value: Nilable<boolean> = true;
-value = null;
-value = undefined;
+let label: Emptyable<string> = "";
+label = null;
 
 type Config = { theme: "light" | "dark"; size: number };
 type ConfigValue = ValueOf<Config>;

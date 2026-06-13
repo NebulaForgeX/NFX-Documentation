@@ -9,10 +9,14 @@ Request/list DTOs, pagination params, error body; used with hooks and constants.
 ```ts
 import type {
   ApiErrorBody,
+  BaseResponse,
+  DataResponse,
+  ListMeta,
   ListDTOWithTotalNumber,
   ListDTOWithNextCursor,
   OffsetLimitNumber,
   OffsetLimitString,
+  PaginatedResponse,
 } from "nfx-ui/types";
 ```
 
@@ -22,11 +26,15 @@ import type {
 
 | Type | Description |
 |------|-------------|
-| ApiErrorBody | Error response body: status, errCode, message, details, traceId. |
+| BaseResponse | Base response: optional `status`, `errCode`, `message`. |
+| DataResponse&lt;T, M&gt; | Extends BaseResponse with required `data` and optional `meta`. |
+| ListMeta | List meta: optional `total`. |
+| ApiErrorBody | Error body: `status`, `errCode`, `message`, `details`, `traceId`. |
 | ListDTOWithTotalNumber&lt;T&gt; | List with total: `{ items: T[], total: number }`. |
 | ListDTOWithNextCursor&lt;T&gt; | List with cursor: `{ items: T[], nextCursor: string }`. |
-| OffsetLimitNumber | Number-based pagination: offset, limit. |
-| OffsetLimitString | String cursor pagination. |
+| OffsetLimitNumber | Number pagination: `{ offset: number, limit: number }`. |
+| OffsetLimitString | String cursor pagination: `{ offset: string, limit: number }`. |
+| PaginatedResponse&lt;T&gt; | Page response: `{ data, total, page, pageSize }`. |
 
 ---
 
@@ -61,12 +69,12 @@ const cursorResponse: ListDTOWithNextCursor<{ id: string }> = {
 const pageParams: OffsetLimitNumber = { offset: 0, limit: 20 };
 const cursorParams: OffsetLimitString = { offset: "eyJpZCI6MH19", limit: 20 };
 
-async function fetchList(
-  params: OffsetLimitNumber
-): Promise<ListDTOWithTotalNumber<{ id: string; name: string }>> {
-  const res = await api.get("/users", { params });
-  return res.data;
-}
+const paginated: PaginatedResponse<{ id: string }> = {
+  data: [{ id: "1" }],
+  total: 100,
+  page: 1,
+  pageSize: 20,
+};
 ```
 
 See `src/types/api.ts` for full definitions.
@@ -86,10 +94,14 @@ See `src/types/api.ts` for full definitions.
 ```ts
 import type {
   ApiErrorBody,
+  BaseResponse,
+  DataResponse,
+  ListMeta,
   ListDTOWithTotalNumber,
   ListDTOWithNextCursor,
   OffsetLimitNumber,
   OffsetLimitString,
+  PaginatedResponse,
 } from "nfx-ui/types";
 ```
 
@@ -99,11 +111,15 @@ import type {
 
 | 类型 | 说明 |
 |------|------|
-| ApiErrorBody | 错误响应体：status、errCode、message、details、traceId。 |
+| BaseResponse | 基础响应：可选 `status`、`errCode`、`message`。 |
+| DataResponse&lt;T, M&gt; | 继承 BaseResponse，含必填 `data` 与可选 `meta`。 |
+| ListMeta | 列表元信息：可选 `total`。 |
+| ApiErrorBody | 错误体：`status`、`errCode`、`message`、`details`、`traceId`。 |
 | ListDTOWithTotalNumber&lt;T&gt; | 列表+总数：`{ items: T[], total: number }`。 |
 | ListDTOWithNextCursor&lt;T&gt; | 列表+游标：`{ items: T[], nextCursor: string }`。 |
-| OffsetLimitNumber | 数字分页：offset、limit。 |
-| OffsetLimitString | 字符串游标分页。 |
+| OffsetLimitNumber | 数字分页：`{ offset, limit }`。 |
+| OffsetLimitString | 字符串游标分页：`{ offset: string, limit }`。 |
+| PaginatedResponse&lt;T&gt; | 分页响应：`{ data, total, page, pageSize }`。 |
 
 ---
 
@@ -138,12 +154,12 @@ const cursorResponse: ListDTOWithNextCursor<{ id: string }> = {
 const pageParams: OffsetLimitNumber = { offset: 0, limit: 20 };
 const cursorParams: OffsetLimitString = { offset: "eyJpZCI6MH19", limit: 20 };
 
-async function fetchList(
-  params: OffsetLimitNumber
-): Promise<ListDTOWithTotalNumber<{ id: string; name: string }>> {
-  const res = await api.get("/users", { params });
-  return res.data;
-}
+const paginated: PaginatedResponse<{ id: string }> = {
+  data: [{ id: "1" }],
+  total: 100,
+  page: 1,
+  pageSize: 20,
+};
 ```
 
 详见源码 `src/types/api.ts`。

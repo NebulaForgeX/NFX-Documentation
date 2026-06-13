@@ -1,6 +1,6 @@
 # makeStore / makePersistStore
 
-Create plain store or persist store. Parameters and Input/Output below.
+Create plain store or persist store with zustand + subscribeWithSelector. Returns `{ store, useStore }`.
 
 ---
 
@@ -21,25 +21,30 @@ import type { SetState, GetState, MakePersistStoreOptions } from "nfx-ui/stores"
 | actions | (set, get) => A | Yes | Returns action object. |
 
 - **Input:** initialState, actions(set, get).
-- **Output:** { getState, setState, ...actions } — read/write state and actions.
+- **Output:** `{ store, useStore }` — zustand store and bound selector hook.
 
 ---
 
 ## makePersistStore
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| options | MakePersistStoreOptions&lt;S, A&gt; | Yes | name, initialState, actions, partialize, etc. |
+| Option | Type | Required | Description |
+|--------|------|----------|-------------|
+| name | string | Yes | Persist key (localStorage). |
+| initialState | S (object) | Yes | Initial state. |
+| actions | (set, get) => A | Yes | Returns action object. |
+| partialize | (state) => Partial&lt;S & A&gt; | No | Subset to persist; default full state. |
+| version | number | No | Persist version for migrate. |
+| migrate | (persistedState, version) => Partial&lt;S & A&gt; | No | Migrate old persisted data. |
 
-- **Input:** options (name, initialState, actions, partialize, etc.).
-- **Output:** Store with persistence (e.g. localStorage).
+- **Input:** MakePersistStoreOptions.
+- **Output:** `{ store, useStore }` — store with persist + subscribeWithSelector.
 
 ---
 
 ## Types
 
-- **SetState&lt;S&gt;** — (partial | (state) => partial) => void.
-- **GetState&lt;S&gt;** — () => S.
+- **SetState&lt;S&gt;** — `(partial: Partial<S> | ((state: S) => Partial<S>)) => void`.
+- **GetState&lt;S&gt;** — `() => S`.
 - **MakePersistStoreOptions&lt;S, A&gt;** — config type for makePersistStore.
 
 ---
@@ -77,7 +82,7 @@ See `src/stores/makeStore.ts` for full API.
 
 # makeStore / makePersistStore — Store 工厂
 
-创建普通 Store 或带持久化的 Store。参数与 Input/Output 见下表。
+创建普通 Store 或带 persist 的 Store（zustand + subscribeWithSelector）。返回 `{ store, useStore }`。
 
 ---
 
@@ -98,25 +103,30 @@ import type { SetState, GetState, MakePersistStoreOptions } from "nfx-ui/stores"
 | actions | (set, get) => A | 是 | 返回方法对象。 |
 
 - **输入：** initialState、actions(set, get)。
-- **输出：** { getState, setState, ...actions } — 可读写状态与方法。
+- **输出：** `{ store, useStore }` — zustand store 与绑定后的 selector hook。
 
 ---
 
 ## makePersistStore
 
-| 参数 | 类型 | 必填 | 说明 |
+| 选项 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| options | MakePersistStoreOptions&lt;S, A&gt; | 是 | name、initialState、actions、partialize 等。 |
+| name | string | 是 | 持久化 key（localStorage）。 |
+| initialState | S (object) | 是 | 初始状态。 |
+| actions | (set, get) => A | 是 | 返回方法对象。 |
+| partialize | (state) => Partial&lt;S & A&gt; | 否 | 只持久化部分 state；缺省全量。 |
+| version | number | 否 | 持久化版本号（用于 migrate）。 |
+| migrate | (persistedState, version) => Partial&lt;S & A&gt; | 否 | 迁移旧持久化数据。 |
 
-- **输入：** options（含 name、initialState、actions、partialize 等）。
-- **输出：** 带持久化（如 localStorage）的 Store。
+- **输入：** MakePersistStoreOptions。
+- **输出：** `{ store, useStore }` — 带 persist + subscribeWithSelector 的 store。
 
 ---
 
 ## 类型
 
-- **SetState&lt;S&gt;** — (partial | (state) => partial) => void。
-- **GetState&lt;S&gt;** — () => S。
+- **SetState&lt;S&gt;** — `(partial: Partial<S> | ((state: S) => Partial<S>)) => void`。
+- **GetState&lt;S&gt;** — `() => S`。
 - **MakePersistStoreOptions&lt;S, A&gt;** — makePersistStore 的配置类型。
 
 ---

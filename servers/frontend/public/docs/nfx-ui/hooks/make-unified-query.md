@@ -8,6 +8,8 @@ Creates a unified single-item query Hook factory (normal or suspense mode).
 
 ```ts
 import { makeUnifiedQuery } from "nfx-ui/hooks";
+import type { QueryMode, NormalUnifiedQueryOptions, SuspenseUnifiedQueryOptions } from "nfx-ui/hooks";
+import type { QueryKey } from "@tanstack/react-query";
 ```
 
 ---
@@ -22,6 +24,8 @@ function makeUnifiedQuery<T, F extends object = Record<string, unknown>>(
 ): (queryKey: QueryKey, filter?: F, options?) => UseQueryResult<T> | UseSuspenseQueryResult<T>;
 ```
 
+Use `NORMAL` / `SUSPENSE` from `nfx-ui/hooks` instead of string literals when possible.
+
 ---
 
 ## Parameters
@@ -29,7 +33,7 @@ function makeUnifiedQuery<T, F extends object = Record<string, unknown>>(
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | fetchRemote | (params: F) => Promise&lt;T&gt; | Yes | — | Fetch function. |
-| mode | `"normal"` \| `"suspense"` | No | `"normal"` | When suspense, returns UseSuspenseQueryResult. |
+| mode | QueryMode (`"normal"` \| `"suspense"`) | No | `"normal"` | When suspense, returns UseSuspenseQueryResult. |
 | postProcess | (data: T) => void | No | — | Optional; called after data is returned. |
 
 ---
@@ -37,17 +41,19 @@ function makeUnifiedQuery<T, F extends object = Record<string, unknown>>(
 ## Input / Output
 
 - **Input:** fetchRemote, optional mode, optional postProcess.
-- **Output:** Returns a Hook `(queryKey, filter?, options?) => UseQueryResult<T> | UseSuspenseQueryResult<T>`; options are merged with queryKey, queryFn, retry, etc.
+- **Output:** Returns a Hook `(queryKey, filter?, options?) => UseQueryResult<T> | UseSuspenseQueryResult<T>`; options merged with queryKey, queryFn, retry (5xx/network only).
 
 ---
 
 ## Example
 
 ```ts
-const useProfile = makeUnifiedQuery(fetchProfile, "normal");
+import { NORMAL, SUSPENSE, makeUnifiedQuery } from "nfx-ui/hooks";
+
+const useProfile = makeUnifiedQuery(fetchProfile, NORMAL);
 const { data } = useProfile(profileKey, { id }, { enabled: !!id });
 
-const useProfileSuspense = makeUnifiedQuery(fetchProfile, "suspense");
+const useProfileSuspense = makeUnifiedQuery(fetchProfile, SUSPENSE);
 const { data } = useProfileSuspense(profileKey, { id });
 ```
 
@@ -67,6 +73,8 @@ Use with `Suspense` and `QueryErrorResetBoundary` for unified loading and error 
 
 ```ts
 import { makeUnifiedQuery } from "nfx-ui/hooks";
+import type { QueryMode, NormalUnifiedQueryOptions, SuspenseUnifiedQueryOptions } from "nfx-ui/hooks";
+import type { QueryKey } from "@tanstack/react-query";
 ```
 
 ---
@@ -81,6 +89,8 @@ function makeUnifiedQuery<T, F extends object = Record<string, unknown>>(
 ): (queryKey: QueryKey, filter?: F, options?) => UseQueryResult<T> | UseSuspenseQueryResult<T>;
 ```
 
+建议使用 `nfx-ui/hooks` 的 `NORMAL` / `SUSPENSE` 常量代替字符串字面量。
+
 ---
 
 ## 参数
@@ -88,7 +98,7 @@ function makeUnifiedQuery<T, F extends object = Record<string, unknown>>(
 | 参数 | 类型 | 必填 | 默认 | 说明 |
 |------|------|------|------|------|
 | fetchRemote | (params: F) => Promise&lt;T&gt; | 是 | — | 拉取函数。 |
-| mode | `"normal"` \| `"suspense"` | 否 | `"normal"` | suspense 时返回 UseSuspenseQueryResult。 |
+| mode | QueryMode（`"normal"` \| `"suspense"`） | 否 | `"normal"` | suspense 时返回 UseSuspenseQueryResult。 |
 | postProcess | (data: T) => void | 否 | — | 数据返回后调用，可选。 |
 
 ---
@@ -96,17 +106,19 @@ function makeUnifiedQuery<T, F extends object = Record<string, unknown>>(
 ## 输入 / 输出
 
 - **输入：** fetchRemote、mode（可选）、postProcess（可选）。
-- **输出：** 返回一个 Hook；options 会合并 queryKey、queryFn、retry 等。
+- **输出：** 返回 Hook；options 会合并 queryKey、queryFn、retry（仅 5xx/网络错误）。
 
 ---
 
 ## 示例
 
 ```ts
-const useProfile = makeUnifiedQuery(fetchProfile, "normal");
+import { NORMAL, SUSPENSE, makeUnifiedQuery } from "nfx-ui/hooks";
+
+const useProfile = makeUnifiedQuery(fetchProfile, NORMAL);
 const { data } = useProfile(profileKey, { id }, { enabled: !!id });
 
-const useProfileSuspense = makeUnifiedQuery(fetchProfile, "suspense");
+const useProfileSuspense = makeUnifiedQuery(fetchProfile, SUSPENSE);
 const { data } = useProfileSuspense(profileKey, { id });
 ```
 

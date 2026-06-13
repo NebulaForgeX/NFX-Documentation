@@ -9,7 +9,7 @@ Layout components and hooks for page frame, sidebar, header, footer and backgrou
 | Name | Description | Doc |
 |------|-------------|-----|
 | LayoutProvider | Layout context | [layout-provider.md](./layout-provider.md) |
-| LayoutSwitcher | Layout toggle (e.g. sidebar show/hide) | [layout-switcher.md](./layout-switcher.md) |
+| LayoutFrame | Full layout shell (Header + Sidebar + main + Footer) | [layout-frame.md](./layout-frame.md) |
 | Sidebar | Sidebar | [sidebar.md](./sidebar.md) |
 | MainWrapper | Main content wrapper | [main-wrapper.md](./main-wrapper.md) |
 | SideHideLayout | Sidebar hidden layout | [side-hide-layout.md](./side-hide-layout.md) |
@@ -17,15 +17,29 @@ Layout components and hooks for page frame, sidebar, header, footer and backgrou
 | Header | Header | [header.md](./header.md) |
 | Footer | Footer | [footer.md](./footer.md) |
 | Background | Dashboard background | [background.md](./background.md) |
-| LayoutFrame | Layout frame container (used by SideHideLayout / SideShowLayout) | — |
+| LayoutSwitcher | Layout toggle (sidebar show/hide) | [../components/layout-switcher.md](../components/layout-switcher.md) |
 
 ## Hooks
 
 | Hook | Description | Doc |
 |------|-------------|-----|
-| useLayout | Read current layout state | [use-layout.md](./use-layout.md) |
-| useSet | Set layout | [use-set.md](./use-set.md) |
-| useAction | Layout actions | [use-action.md](./use-action.md) |
+| useLayout | Read and update layout state (consumer hook) | [use-layout.md](./use-layout.md) |
+| useSet | Layout mode + persistence (used by LayoutProvider) | [use-set.md](./use-set.md) |
+| useAction | Sidebar open state (used by LayoutProvider) | [use-action.md](./use-action.md) |
+
+## Storage utils
+
+Persisted under `layout-storage` (JSON: `{ state: { sidebarOpen, layoutMode } }`).
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `getLayoutStorage` | `() => Nilable<string>` | Read raw JSON string from localStorage. |
+| `setLayoutStorage` | `(value: string) => void` | Write raw JSON string. |
+| `removeLayoutStorage` | `() => void` | Remove persisted layout state. |
+
+```tsx
+import { getLayoutStorage, setLayoutStorage, removeLayoutStorage } from "nfx-ui/layouts";
+```
 
 ---
 
@@ -34,6 +48,7 @@ Layout components and hooks for page frame, sidebar, header, footer and backgrou
 ```tsx
 import {
   LayoutProvider,
+  LayoutFrame,
   Sidebar,
   MainWrapper,
   SideHideLayout,
@@ -41,6 +56,9 @@ import {
   Header,
   Footer,
   Background,
+  LayoutModeEnum,
+  useLayout,
+  getLayoutStorage,
 } from "nfx-ui/layouts";
 ```
 
@@ -59,7 +77,7 @@ import {
 | 名称 | 说明 | 文档 |
 |------|------|------|
 | LayoutProvider | 布局上下文 | [layout-provider.md](./layout-provider.md) |
-| LayoutSwitcher | 布局切换（如侧栏显隐） | [layout-switcher.md](./layout-switcher.md) |
+| LayoutFrame | 完整布局骨架（Header + Sidebar + 主区 + Footer） | [layout-frame.md](./layout-frame.md) |
 | Sidebar | 侧边栏 | [sidebar.md](./sidebar.md) |
 | MainWrapper | 主内容区包裹 | [main-wrapper.md](./main-wrapper.md) |
 | SideHideLayout | 侧栏隐藏布局 | [side-hide-layout.md](./side-hide-layout.md) |
@@ -67,15 +85,29 @@ import {
 | Header | 顶栏 | [header.md](./header.md) |
 | Footer | 底栏 | [footer.md](./footer.md) |
 | Background | 仪表盘背景 | [background.md](./background.md) |
-| LayoutFrame | 布局骨架容器（供 SideHideLayout / SideShowLayout 内部使用） | — |
+| LayoutSwitcher | 布局切换（侧栏显隐） | [../components/layout-switcher.md](../components/layout-switcher.md) |
 
 ## Hooks
 
 | Hook | 说明 | 文档 |
 |------|------|------|
-| useLayout | 读取当前布局状态 | [use-layout.md](./use-layout.md) |
-| useSet | 布局 set 方法 | [use-set.md](./use-set.md) |
-| useAction | 布局相关操作 | [use-action.md](./use-action.md) |
+| useLayout | 读取与更新布局状态（业务侧主入口） | [use-layout.md](./use-layout.md) |
+| useSet | 布局模式与持久化（LayoutProvider 内部） | [use-set.md](./use-set.md) |
+| useAction | 侧栏开关状态（LayoutProvider 内部） | [use-action.md](./use-action.md) |
+
+## 存储工具
+
+持久化键为 `layout-storage`（JSON：`{ state: { sidebarOpen, layoutMode } }`）。
+
+| 函数 | 签名 | 说明 |
+|------|------|------|
+| `getLayoutStorage` | `() => Nilable<string>` | 从 localStorage 读取原始 JSON 字符串。 |
+| `setLayoutStorage` | `(value: string) => void` | 写入原始 JSON 字符串。 |
+| `removeLayoutStorage` | `() => void` | 清除已保存的布局状态。 |
+
+```tsx
+import { getLayoutStorage, setLayoutStorage, removeLayoutStorage } from "nfx-ui/layouts";
+```
 
 ---
 
@@ -84,6 +116,7 @@ import {
 ```tsx
 import {
   LayoutProvider,
+  LayoutFrame,
   Sidebar,
   MainWrapper,
   SideHideLayout,
@@ -91,5 +124,8 @@ import {
   Header,
   Footer,
   Background,
+  LayoutModeEnum,
+  useLayout,
+  getLayoutStorage,
 } from "nfx-ui/layouts";
 ```

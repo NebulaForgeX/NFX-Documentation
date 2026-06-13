@@ -25,7 +25,7 @@ import { defineEvents, EventEmitter } from "@/events";
 | File | Description |
 |------|-------------|
 | [define-events.md](./define-events.md) | defineEvents(), DefinedEvents, EventNamesOf, EventCallback |
-| [event-emitter.md](./event-emitter.md) | EventEmitter class: constructor, on, off, emit |
+| [event-emitter.md](./event-emitter.md) | EventEmitter class: constructor, on, off, emit, PayloadMap |
 
 ---
 
@@ -34,7 +34,8 @@ import { defineEvents, EventEmitter } from "@/events";
 1. Use `defineEvents({ ... })` to define and export event names (one-level key-value, value is string).
 2. Export type: `type MyEvent = EventNamesOf<typeof myEvents>`.
 3. Subclass: `class MyEventEmitter extends EventEmitter<MyEvent> { constructor() { super(myEvents); } }`.
-4. For singleton, use `singleton(MyEventEmitter)` then export after `new`.
+4. Optionally pass a second generic `PayloadMap` for strict emit/on args: `EventEmitter<E, PayloadMap>`.
+5. For singleton, use `singleton(MyEventEmitter)` then export after `new`.
 
 ---
 
@@ -67,7 +68,7 @@ import { defineEvents, EventEmitter } from "@/events";
 | 文件 | 说明 |
 |------|------|
 | [define-events.md](./define-events.md) | defineEvents()、DefinedEvents、EventNamesOf、EventCallback |
-| [event-emitter.md](./event-emitter.md) | EventEmitter 类：构造函数、on、off、emit |
+| [event-emitter.md](./event-emitter.md) | EventEmitter 类：构造函数、on、off、emit、PayloadMap |
 
 ---
 
@@ -76,4 +77,5 @@ import { defineEvents, EventEmitter } from "@/events";
 1. 用 `defineEvents({ ... })` 定义并导出事件名对象（仅一级 key-value，value 为字符串）。
 2. 导出类型：`type MyEvent = EventNamesOf<typeof myEvents>`。
 3. 子类：`class MyEventEmitter extends EventEmitter<MyEvent> { constructor() { super(myEvents); } }`。
-4. 若需单例，使用 `singleton(MyEventEmitter)` 再 `new` 导出。
+4. 可选第二泛型 `PayloadMap` 约束 emit/on 参数：`EventEmitter<E, PayloadMap>`。
+5. 若需单例，使用 `singleton(MyEventEmitter)` 再 `new` 导出。

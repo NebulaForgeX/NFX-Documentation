@@ -1,6 +1,8 @@
 # getApiError / getApiErrorMessage
 
-Parse API error body and message from an exception.
+Parse API error body and display message from an exception. Expects backend error shape `{ status, err_code, message, details?, trace_id? }` (axios camelCase: `errCode`, `traceId`).
+
+Display priority: i18n `errors:{errCode}` → `api.message` → fallback.
 
 ---
 
@@ -18,8 +20,8 @@ import { getApiError, getApiErrorMessage } from "nfx-ui/utils";
 |-----------|------|----------|---------|-------------|
 | error | unknown | Yes | — | Caught exception (e.g. Axios error). |
 
-- **Input:** Any error (e.g. from failed request).
-- **Output:** ApiErrorBody \| null — returns error body if API error, else null.
+- **Input:** Any error (typically Axios with `response.data`).
+- **Output:** ApiErrorBody \| null — parsed body when `response.data` exists, else null.
 
 ---
 
@@ -31,7 +33,7 @@ import { getApiError, getApiErrorMessage } from "nfx-ui/utils";
 | fallback | string | Yes | — | Default message when parse fails. |
 
 - **Input:** error, fallback.
-- **Output:** string — error message or fallback.
+- **Output:** string — i18n by errCode, then api.message, then fallback.
 
 ---
 
@@ -52,7 +54,9 @@ try {
 
 # getApiError / getApiErrorMessage — API 错误解析
 
-从异常中解析 API 错误体与文案。
+从异常中解析 API 错误体与展示文案。约定后端错误体 `{ status, err_code, message, details?, trace_id? }`（axios 转 camelCase：`errCode`、`traceId`）。
+
+展示优先级：i18n `errors:{errCode}` → `api.message` → fallback。
 
 ---
 
@@ -70,8 +74,8 @@ import { getApiError, getApiErrorMessage } from "nfx-ui/utils";
 |------|------|------|------|------|
 | error | unknown | 是 | — | 捕获的异常（如 Axios error）。 |
 
-- **输入：** 任意 error（通常为请求失败抛出的对象）。
-- **输出：** ApiErrorBody \| null — 若为 API 错误则返回错误体，否则 null。
+- **输入：** 任意 error（通常含 `response.data`）。
+- **输出：** ApiErrorBody \| null — 有 `response.data` 时解析为错误体，否则 null。
 
 ---
 
@@ -83,7 +87,7 @@ import { getApiError, getApiErrorMessage } from "nfx-ui/utils";
 | fallback | string | 是 | — | 无法解析时返回的默认文案。 |
 
 - **输入：** error、fallback。
-- **输出：** string — 错误消息或 fallback。
+- **输出：** string — 先按 errCode 查 i18n，再 api.message，最后 fallback。
 
 ---
 

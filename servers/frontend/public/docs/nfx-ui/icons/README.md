@@ -1,6 +1,6 @@
 # Icons module
 
-Icon re-exports (e.g. Lucide). Exported from **`nfx-ui/icons`**; in repo you can use `@/icons`. Parameters and examples in sub-docs.
+Icon re-exports (Lucide, 71 icons). Exported from **`nfx-ui/icons`**; in repo you can use `@/icons`. Parameters and examples in sub-docs.
 
 ---
 
@@ -9,7 +9,7 @@ Icon re-exports (e.g. Lucide). Exported from **`nfx-ui/icons`**; in repo you can
 **From nfx-ui/icons (consuming app):**
 
 ```ts
-import { /* Lucide icons */ } from "nfx-ui/icons";
+import { Search, ChevronDown, X } from "nfx-ui/icons";
 import type { LucideIcon } from "nfx-ui/icons";
 ```
 
@@ -19,7 +19,7 @@ import type { LucideIcon } from "nfx-ui/icons";
 
 | File | Description |
 |------|-------------|
-| [lucide.md](./lucide.md) | Lucide icons and types |
+| [lucide.md](./lucide.md) | Lucide icons (71) and LucideIcon type |
 
 ---
 
@@ -27,7 +27,7 @@ import type { LucideIcon } from "nfx-ui/icons";
 
 # Icons 模块
 
-图标统一导出（如 Lucide）。从 **`nfx-ui/icons`** 子路径导出；本仓库内也可从 `@/icons` 引用。参数与示例见子文档。
+图标统一导出（Lucide，共 71 个）。从 **`nfx-ui/icons`** 子路径导出；本仓库内也可从 `@/icons` 引用。参数与示例见子文档。
 
 ---
 
@@ -36,7 +36,7 @@ import type { LucideIcon } from "nfx-ui/icons";
 **从 nfx-ui/icons 引用（业务项目）：**
 
 ```ts
-import { /* Lucide icons */ } from "nfx-ui/icons";
+import { Search, ChevronDown, X } from "nfx-ui/icons";
 import type { LucideIcon } from "nfx-ui/icons";
 ```
 
@@ -46,4 +46,4 @@ import type { LucideIcon } from "nfx-ui/icons";
 
 | 文件 | 说明 |
 |------|------|
-| [lucide.md](./lucide.md) | Lucide 图标与类型 |
+| [lucide.md](./lucide.md) | Lucide 图标（71 个）与 LucideIcon 类型 |

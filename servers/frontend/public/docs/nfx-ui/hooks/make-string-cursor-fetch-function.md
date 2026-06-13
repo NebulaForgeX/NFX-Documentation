@@ -1,6 +1,6 @@
 # makeStringCursorFetchFunction
 
-Converts string-cursor list API to (pageParam: string, filter?) => ListDTOWithNextCursor.
+Converts string-cursor list API to `(pageParam: string, filter?) => ListDTOWithNextCursor`. `offset` param receives the cursor string.
 
 ---
 
@@ -8,7 +8,11 @@ Converts string-cursor list API to (pageParam: string, filter?) => ListDTOWithNe
 
 ```ts
 import { makeStringCursorFetchFunction } from "nfx-ui/hooks";
+import type { FetchStringListParams } from "nfx-ui/hooks";
+import type { ListDTOWithNextCursor } from "nfx-ui/types";
 ```
+
+Exported from `src/hooks/makeCursorFetchFunction.tsx` alongside `makeCursorFetchFunction`.
 
 ---
 
@@ -28,16 +32,16 @@ function makeStringCursorFetchFunction<T, F extends object = Record<string, unkn
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| fetchFunc | (params) => Promise&lt;ListDTOWithNextCursor&lt;T&gt;&gt; | Yes | — | params include offset (string), limit. |
+| fetchFunc | (params: FetchStringListParams&lt;F&gt;) => Promise&lt;ListDTOWithNextCursor&lt;T&gt;&gt; | Yes | — | params include offset (string cursor), limit. |
 | pageSize | number | No | 20 | Page size. |
-| postProcess | (data: T[]) => void | No | — | Optional. |
+| postProcess | (data: T[]) => void | No | — | Optional; called when items.length &gt; 0. |
 
 ---
 
 ## Input / Output
 
 - **Input:** fetchFunc, pageSize, postProcess.
-- **Output:** Returns async function `(pageParam: string, filter?) => Promise<ListDTOWithNextCursor<T>>`.
+- **Output:** `(pageParam: string = "", filter?) => Promise<ListDTOWithNextCursor<T>>` — returns `{ items, nextCursor }`.
 
 ---
 
@@ -55,7 +59,7 @@ if (page.nextCursor) await fetchByToken(page.nextCursor, { q: "x" });
 
 # makeStringCursorFetchFunction — 字符串游标分页函数
 
-将「字符串游标列表 API」转为 (pageParam: string, filter?) => ListDTOWithNextCursor。
+将「字符串游标列表 API」转为 `(pageParam: string, filter?) => ListDTOWithNextCursor`。请求参数 `offset` 为游标字符串。
 
 ---
 
@@ -63,7 +67,11 @@ if (page.nextCursor) await fetchByToken(page.nextCursor, { q: "x" });
 
 ```ts
 import { makeStringCursorFetchFunction } from "nfx-ui/hooks";
+import type { FetchStringListParams } from "nfx-ui/hooks";
+import type { ListDTOWithNextCursor } from "nfx-ui/types";
 ```
+
+与 `makeCursorFetchFunction` 同文件导出：`src/hooks/makeCursorFetchFunction.tsx`。
 
 ---
 
@@ -83,16 +91,16 @@ function makeStringCursorFetchFunction<T, F extends object = Record<string, unkn
 
 | 参数 | 类型 | 必填 | 默认 | 说明 |
 |------|------|------|------|------|
-| fetchFunc | (params) => Promise&lt;ListDTOWithNextCursor&lt;T&gt;&gt; | 是 | — | params 含 offset (string)、limit。 |
+| fetchFunc | (params: FetchStringListParams&lt;F&gt;) => Promise&lt;ListDTOWithNextCursor&lt;T&gt;&gt; | 是 | — | params 含 offset（字符串游标）、limit。 |
 | pageSize | number | 否 | 20 | 每页条数。 |
-| postProcess | (data: T[]) => void | 否 | — | 可选。 |
+| postProcess | (data: T[]) => void | 否 | — | 可选；items.length &gt; 0 时调用。 |
 
 ---
 
 ## 输入 / 输出
 
 - **输入：** fetchFunc、pageSize、postProcess。
-- **输出：** 返回 `(pageParam: string, filter?) => Promise<ListDTOWithNextCursor<T>>`。
+- **输出：** `(pageParam: string = "", filter?) => Promise<ListDTOWithNextCursor<T>>` — 返回 `{ items, nextCursor }`。
 
 ---
 

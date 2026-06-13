@@ -1,6 +1,6 @@
 # Preference — user preference
 
-Constants, types and helpers for user preference (e.g. dashboard background, parse/serialize preference JSON). Parameters and Input/Output in types and source.
+Constants, types and helpers for user preference JSON (`profile.preference`). Root always has logical `nfx` slice; host extensions are parsed via `parseExtra` / `serializeExtra`.
 
 ---
 
@@ -8,12 +8,39 @@ Constants, types and helpers for user preference (e.g. dashboard background, par
 
 | Name | Description |
 |------|-------------|
-| DashboardBackgroundEnum | Dashboard background enum |
-| DEFAULT_DASHBOARD_BACKGROUND | Default background |
-| DASHBOARD_BACKGROUND_VALUES | Enum values array |
-| Preference | Preference type |
-| parsePreferenceJson | Parse preference from JSON |
-| preferenceToJson | Serialize preference to JSON |
+| NFX_PREFERENCE_ROOT_KEY | Literal `"nfx"` — JSON root key for NFX built-in slice. |
+| NfxPreferenceSlice | Built-in fields: theme, base, language, layoutMode, dashboardBackground. |
+| Preference&lt;TExtra&gt; | `{ nfx: NfxPreferenceSlice } & TExtra` — full in-memory preference. |
+| DashboardBackgroundEnum | Dashboard background enum. |
+| DEFAULT_DASHBOARD_BACKGROUND | Default background (`NONE`). |
+| DASHBOARD_BACKGROUND_VALUES | Enum values array. |
+| parsePreferenceJson | Parse preference from JSON string; normalizes missing/invalid `nfx`. |
+| preferenceToJson | Serialize preference to JSON string. |
+
+---
+
+## NfxPreferenceSlice fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| theme | ThemeEnum | Theme preference. |
+| base | BaseEnum | Base color preference. |
+| language | LanguageEnum | Language preference. |
+| layoutMode | LayoutModeEnum | Sidebar layout mode. |
+| dashboardBackground | DashboardBackgroundEnum | Dashboard background animation. |
+
+---
+
+## parsePreferenceJson / preferenceToJson
+
+```ts
+parsePreferenceJson(json, parseExtra?)
+// Missing/invalid nfx → normalized to defaults (not null)
+// parseExtra receives root object minus nfx key
+
+preferenceToJson(preference, serializeExtra?)
+// Writes { [NFX_PREFERENCE_ROOT_KEY]: nfxSliceToBackend(nfx), ...extra }
+```
 
 ---
 
@@ -21,11 +48,20 @@ Constants, types and helpers for user preference (e.g. dashboard background, par
 
 ```tsx
 import {
+  NFX_PREFERENCE_ROOT_KEY,
   DashboardBackgroundEnum,
   parsePreferenceJson,
   preferenceToJson,
+  type NfxPreferenceSlice,
   type Preference,
 } from "nfx-ui/preference";
+
+parsePreferenceJson("{}");
+// => { nfx: { theme, base, language, layoutMode, dashboardBackground defaults } }
+
+const p = parsePreferenceJson('{"nfx":{},"my_app":{"k":1}}', (raw) => ({
+  myApp: { k: Number((raw.my_app as { k?: unknown })?.k) || 0 },
+}));
 ```
 
 ---
@@ -34,7 +70,7 @@ import {
 
 # 用户偏好
 
-用户偏好相关常量、类型与工具函数（如仪表盘背景、解析/序列化偏好 JSON）。参数与 Input/Output 见类型定义与源码。
+用户偏好相关常量、类型与工具函数（`profile.preference` JSON 约定）。根对象必有逻辑上的 `nfx` 块；宿主扩展通过 `parseExtra` / `serializeExtra` 处理。
 
 ---
 
@@ -42,12 +78,39 @@ import {
 
 | 名称 | 说明 |
 |------|------|
-| DashboardBackgroundEnum | 仪表盘背景枚举 |
-| DEFAULT_DASHBOARD_BACKGROUND | 默认背景值 |
-| DASHBOARD_BACKGROUND_VALUES | 枚举值数组 |
-| Preference | 偏好对象类型 |
-| parsePreferenceJson | 从 JSON 字符串解析偏好 |
-| preferenceToJson | 将偏好序列化为 JSON |
+| NFX_PREFERENCE_ROOT_KEY | 字面量 `"nfx"` — JSON 根上 NFX 内置块的键名。 |
+| NfxPreferenceSlice | 内置字段：theme、base、language、layoutMode、dashboardBackground。 |
+| Preference&lt;TExtra&gt; | `{ nfx: NfxPreferenceSlice } & TExtra` — 内存中的完整偏好。 |
+| DashboardBackgroundEnum | 仪表盘背景枚举。 |
+| DEFAULT_DASHBOARD_BACKGROUND | 默认背景（`NONE`）。 |
+| DASHBOARD_BACKGROUND_VALUES | 枚举值数组。 |
+| parsePreferenceJson | 从 JSON 字符串解析；缺省/非法 `nfx` 会规范化后再合并扩展。 |
+| preferenceToJson | 序列化为 JSON 字符串。 |
+
+---
+
+## NfxPreferenceSlice 字段
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| theme | ThemeEnum | 主题偏好。 |
+| base | BaseEnum | 基础色偏好。 |
+| language | LanguageEnum | 语言偏好。 |
+| layoutMode | LayoutModeEnum | 侧栏布局模式。 |
+| dashboardBackground | DashboardBackgroundEnum | 仪表盘背景动画。 |
+
+---
+
+## parsePreferenceJson / preferenceToJson
+
+```ts
+parsePreferenceJson(json, parseExtra?)
+// 缺 nfx 或非法 nfx → 按默认值规范化（不因缺 nfx 返回 null）
+// parseExtra 收到的是根对象去掉 nfx 后的键值
+
+preferenceToJson(preference, serializeExtra?)
+// 写出 { [NFX_PREFERENCE_ROOT_KEY]: nfxSliceToBackend(nfx), ...extra }
+```
 
 ---
 
@@ -55,9 +118,18 @@ import {
 
 ```tsx
 import {
+  NFX_PREFERENCE_ROOT_KEY,
   DashboardBackgroundEnum,
   parsePreferenceJson,
   preferenceToJson,
+  type NfxPreferenceSlice,
   type Preference,
 } from "nfx-ui/preference";
+
+parsePreferenceJson("{}");
+// => { nfx: { theme、base、language、layoutMode、dashboardBackground 默认值 } }
+
+const p = parsePreferenceJson('{"nfx":{},"my_app":{"k":1}}', (raw) => ({
+  myApp: { k: Number((raw.my_app as { k?: unknown })?.k) || 0 },
+}));
 ```

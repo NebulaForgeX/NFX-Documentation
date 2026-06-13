@@ -1,6 +1,6 @@
 # Label Hooks
 
-Four label hooks and pure functions from the languages module: get i18n display names for enum values; can be passed to SlideDownSwitcher `getDisplayName`.
+Four label hooks and pure functions from the languages module: get i18n display names for enum values; pass to `SlideDownSwitcher` `getDisplayName`.
 
 ---
 
@@ -23,52 +23,56 @@ import {
 
 ## 1. useLanguageLabel / getLanguageDisplayName
 
-Returns display name for language enum (e.g. "简体中文", "English"). Uses built-in `language` namespace.
+Returns display name for `LanguageEnum` (e.g. "简体中文", "English").
 
-| Name | Type | Description |
-|------|------|-------------|
-| useLanguageLabel | () => { getLanguageDisplayName: (lang: LanguageEnum) => string } | Hook, returns getLanguageDisplayName. |
-| getLanguageDisplayName | (lang: LanguageEnum) => string | Pure function, no React. |
+| Name | Type | i18n key | Namespace |
+|------|------|----------|-----------|
+| useLanguageLabel | `() => { getLanguageDisplayName }` | `languageSwitcher.{lang}` | `language` |
+| getLanguageDisplayName | `(lang: LanguageEnum) => string` | same | `language` |
+
+Falls back to raw enum value when no translation.
 
 ---
 
 ## 2. useLayoutLabel / getLayoutDisplayName
 
-Returns display name for layout mode enum. Uses built-in `layout` namespace.
+Returns display name for `LayoutModeEnum` (`show` / `hide`).
 
-| Name | Type | Description |
-|------|------|-------------|
-| useLayoutLabel | () => { getLayoutDisplayName: (mode: LayoutModeEnum) => string } | Hook, returns getLayoutDisplayName. |
-| getLayoutDisplayName | (mode: LayoutModeEnum) => string | Pure function. |
+| Name | Type | i18n key | Namespace |
+|------|------|----------|-----------|
+| useLayoutLabel | `() => { getLayoutDisplayName }` | `layoutSwitcher.{mode}` | `layout` |
+| getLayoutDisplayName | `(mode: LayoutModeEnum) => string` | same | `layout` |
 
 ---
 
 ## 3. usePreferenceLabel / getPreferenceDisplayName
 
-Returns display name for preference/Base enum (e.g. iOS, Android, Windows). Uses built-in `preference` namespace.
+Returns display name for `BaseEnum` (iOS, Android, Windows, etc.).
 
-| Name | Type | Description |
-|------|------|-------------|
-| usePreferenceLabel | () => { getPreferenceDisplayName: (base: BaseEnum) => string } | Hook, returns getPreferenceDisplayName. |
-| getPreferenceDisplayName | (base: BaseEnum) => string | Pure function. |
+| Name | Type | i18n key | Namespace |
+|------|------|----------|-----------|
+| usePreferenceLabel | `() => { getPreferenceDisplayName }` | `baseSwitcher.{base}` | `preference` |
+| getPreferenceDisplayName | `(base: BaseEnum) => string` | same | `preference` |
 
 ---
 
 ## 4. useThemeLabel / getThemeDisplayName
 
-Returns display name for theme enum (e.g. "浅色", "深色"). Uses built-in `theme` namespace.
+Returns display name for `ThemeEnum` (e.g. "浅色", "Dark").
 
-| Name | Type | Description |
-|------|------|-------------|
-| useThemeLabel | () => { getThemeDisplayName: (theme: ThemeEnum) => string } | Hook, returns getThemeDisplayName. |
-| getThemeDisplayName | (theme: ThemeEnum) => string | Pure function. |
+| Name | Type | i18n key | Namespace |
+|------|------|----------|-----------|
+| useThemeLabel | `() => { getThemeDisplayName }` | `themeSwitcher.{theme}` | `theme` |
+| getThemeDisplayName | `(theme: ThemeEnum) => string` | same | `theme` |
 
 ---
 
 ## Input / Output
 
-- **Input:** Hooks take no args; each getXxxDisplayName takes the enum value (LanguageEnum / LayoutModeEnum / BaseEnum / ThemeEnum).
-- **Output:** Display string in current language; if no translation, returns enum value as default.
+- **Input:** Hooks take no args; each `getXxxDisplayName` takes the enum value.
+- **Output:** Localized string in current `i18n.language`; `defaultValue` is the enum raw value.
+
+Requires **LanguageProvider** (or prior `initI18n`) for built-in NFX bundles.
 
 ---
 
@@ -76,24 +80,32 @@ Returns display name for theme enum (e.g. "浅色", "深色"). Uses built-in `th
 
 ```tsx
 import { SlideDownSwitcher } from "nfx-ui/components";
-import { useThemeLabel, useLanguageLabel } from "nfx-ui/languages";
+import { useTheme, ThemeEnum } from "nfx-ui/themes";
+import i18n, {
+  useThemeLabel,
+  useLanguageLabel,
+  changeLanguage,
+  LANGUAGE_VALUES,
+  LanguageEnum,
+} from "nfx-ui/languages";
 
-function MySwitcher() {
+function HeaderSwitchers() {
+  const { themeName, setTheme, availableThemes } = useTheme();
   const { getThemeDisplayName } = useThemeLabel();
   const { getLanguageDisplayName } = useLanguageLabel();
 
   return (
     <>
       <SlideDownSwitcher
-        options={["light", "dark"]}
-        value={theme}
-        onChange={setTheme}
+        options={availableThemes}
+        value={themeName}
+        onChange={(t) => setTheme(t as ThemeEnum)}
         getDisplayName={getThemeDisplayName}
       />
       <SlideDownSwitcher
-        options={["zh", "en", "fr"]}
-        value={lang}
-        onChange={setLang}
+        options={LANGUAGE_VALUES}
+        value={i18n.language as LanguageEnum}
+        onChange={(lng) => changeLanguage(lng as LanguageEnum)}
         getDisplayName={getLanguageDisplayName}
       />
     </>
@@ -103,10 +115,8 @@ function MySwitcher() {
 
 ```ts
 import { getThemeDisplayName } from "nfx-ui/languages";
-const label = getThemeDisplayName("dark");
+const label = getThemeDisplayName(ThemeEnum.DARK);
 ```
-
-Use inside **LanguageProvider** for correct i18n; otherwise built-in default labels apply.
 
 ---
 
@@ -114,7 +124,7 @@ Use inside **LanguageProvider** for correct i18n; otherwise built-in default lab
 
 # 展示名 Hooks
 
-语言模块提供的四组「展示名」Hook 与纯函数：用于根据枚举值获取 i18n 文案，可传给 SlideDownSwitcher 的 `getDisplayName` 等。
+语言模块四组展示名 Hook 与纯函数：根据枚举值获取 i18n 文案，可传给 `SlideDownSwitcher` 的 `getDisplayName`。
 
 ---
 
@@ -137,52 +147,56 @@ import {
 
 ## 1. useLanguageLabel / getLanguageDisplayName
 
-返回语言枚举的展示名（如 "简体中文"、"English"）。依赖内置 `language` 命名空间。
+返回 `LanguageEnum` 展示名（如 "简体中文"、"English"）。
 
-| 名称 | 类型 | 说明 |
-|------|------|------|
-| useLanguageLabel | () => { getLanguageDisplayName: (lang: LanguageEnum) => string } | Hook，返回 getLanguageDisplayName。 |
-| getLanguageDisplayName | (lang: LanguageEnum) => string | 纯函数，不依赖 React。 |
+| 名称 | 类型 | i18n 键 | 命名空间 |
+|------|------|---------|----------|
+| useLanguageLabel | `() => { getLanguageDisplayName }` | `languageSwitcher.{lang}` | `language` |
+| getLanguageDisplayName | `(lang: LanguageEnum) => string` | 同上 | `language` |
+
+无翻译时回退为枚举原始值。
 
 ---
 
 ## 2. useLayoutLabel / getLayoutDisplayName
 
-返回布局模式枚举的展示名。依赖内置 `layout` 命名空间。
+返回 `LayoutModeEnum`（`show` / `hide`）展示名。
 
-| 名称 | 类型 | 说明 |
-|------|------|------|
-| useLayoutLabel | () => { getLayoutDisplayName: (mode: LayoutModeEnum) => string } | Hook，返回 getLayoutDisplayName。 |
-| getLayoutDisplayName | (mode: LayoutModeEnum) => string | 纯函数。 |
+| 名称 | 类型 | i18n 键 | 命名空间 |
+|------|------|---------|----------|
+| useLayoutLabel | `() => { getLayoutDisplayName }` | `layoutSwitcher.{mode}` | `layout` |
+| getLayoutDisplayName | `(mode: LayoutModeEnum) => string` | 同上 | `layout` |
 
 ---
 
 ## 3. usePreferenceLabel / getPreferenceDisplayName
 
-返回偏好/Base 枚举的展示名（如 iOS、Android、Windows）。依赖内置 `preference` 命名空间。
+返回 `BaseEnum`（iOS、Android、Windows 等）展示名。
 
-| 名称 | 类型 | 说明 |
-|------|------|------|
-| usePreferenceLabel | () => { getPreferenceDisplayName: (base: BaseEnum) => string } | Hook，返回 getPreferenceDisplayName。 |
-| getPreferenceDisplayName | (base: BaseEnum) => string | 纯函数。 |
+| 名称 | 类型 | i18n 键 | 命名空间 |
+|------|------|---------|----------|
+| usePreferenceLabel | `() => { getPreferenceDisplayName }` | `baseSwitcher.{base}` | `preference` |
+| getPreferenceDisplayName | `(base: BaseEnum) => string` | 同上 | `preference` |
 
 ---
 
 ## 4. useThemeLabel / getThemeDisplayName
 
-返回主题枚举的展示名（如 "浅色"、"深色"）。依赖内置 `theme` 命名空间。
+返回 `ThemeEnum` 展示名（如 "浅色"、"Dark"）。
 
-| 名称 | 类型 | 说明 |
-|------|------|------|
-| useThemeLabel | () => { getThemeDisplayName: (theme: ThemeEnum) => string } | Hook，返回 getThemeDisplayName。 |
-| getThemeDisplayName | (theme: ThemeEnum) => string | 纯函数。 |
+| 名称 | 类型 | i18n 键 | 命名空间 |
+|------|------|---------|----------|
+| useThemeLabel | `() => { getThemeDisplayName }` | `themeSwitcher.{theme}` | `theme` |
+| getThemeDisplayName | `(theme: ThemeEnum) => string` | 同上 | `theme` |
 
 ---
 
 ## 输入 / 输出
 
-- **输入：** 各 Hook 无参数；各 getXxxDisplayName 接收对应枚举值（LanguageEnum / LayoutModeEnum / BaseEnum / ThemeEnum）。
-- **输出：** 当前语言下的展示字符串；若无翻译则返回枚举原始值作为 defaultValue。
+- **输入：** 各 Hook 无参数；各 `getXxxDisplayName` 接收对应枚举值。
+- **输出：** 当前 `i18n.language` 下的文案；`defaultValue` 为枚举原始值。
+
+需在 **LanguageProvider**（或事先 `initI18n`）内使用，才能加载内置 NFX 文案包。
 
 ---
 
@@ -190,24 +204,32 @@ import {
 
 ```tsx
 import { SlideDownSwitcher } from "nfx-ui/components";
-import { useThemeLabel, useLanguageLabel } from "nfx-ui/languages";
+import { useTheme, ThemeEnum } from "nfx-ui/themes";
+import i18n, {
+  useThemeLabel,
+  useLanguageLabel,
+  changeLanguage,
+  LANGUAGE_VALUES,
+  LanguageEnum,
+} from "nfx-ui/languages";
 
-function MySwitcher() {
+function HeaderSwitchers() {
+  const { themeName, setTheme, availableThemes } = useTheme();
   const { getThemeDisplayName } = useThemeLabel();
   const { getLanguageDisplayName } = useLanguageLabel();
 
   return (
     <>
       <SlideDownSwitcher
-        options={["light", "dark"]}
-        value={theme}
-        onChange={setTheme}
+        options={availableThemes}
+        value={themeName}
+        onChange={(t) => setTheme(t as ThemeEnum)}
         getDisplayName={getThemeDisplayName}
       />
       <SlideDownSwitcher
-        options={["zh", "en", "fr"]}
-        value={lang}
-        onChange={setLang}
+        options={LANGUAGE_VALUES}
+        value={i18n.language as LanguageEnum}
+        onChange={(lng) => changeLanguage(lng as LanguageEnum)}
         getDisplayName={getLanguageDisplayName}
       />
     </>
@@ -217,7 +239,5 @@ function MySwitcher() {
 
 ```ts
 import { getThemeDisplayName } from "nfx-ui/languages";
-const label = getThemeDisplayName("dark");
+const label = getThemeDisplayName(ThemeEnum.DARK);
 ```
-
-需在 **LanguageProvider** 内使用，否则使用内置默认文案。

@@ -1,6 +1,6 @@
 # BounceLoading
 
-Bouncing square or circle loading animation, simple and generic.
+Bouncing square or circle loading animation. Fill and shadow use theme CSS variable `--color-primary`.
 
 ---
 
@@ -16,16 +16,16 @@ import { BounceLoading } from "nfx-ui/animations";
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| size | `"small"` \| `"medium"` \| `"large"` | No | `"medium"` | Size (square). |
-| shape | `"square"` \| `"circle"` | No | `"square"` | Shape of the loader. |
-| className | string | No | — | Custom CSS class. |
+| size | `"small"` \| `"medium"` \| `"large"` | No | `"medium"` | Width and height of the loader (square bounding box). |
+| shape | `"square"` \| `"circle"` | No | `"square"` | Shape of the bouncing element. |
+| className | string | No | — | Custom CSS class appended to the root element. |
 
 ---
 
 ## Input / Output
 
 - **Input:** Optional props above.
-- **Output:** Renders a bouncing animation element.
+- **Output:** Renders a bouncing `div` with pseudo-element shadow animation.
 
 ---
 
@@ -51,7 +51,7 @@ import { BounceLoading } from "nfx-ui/animations";
 <BounceLoading size="large" />
 ```
 
-Use inside `ThemeProvider` for theme variables.
+Use inside `ThemeProvider` for theme primary color.
 
 ---
 
@@ -59,7 +59,7 @@ Use inside `ThemeProvider` for theme variables.
 
 # BounceLoading — 弹跳加载
 
-弹跳方块或圆点加载动画，简洁通用。
+弹跳方块或圆点加载动画。填充与阴影使用主题 CSS 变量 `--color-primary`。
 
 ---
 
@@ -75,16 +75,16 @@ import { BounceLoading } from "nfx-ui/animations";
 
 | 参数 | 类型 | 必填 | 默认 | 说明 |
 |------|------|------|------|------|
-| size | `"small"` \| `"medium"` \| `"large"` | 否 | `"medium"` | 尺寸（宽高一致）。 |
-| shape | `"square"` \| `"circle"` | 否 | `"square"` | 形状。 |
-| className | string | 否 | — | 自定义类名。 |
+| size | `"small"` \| `"medium"` \| `"large"` | 否 | `"medium"` | 加载器宽高（正方形边界框）。 |
+| shape | `"square"` \| `"circle"` | 否 | `"square"` | 弹跳元素形状。 |
+| className | string | 否 | — | 追加到根元素的自定义类名。 |
 
 ---
 
 ## 输入 / 输出
 
 - **输入：** 上述 props（可选）。
-- **输出：** 渲染一个弹跳动画元素。
+- **输出：** 渲染带伪元素阴影动画的弹跳 `div`。
 
 ---
 
@@ -110,4 +110,4 @@ import { BounceLoading } from "nfx-ui/animations";
 <BounceLoading size="large" />
 ```
 
-建议在 `ThemeProvider` 内使用。
+建议在 `ThemeProvider` 内使用以应用主题主色。

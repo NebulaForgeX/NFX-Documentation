@@ -1,6 +1,6 @@
 # toTextInputValue / toNumberInputValue
 
-Convert value to controlled input/textarea value string (text or number).
+Convert any value to controlled input value strings for form display.
 
 ---
 
@@ -12,29 +12,24 @@ import { toTextInputValue, toNumberInputValue } from "nfx-ui/utils";
 
 ---
 
-## Parameters
+## Parameters and Output
 
-| Function | Parameter | Type | Description |
-|----------|------------|------|-------------|
-| toTextInputValue | value | unknown | Any value to text input value. |
-| toNumberInputValue | value | unknown | Any value to number input value string. |
-
----
-
-## Input / Output
-
-- **Input:** value (number, string, null, undefined, etc.).
-- **Output:** string — for `<input value={...} />` or `<input type="number" value={...} />`.
+| Function | Parameter | Output |
+|----------|-----------|--------|
+| toTextInputValue | value: unknown | string — string as-is; null/undefined → `""`; number/boolean → String; array → comma-joined; object → JSON.stringify. |
+| toNumberInputValue | value: unknown | string — null/undefined → `""`; finite number → String; non-finite number → `""`; string as-is; boolean → `"1"`/`"0"`; array → first element String. |
 
 ---
 
 ## Example
 
 ```ts
-toTextInputValue(123);
-toTextInputValue(null);
-toNumberInputValue(99.5);
-toNumberInputValue(null);
+toTextInputValue(123);        // "123"
+toTextInputValue(null);       // ""
+toTextInputValue(["a", "b"]); // "a, b"
+toNumberInputValue(99.5);     // "99.5"
+toNumberInputValue(null);     // ""
+toNumberInputValue(true);     // "1"
 ```
 
 ---
@@ -43,7 +38,7 @@ toNumberInputValue(null);
 
 # toTextInputValue / toNumberInputValue — 表单值转换
 
-将值转为受控 input/textarea 的 value 字符串（文本或数字）。
+将任意值转为受控 input/textarea 的 value 字符串（文本或数字）。
 
 ---
 
@@ -55,27 +50,22 @@ import { toTextInputValue, toNumberInputValue } from "nfx-ui/utils";
 
 ---
 
-## 参数
+## 参数与输出
 
-| 函数 | 参数 | 类型 | 说明 |
-|------|------|------|------|
-| toTextInputValue | value | unknown | 任意值转文本 input 的 value。 |
-| toNumberInputValue | value | unknown | 任意值转数字 input 的 value 字符串。 |
-
----
-
-## 输入 / 输出
-
-- **输入：** value（number、string、null、undefined 等）。
-- **输出：** string — 可直接用于 `<input value={...} />` 或 `<input type="number" value={...} />`。
+| 函数 | 参数 | 输出 |
+|------|------|------|
+| toTextInputValue | value: unknown | string — 字符串原样；null/undefined → `""`；数字/布尔 → String；数组 → 逗号拼接；对象 → JSON.stringify。 |
+| toNumberInputValue | value: unknown | string — null/undefined → `""`；有限数字 → String；非有限数字 → `""`；字符串原样；布尔 → `"1"`/`"0"`；数组 → 首项 String。 |
 
 ---
 
 ## 示例
 
 ```ts
-toTextInputValue(123);
-toTextInputValue(null);
-toNumberInputValue(99.5);
-toNumberInputValue(null);
+toTextInputValue(123);        // "123"
+toTextInputValue(null);       // ""
+toTextInputValue(["a", "b"]); // "a, b"
+toNumberInputValue(99.5);     // "99.5"
+toNumberInputValue(null);     // ""
+toNumberInputValue(true);     // "1"
 ```

@@ -1,17 +1,6 @@
-// Lucide图标导出
-// 使用 lucide-vue-next 库
+/**
+ * Re-export Lucide icons used by this host from nfx-ui.
+ */
+export type { LucideIcon } from "nfx-ui/icons";
 
-export {
-  Home,
-  BookOpen,
-  Github,
-  Info,
-  Sun,
-  Moon,
-  Languages,
-  Menu,
-  X,
-  ChevronRight,
-  ArrowRight,
-  ExternalLink,
-} from 'lucide-vue-next'
+export { ArrowLeft, ArrowRight, FileText, Folders, GraduationCap, Home, Info } from "nfx-ui/icons";

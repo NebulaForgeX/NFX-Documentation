@@ -1,4 +1,2 @@
-export { default } from './i18n'
-export { LANGUAGE, changeLanguage } from './i18n'
-export type { Language } from './i18n'
-
+export { getBuiltinI18nBundles } from "./i18nResources";
+export { ChangeLanguage } from "./i18n";

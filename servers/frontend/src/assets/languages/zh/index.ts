@@ -7,7 +7,6 @@ import chapter05 from './chapter05.json'
 import repo from './repo.json'
 import about from './about.json'
 import notFound from './notFound.json'
-import uiApi from './uiApi.json'
 
 export default {
   common,
@@ -19,6 +18,4 @@ export default {
   repo,
   about,
   notFound,
-  uiApi,
 }
-

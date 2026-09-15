@@ -1,3 +1,1 @@
-// Export utilities here
-// Example: export { someUtil } from './someUtil'
-
+export { tList, tObject, tObjects, chapterLocale } from "./i18nContent";

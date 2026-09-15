@@ -1,30 +1,22 @@
-import js from '@eslint/js'
-import pluginVue from 'eslint-plugin-vue'
-import * as parserVue from 'vue-eslint-parser'
-import tseslint from 'typescript-eslint'
+import js from "@eslint/js";
+import globals from "globals";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
+import tseslint from "typescript-eslint";
+import { defineConfig, globalIgnores } from "eslint/config";
 
-export default tseslint.config(
-  { ignores: ['dist', 'node_modules'] },
+export default defineConfig([
+  globalIgnores(["dist", ".prettierrc.mjs", "eslint.config.js", "vite.config.ts"]),
   {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ['**/*.{ts,mts,tsx,vue}'],
+    files: ["**/*.{ts,tsx}"],
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+    ],
     languageOptions: {
-      ecmaVersion: 2020,
-      parser: parserVue,
-      parserOptions: {
-        parser: '@typescript-eslint/parser',
-        sourceType: 'module',
-      },
+      globals: globals.browser,
     },
-    plugins: {
-      vue: pluginVue,
-    },
-    rules: {
-      ...pluginVue.configs.base.rules,
-      ...pluginVue.configs['vue3-essential'].rules,
-      ...pluginVue.configs['vue3-strongly-recommended'].rules,
-      ...pluginVue.configs['vue3-recommended'].rules,
-    },
-  }
-)
-
+  },
+]);

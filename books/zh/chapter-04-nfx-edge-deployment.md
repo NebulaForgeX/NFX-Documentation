@@ -1,10 +1,10 @@
 # 第四章节：NFX-Edge 反向代理与多网站管理部署
 
-[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) 是基于 Traefik v3.4 和 Docker Compose 的多网站反向代理解决方案，提供统一的多网站管理和自动 HTTPS 支持。本章节将指导您完成 NFX-Edge 的部署和配置。
+[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) 是基于 Traefik v3.7 和 Docker Compose 的多网站反向代理解决方案，提供统一的多网站管理和自动 HTTPS 支持。本章节将指导您完成 NFX-Edge 的部署和配置。
 
 ## 为什么需要 NFX-Edge？
 
-NFX-Edge 是 NFX 生态系统中的边缘服务层，负责处理所有来自公网的 HTTP/HTTPS 流量。作为整个系统的入口点，它在架构中扮演着至关重要的角色。
+NFX-Edge 是 NFX 生态系统中的边缘服务层，负责处理所有来自公网的 HTTP/HTTPS 流量。作为整个系统的入口点，它在架构中扮演着至关重要的角色。Identity、Vault、News、Storages、Documentation **都不再自带 Traefik**，只加入 `nfx-edge` 网络并打 `traefik.project` 标签，由本仓唯一反向代理发现（与 CityPulso 相同）。
 
 首先，NFX-Edge 提供了统一的流量入口。在传统的部署方式中，每个网站都需要单独配置反向代理服务器，这不仅增加了维护成本，还容易造成配置不一致的问题。而 NFX-Edge 通过 Traefik 反向代理，将所有网站流量集中到单一服务中进行管理，实现了统一的流量调度和路由。
 
@@ -141,7 +141,7 @@ mkdir -p /home/kali/Certs-repo/websites
 
 ### 步骤 1：配置 Traefik Dashboard
 
-在 `docker-compose.yml` 中找到 `reverse-proxy` 服务的 `labels` 部分，修改 Traefik Dashboard 的域名：
+在 `docker-compose.yml` 中找到 `traefik` 服务的 `labels` 部分，修改 Traefik Dashboard 的域名：
 
 ```yaml
 labels:
@@ -189,10 +189,10 @@ www_example:
   networks:
     - nfx-edge
   depends_on:
-    - reverse-proxy
+    - traefik
 ```
 
-在这个配置中，有几个关键的配置项需要理解。`container_name` 指定了容器的名称，建议使用有意义的命名规则，例如 `NFX-Edge-WWW-EXAMPLE`，这样可以清楚地标识每个容器的用途。`volumes` 配置项用于挂载数据卷，这里挂载了网站静态文件目录和 Nginx 配置文件，并且使用了只读模式（`:ro`），这意味着容器只能读取这些文件，无法修改，提高了安全性。`labels` 部分是 Traefik 的路由规则配置，在这里指定了域名匹配规则和 TLS 配置，Traefik 会根据这些标签来创建路由规则。`networks` 配置确保所有容器都连接到 `nfx-edge` 网络，这样容器之间就可以相互通信。最后，`depends_on` 配置确保 `reverse-proxy` 服务会先启动，这对于依赖关系很重要，因为网站服务需要等待反向代理服务就绪后才能正常工作。
+在这个配置中，有几个关键的配置项需要理解。`container_name` 指定了容器的名称，建议使用有意义的命名规则，例如 `NFX-Edge-WWW-EXAMPLE`，这样可以清楚地标识每个容器的用途。`volumes` 配置项用于挂载数据卷，这里挂载了网站静态文件目录和 Nginx 配置文件，并且使用了只读模式（`:ro`），这意味着容器只能读取这些文件，无法修改，提高了安全性。`labels` 部分是 Traefik 的路由规则配置，在这里指定了域名匹配规则和 TLS 配置，Traefik 会根据这些标签来创建路由规则。`networks` 配置确保所有容器都连接到 `nfx-edge` 网络，这样容器之间就可以相互通信。最后，`depends_on` 配置确保 `traefik` 服务会先启动，这对于依赖关系很重要，因为网站服务需要等待反向代理服务就绪后才能正常工作。
 
 ### 步骤 3：创建网站目录
 
@@ -289,7 +289,7 @@ tls:
 然后重启 Traefik 服务以加载新证书：
 
 ```bash
-sudo docker compose restart reverse-proxy
+sudo docker compose restart traefik
 ```
 
 **验证连接：**
@@ -341,7 +341,7 @@ tls:
 4. **重启 Traefik 服务**
 
 ```bash
-sudo docker compose restart reverse-proxy
+sudo docker compose restart traefik
 ```
 
 ## 5. 验证配置
@@ -408,7 +408,7 @@ NFX-Edge-WWW-EXAMPLE          Up              80/tcp
 sudo docker compose logs -f
 
 # 或查看特定服务的日志
-sudo docker compose logs -f reverse-proxy
+sudo docker compose logs -f traefik
 sudo docker compose logs -f www_example
 ```
 
@@ -459,7 +459,7 @@ www_newdomain:
   networks:
     - nfx-edge
   depends_on:
-    - reverse-proxy
+    - traefik
 ```
 
 ### 步骤 2：创建网站目录并添加文件
@@ -491,7 +491,7 @@ tls:
 sudo docker compose up -d www_newdomain
 
 # 重启 Traefik 以加载新证书
-sudo docker compose restart reverse-proxy
+sudo docker compose restart traefik
 ```
 
 ## 9. 常用操作
@@ -506,7 +506,7 @@ sudo docker compose restart reverse-proxy
 sudo docker compose restart
 
 # 重启特定服务
-sudo docker compose restart reverse-proxy
+sudo docker compose restart traefik
 sudo docker compose restart www_example
 ```
 

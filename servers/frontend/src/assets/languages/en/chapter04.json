@@ -1,6 +1,6 @@
 {
   "title": "Chapter 4: NFX-Edge Reverse Proxy and Multi-Website Management Deployment",
-  "intro": "[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) is a multi-website reverse proxy solution based on Traefik v3.4 and Docker Compose, providing unified multi-website management and automatic HTTPS support. This chapter will guide you through the deployment and configuration of NFX-Edge.",
+  "intro": "[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) is a multi-website reverse proxy solution based on Traefik v3.7 and Docker Compose, providing unified multi-website management and automatic HTTPS support. This chapter will guide you through the deployment and configuration of NFX-Edge.",
   "why": {
     "title": "Why Do We Need NFX-Edge?",
     "description": "NFX-Edge is the edge service layer of the NFX ecosystem, responsible for handling all HTTP/HTTPS traffic from the public internet. As the entry point of the entire system, it plays a crucial role in the architecture.",

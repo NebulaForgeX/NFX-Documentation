@@ -61,19 +61,19 @@ Services in the NFX ecosystem have clear dependencies. It is recommended to depl
 - Deployment location: `/home/kali/repo`
 - Requires connection to: MySQL, Redis, Kafka (from [NFX Stack](https://github.com/NebulaForgeX/NFX-Stack))
 
-### 3. Application Service Layer
+### 3. Edge ingress (the only reverse proxy)
 
-**[NFX-Edge (Websites)](https://github.com/NebulaForgeX/NFX-Edge)**
+**[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge)**
 
-- Multi-website reverse proxy system
-- Depends on certificate management service (recommended to use [NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault))
-- Deployment location: `/home/kali/repo`
-- Network configuration: `nfx-edge` (needs to be created in advance)
+- The **only** HTTP/HTTPS reverse proxy in NebulaForgeX (CityPulso-style: one Traefik, products only attach labels)
+- Creates and owns the `nfx-edge` network and host ports `80/443`
+- Depends on certificate files (recommended: [NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault))
 
-**Other Business Services**
+**Other product services (Identity / Vault / News / Storages / Documentation)**
 
-- All business services should connect to the `nfx-stack` network
-- Use database and message queue services provided by [NFX Stack](https://github.com/NebulaForgeX/NFX-Stack)
+- **Do not** run Traefik / `reverse-proxy` in product repos
+- HTTP services join external network `nfx-edge` and attach with `traefik.project` + Host/PathPrefix labels
+- Data plane still uses [NFX Stack](https://github.com/NebulaForgeX/NFX-Stack) (Postgres / Redis / Kafka)
 
 ---
 

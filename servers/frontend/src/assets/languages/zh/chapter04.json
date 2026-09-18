@@ -1,6 +1,6 @@
 {
   "title": "第四章节：NFX-Edge 反向代理与多网站管理部署",
-  "intro": "[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) 是基于 Traefik v3.4 和 Docker Compose 的多网站反向代理解决方案，提供统一的多网站管理和自动 HTTPS 支持。本章节将指导您完成 NFX-Edge 的部署和配置。",
+  "intro": "[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) 是基于 Traefik v3.7 和 Docker Compose 的多网站反向代理解决方案，提供统一的多网站管理和自动 HTTPS 支持。本章节将指导您完成 NFX-Edge 的部署和配置。",
   "why": {
     "title": "为什么需要 NFX-Edge？",
     "description": "NFX-Edge 是 NFX 生态系统中的边缘服务层，负责处理所有来自公网的 HTTP/HTTPS 流量。作为整个系统的入口点，它在架构中扮演着至关重要的角色。",

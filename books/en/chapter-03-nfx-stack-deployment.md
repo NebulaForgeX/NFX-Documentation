@@ -234,8 +234,8 @@ REDIS_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/redis
 # Kafka
 KAFKA_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/kafka
 
-# MinIO (if used, usually placed in Stores directory)
-# MINIO_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Stores
+# MinIO
+MINIO_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/minio
 
 # PostgreSQL
 POSTGRESQL_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/postgresql
@@ -259,8 +259,8 @@ REDIS_DATA_PATH=/volume1/NFX-Stack/Databases/redis
 # Kafka
 KAFKA_DATA_PATH=/volume1/NFX-Stack/Databases/kafka
 
-# MinIO (if used)
-# MINIO_DATA_PATH=/volume1/NFX-Stack/Stores
+# MinIO
+MINIO_DATA_PATH=/volume1/NFX-Stack/Databases/minio
 
 # PostgreSQL
 POSTGRESQL_DATA_PATH=/volume1/NFX-Stack/Databases/postgresql

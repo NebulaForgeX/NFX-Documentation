@@ -61,19 +61,19 @@ NFX 生态系统中的服务存在明确的依赖关系，建议按以下顺序�
 - 部署位置：`/home/kali/repo`
 - 需要连接：MySQL、Redis、Kafka（来自 [NFX Stack](https://github.com/NebulaForgeX/NFX-Stack)）
 
-### 3. 应用服务层
+### 3. 边缘入口（唯一反向代理）
 
-**[NFX-Edge (Websites)](https://github.com/NebulaForgeX/NFX-Edge)**
+**[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge)**
 
-- 多网站反向代理系统
-- 依赖证书管理服务（推荐使用 [NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault)）
-- 部署位置：`/home/kali/repo`
-- 配置网络：`nfx-edge`（需要预先创建）
+- NebulaForgeX **唯一**的 HTTP/HTTPS 反向代理（对齐 CityPulso：一个 Traefik，产品只打标签）
+- 创建并占用 `nfx-edge` 网络与主机 `80/443`
+- 依赖证书文件（推荐 [NFX-Vault](https://github.com/NebulaForgeX/NFX-Vault)）
 
-**其他业务服务**
+**其它业务服务（Identity / Vault / News / Storages / Documentation）**
 
-- 所有业务服务应连接到 `nfx-stack` 网络
-- 使用 [NFX Stack](https://github.com/NebulaForgeX/NFX-Stack) 提供的数据库和消息队列服务
+- **不要**在产品仓再起 Traefik / `reverse-proxy`
+- HTTP 服务加入外部网络 `nfx-edge`，用 `traefik.project` + Host/PathPrefix 标签接入 Edge
+- 数据面仍连 [NFX Stack](https://github.com/NebulaForgeX/NFX-Stack)（Postgres / Redis / Kafka）
 
 ---
 

@@ -1,10 +1,10 @@
 # Chapter 4: NFX-Edge Reverse Proxy and Multi-Website Management Deployment
 
-[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) is a multi-website reverse proxy solution based on Traefik v3.4 and Docker Compose, providing unified multi-website management and automatic HTTPS support. This chapter will guide you through the deployment and configuration of NFX-Edge.
+[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) is a multi-website reverse proxy solution based on Traefik v3.7 and Docker Compose, providing unified multi-website management and automatic HTTPS support. This chapter will guide you through the deployment and configuration of NFX-Edge.
 
 ## Why Do We Need NFX-Edge?
 
-NFX-Edge is the edge service layer of the NFX ecosystem, responsible for handling all HTTP/HTTPS traffic from the public internet. As the entry point of the entire system, it plays a crucial role in the architecture.
+NFX-Edge is the edge service layer of the NFX ecosystem, responsible for handling all HTTP/HTTPS traffic from the public internet. As the entry point of the entire system, it plays a crucial role in the architecture. Identity, Vault, News, Storages, and Documentation **do not run Traefik**; they join `nfx-edge` and set `traefik.project` labels so this repo is the only reverse proxy (same pattern as CityPulso).
 
 First, NFX-Edge provides a unified traffic entry point. In traditional deployment methods, each website requires a separate reverse proxy server configuration, which not only increases maintenance costs but also easily leads to configuration inconsistencies. NFX-Edge, through Traefik reverse proxy, centralizes all website traffic management in a single service, achieving unified traffic scheduling and routing.
 
@@ -141,7 +141,7 @@ Edit the `docker-compose.yml` file and configure it according to your actual nee
 
 ### Step 1: Configure Traefik Dashboard
 
-In `docker-compose.yml`, find the `labels` section of the `reverse-proxy` service and modify the Traefik Dashboard domain:
+In `docker-compose.yml`, find the `labels` section of the `traefik` service and modify the Traefik Dashboard domain:
 
 ```yaml
 labels:
@@ -189,10 +189,10 @@ www_example:
   networks:
     - nfx-edge
   depends_on:
-    - reverse-proxy
+    - traefik
 ```
 
-In this configuration, there are several key configuration items to understand. `container_name` specifies the container name, and it is recommended to use meaningful naming conventions, such as `NFX-Edge-WWW-EXAMPLE`, so that the purpose of each container can be clearly identified. The `volumes` configuration item is used to mount data volumes, here mounting the website static file directory and Nginx configuration file, and using read-only mode (`:ro`), which means containers can only read these files and cannot modify them, improving security. The `labels` section contains Traefik routing rule configurations, where domain matching rules and TLS configuration are specified. Traefik will create routing rules based on these labels. The `networks` configuration ensures that all containers are connected to the `nfx-edge` network, allowing containers to communicate with each other. Finally, the `depends_on` configuration ensures that the `reverse-proxy` service starts first, which is important for dependency relationships, as website services need to wait for the reverse proxy service to be ready before they can work normally.
+In this configuration, there are several key configuration items to understand. `container_name` specifies the container name, and it is recommended to use meaningful naming conventions, such as `NFX-Edge-WWW-EXAMPLE`, so that the purpose of each container can be clearly identified. The `volumes` configuration item is used to mount data volumes, here mounting the website static file directory and Nginx configuration file, and using read-only mode (`:ro`), which means containers can only read these files and cannot modify them, improving security. The `labels` section contains Traefik routing rule configurations, where domain matching rules and TLS configuration are specified. Traefik will create routing rules based on these labels. The `networks` configuration ensures that all containers are connected to the `nfx-edge` network, allowing containers to communicate with each other. Finally, the `depends_on` configuration ensures that the `traefik` service starts first, which is important for dependency relationships, as website services need to wait for the reverse proxy service to be ready before they can work normally.
 
 ### Step 3: Create Website Directories
 
@@ -292,7 +292,7 @@ tls:
 Then restart Traefik service to load the new certificate:
 
 ```bash
-sudo docker compose restart reverse-proxy
+sudo docker compose restart traefik
 ```
 
 **Verify Connection:**
@@ -344,7 +344,7 @@ tls:
 4. **Restart Traefik Service**
 
 ```bash
-sudo docker compose restart reverse-proxy
+sudo docker compose restart traefik
 ```
 
 ## 5. Verify Configuration
@@ -411,7 +411,7 @@ NFX-Edge-WWW-EXAMPLE          Up              80/tcp
 sudo docker compose logs -f
 
 # Or view logs for specific service
-sudo docker compose logs -f reverse-proxy
+sudo docker compose logs -f traefik
 sudo docker compose logs -f www_example
 ```
 
@@ -462,7 +462,7 @@ www_newdomain:
   networks:
     - nfx-edge
   depends_on:
-    - reverse-proxy
+    - traefik
 ```
 
 ### Step 2: Create Website Directory and Add Files
@@ -494,7 +494,7 @@ tls:
 sudo docker compose up -d www_newdomain
 
 # Restart Traefik to load new certificate
-sudo docker compose restart reverse-proxy
+sudo docker compose restart traefik
 ```
 
 ## 9. Common Operations
@@ -509,7 +509,7 @@ sudo docker compose restart reverse-proxy
 sudo docker compose restart
 
 # Restart specific service
-sudo docker compose restart reverse-proxy
+sudo docker compose restart traefik
 sudo docker compose restart www_example
 ```
 

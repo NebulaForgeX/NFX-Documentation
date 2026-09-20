@@ -2,13 +2,13 @@
 
 [NFX-UI](https://github.com/NebulaForgeX/NFX-UI) is a React library, **not** a standalone site. Hosts: Identity, Vault, News, Storages, Documentation. Not LSR / PQTTEC / SJGZ.
 
-Current version **0.28.0** on npm. Hosts pin **exactly** `"nfx-ui": "0.28.0"` (no `^0.28.0`).
+Current version **0.29.0** on npm. Hosts pin **exactly** `"nfx-ui": "0.29.0"` (no `^0.29.0`).
 
 ## No dual path
 
 Do not combine a registry version with `"nfx-ui": "file:../../NFX-UI"`. If Docker needs sources, copy them with compose `additional_contexts`; the dependency declaration stays one source.
 
-## What 0.28.0 actually exports (do not copy stale docs)
+## What 0.29.0 actually exports (do not copy stale docs)
 
 There is **no** `nfx-ui/layouts`, `LayoutFrame`, `PageFrame`, or `ModalProvider`. `nfx-ui/elements` is an empty `export {}`. `nfx-ui/icons` resolves to `src/animations`.
 
@@ -60,6 +60,6 @@ npm run build
 npm run typecheck
 ```
 
-After hook changes (e.g. phone login): **bump → publish npm → pin every host and `npm install`**. Do not leave Identity on 0.28.0 and News on 0.27.0.
+After hook changes (e.g. phone login): **bump → publish npm → pin every host and `npm install`**. Do not leave Identity on 0.29.0 and News on 0.28.0.
 
 Next: News.

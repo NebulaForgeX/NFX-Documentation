@@ -94,7 +94,7 @@ Postgres 库名以 `.env` 为准（常见 `nfxvault_dev` / `nfxvault` / shadow `
 - `/filefolder`
 - `/dns`、`/dns/:domain`
 
-页面走 nfx-ui hooks 登录 Identity；证书 API 走本仓 axios。`nfx-ui` 钉 **0.28.0**。
+页面走 nfx-ui hooks 登录 Identity；证书 API 走本仓 axios。`nfx-ui` 钉 **0.29.0**。
 
 ## 数据库（当前 schema，不是旧 Python 库）
 

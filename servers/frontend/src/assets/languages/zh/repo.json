@@ -11,10 +11,10 @@
     "description": "Go 证书与 DNS 控制台。为 Edge 申请/续签 TLS。主机 gRPC 10219–10223，console 10224。"
   },
   "nfxIdentity": {
-    "description": "统一登录与资料。Forger / Authority 两套路由。主机 gRPC 10200–10202，console 10203。nfx-ui@0.28.0。"
+    "description": "统一登录与资料。Forger / Authority 两套路由。主机 gRPC 10200–10202，console 10203。nfx-ui@0.29.0。"
   },
   "nfxUi": {
-    "description": "共享 React 库：主题、布局、AuthRepository 与 hooks。宿主精确钉 0.28.0，不要 file: 与 registry 双路径。"
+    "description": "共享 React 库：主题、布局、AuthRepository 与 hooks。宿主精确钉 0.29.0，不要 file: 与 registry 双路径。"
   },
   "nfxNews": {
     "description": "Go 资讯微服务（source / news / crawl / report / notify / mcp / system）。无本地 auth。主机 gRPC 10204–10210，console 10211。"

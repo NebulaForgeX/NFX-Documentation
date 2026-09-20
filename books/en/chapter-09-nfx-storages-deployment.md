@@ -82,7 +82,7 @@ Guest login uses Identity hooks. Profile pages are still `/user/profile/*`. Prod
 
 `/config`, `/browser`, `/browser/:bucket`, `/buckets/:key`, `/access-keys`, `/policies`, `/users`, `/user-groups`, `/import-export`, `/performance`, `/pools`, `/events`, `/replication`, `/lifecycle`, `/tiers`, `/events-target`, `/sse`, `/license`.
 
-Pages use hooks (buckets / objects / iam), not `useQuery` + repository in the page file. Pin **nfx-ui 0.28.0**.
+Pages use hooks (buckets / objects / iam), not `useQuery` + repository in the page file. Pin **nfx-ui 0.29.0**.
 
 ## Database `storages`
 

@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
@@ -40,6 +41,41 @@ function serveBooks(req: IncomingMessage, res: ServerResponse, next: () => void)
   fs.createReadStream(file).pipe(res);
 }
 
+function killTcpPort(port: number): void {
+  if (!Number.isInteger(port) || port < 1 || port > 65535) return;
+  try {
+    execFileSync("fuser", ["-k", `${port}/tcp`], { stdio: "ignore" });
+  } catch {
+    /* nothing listening, or already gone */
+  }
+  try {
+    const out = execFileSync("lsof", ["-nP", `-iTCP:${port}`, "-sTCP:LISTEN", "-t"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+    for (const token of out.split(/\s+/).filter(Boolean)) {
+      const pid = Number(token);
+      if (!Number.isInteger(pid) || pid <= 1 || pid === process.pid) continue;
+      try {
+        process.kill(pid, "SIGKILL");
+      } catch {
+        /* already gone */
+      }
+    }
+  } catch {
+    /* nothing listening */
+  }
+}
+
+function killListenPortPlugin(port: number): Plugin {
+  const kill = () => killTcpPort(port);
+  return {
+    name: "kill-listen-port",
+    configureServer: kill,
+    configurePreviewServer: kill,
+  };
+}
+
 function serveBooksPlugin(): Plugin {
   return {
     name: "serve-nfx-books",
@@ -58,7 +94,7 @@ export default defineConfig(({ mode }) => {
   const port = Number(env.VITE_PORT) || 5173;
 
   return {
-    plugins: [react(), serveBooksPlugin()],
+    plugins: [killListenPortPlugin(port), react(), serveBooksPlugin()],
     base: "/",
     resolve: {
       alias: {
@@ -74,6 +110,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port,
+      strictPort: true,
       host: "0.0.0.0",
       open: true,
       fs: {
@@ -87,6 +124,7 @@ export default defineConfig(({ mode }) => {
     },
     preview: {
       port,
+      strictPort: true,
       host: "0.0.0.0",
     },
     envDir,

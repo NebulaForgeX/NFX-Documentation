@@ -1,22 +1,25 @@
 {
   "title": "关于",
-  "subtitle": "了解 NFX 生态系统和 NFX-Documentation 项目",
+  "subtitle": "NebulaForgeX 部署手册与产品仓索引",
   "what": {
-    "title": "什么是 NFX-Documentation？",
-    "description": "NFX-Documentation 是 <a href='https://github.com/NebulaForgeX' target='_blank' rel='noopener noreferrer' class='link'>NebulaForgeX</a> 项目的部署与配置文档。本项目提供了详细的部署指南、配置说明和最佳实践，帮助用户快速部署和配置 NFX 生态系统中的各个组件。"
+    "title": "本仓库做什么",
+    "description": "NFX-Documentation 是 <a href='https://github.com/NebulaForgeX' target='_blank' rel='noopener noreferrer'>NebulaForgeX</a> 的部署与配置手册。章节正文只存在 <code>books/</code>；站点是阅读器，不是第二份手抄文档。"
   },
   "ecosystem": {
-    "title": "NFX 生态系统",
-    "description": "NFX 生态系统由多个开源项目组成，每个项目都有其特定的用途：",
+    "title": "部署顺序",
+    "description": "按依赖启动，不要跳过 Edge 或 Identity：",
     "items": [
-      "<strong>NFX-Stack</strong>：核心资源栈，提供 MySQL、Redis、Kafka 等基础服务",
-      "<strong>NFX-Edge</strong>：多网站反向代理解决方案，基于 Traefik 实现",
-      "<strong>NFX-Vault</strong>：SSL 证书管理和监控系统",
-      "<strong>NFX-Documentation</strong>：部署与配置文档（当前项目）"
+      "<strong>NFX-Stack</strong>：数据库、缓存、Kafka、MinIO、OTEL",
+      "<strong>NFX-Edge</strong>：唯一 80/443 入口",
+      "<strong>NFX-Vault</strong>：TLS 证书（给 Edge）",
+      "<strong>NFX-Identity</strong>：登录与 Forger/Authority 资料",
+      "<strong>NFX-UI</strong>：各 console 共用前端库",
+      "<strong>NFX-News / NFX-Storages</strong>：产品服务，登录走 Identity",
+      "<strong>NFX-Documentation</strong>：本手册站点"
     ]
   },
   "contribute": {
     "title": "贡献",
-    "description": "NFX-Documentation 是一个开源项目，欢迎社区贡献。如果您发现问题或有改进建议，请访问我们的 <a href='https://github.com/NebulaForgeX/NFX-Documentation' target='_blank' rel='noopener noreferrer' class='link'>GitHub 仓库</a> 提交 Issue 或 Pull Request。"
+    "description": "改章节请改 <code>books/zh</code> 与 <code>books/en</code>，不要在前端再写一套 TSX。Issue / PR：<a href='https://github.com/NebulaForgeX/NFX-Documentation' target='_blank' rel='noopener noreferrer'>GitHub</a>。"
   }
 }

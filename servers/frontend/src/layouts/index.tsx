@@ -1,15 +1,16 @@
-import type { SidebarMenuItem } from "nfx-ui/layouts";
 import type { ReactNode } from "react";
 
 import { memo, useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useLocation, useNavigate } from "react-router";
-import { Flex, Link as RadixLink, Logo, PreferencesPopover, Text } from "nfx-ui/components";
-import { LayoutFrame } from "nfx-ui/layouts";
-import { PreferenceStore } from "nfx-ui/stores";
+import { Link, NavLink, useLocation, useNavigate } from "react-router";
+import { Button, Flex, Text } from "@radix-ui/themes";
+import { Appearance, AppearanceEnum, Language, LanguageEnum } from "nfx-ui/enums";
+import { useSyncPreference } from "nfx-ui/hooks";
+import { PreferenceStore, usePreferenceStore } from "nfx-ui/stores";
 
 import { FileText, Folders, GraduationCap, Home, Info } from "@/assets/icons/lucide";
 import { routerEventEmitter } from "@/events/router";
+import { useBooksManifest } from "@/hooks/books";
 import { ROUTES, chapterPath } from "@/navigations";
 import { chapterLocale } from "@/utils/i18nContent";
 
@@ -41,95 +42,116 @@ function LanguagePathSync() {
   return null;
 }
 
-function RightContainer() {
-  return (
-    <Flex align="center" justify="end" width="100%">
-      <PreferencesPopover />
-    </Flex>
-  );
-}
-
-function FooterContent() {
+function ChromeControls() {
   const { t } = useTranslation("common");
-  const year = new Date().getFullYear();
+  const { syncPreference } = useSyncPreference();
+  const language = usePreferenceStore((s) => s.language);
+  const appearance = usePreferenceStore((s) => s.theme.appearance);
+  const nextAppearance =
+    appearance === AppearanceEnum.DARK ? AppearanceEnum.LIGHT : AppearanceEnum.DARK;
 
   return (
-    <Flex justify="between" align="center" wrap="wrap" gap="3" width="100%">
-      <Text size="2" color="gray">
-        © {year} {t("footer.copyright")}
-      </Text>
-      <Flex gap="4" align="center">
-        <RadixLink asChild size="2">
-          <Link to={ROUTES.ABOUT}>{t("footer.about")}</Link>
-        </RadixLink>
-        <RadixLink size="2" href="https://github.com/NebulaForgeX/NFX-Documentation" target="_blank" rel="noopener noreferrer">
-          {t("footer.github")}
-        </RadixLink>
-      </Flex>
+    <Flex align="center" gap="2">
+      <Button
+        size="1"
+        variant="ghost"
+        onClick={() =>
+          syncPreference({
+            language: Language(language === LanguageEnum.ZH ? LanguageEnum.EN : LanguageEnum.ZH),
+          })
+        }
+      >
+        {language === LanguageEnum.ZH ? "EN" : "中文"}
+      </Button>
+      <Button
+        size="1"
+        variant="ghost"
+        onClick={() => syncPreference({ theme: { appearance: Appearance(nextAppearance) } })}
+      >
+        {t("theme.toggle")}
+      </Button>
     </Flex>
   );
-}
-
-function useSidebarItems(): SidebarMenuItem[] {
-  const { t, i18n } = useTranslation("common");
-  const locale = chapterLocale(i18n.language);
-
-  return useMemo(() => {
-    const chapters = [
-      { id: t("chapterList.chapter01.id"), title: t("chapterList.chapter01.title") },
-      { id: t("chapterList.chapter02.id"), title: t("chapterList.chapter02.title") },
-      { id: t("chapterList.chapter03.id"), title: t("chapterList.chapter03.title") },
-      { id: t("chapterList.chapter04.id"), title: t("chapterList.chapter04.title") },
-      { id: t("chapterList.chapter05.id"), title: t("chapterList.chapter05.title") },
-    ];
-
-    return [
-      { label: t("nav.home"), path: ROUTES.HOME, icon: <Home size={20} /> },
-      {
-        label: t("nav.chapters"),
-        path: chapterPath(locale, chapters[0].id),
-        icon: <GraduationCap size={20} />,
-        children: chapters.map((chapter) => ({
-          label: chapter.title,
-          path: chapterPath(locale, chapter.id),
-          icon: <FileText size={18} />,
-        })),
-      },
-      { label: t("nav.repo"), path: ROUTES.REPO, icon: <Folders size={20} /> },
-      { label: t("nav.about"), path: ROUTES.ABOUT, icon: <Info size={20} /> },
-    ];
-  }, [t, locale]);
 }
 
 export const DocsLayout = memo(({ children }: DocsLayoutProps) => {
+  const { t, i18n } = useTranslation("common");
+  const locale = chapterLocale(i18n.language);
   const location = useLocation();
-  const sidebarItems = useSidebarItems();
+  const { data } = useBooksManifest();
+  const chapters = data?.chapters ?? [];
+  const year = new Date().getFullYear();
 
-  const onSidebarNavigate = useCallback((path: string) => {
-    routerEventEmitter.navigate({ to: path });
+  const onHome = useCallback(() => {
+    routerEventEmitter.navigateToHome();
   }, []);
+
+  const chapterLinks = useMemo(
+    () =>
+      chapters.map((chapter) => ({
+        to: chapterPath(locale, chapter.slug),
+        label: chapter.title[locale],
+      })),
+    [chapters, locale],
+  );
 
   return (
     <>
       <LanguagePathSync />
-      <LayoutFrame
-        headerLeft={
-          <Logo
-            src="/logo.ico"
-            title="NFX"
-            subtitle="Documentation"
-            alt="NFX"
-            onClick={() => routerEventEmitter.navigateToHome()}
-          />
-        }
-        headerRight={<RightContainer />}
-        footerContent={<FooterContent />}
-        sidebarItems={sidebarItems}
-        sidebarCurrentPathname={location.pathname}
-        onSidebarNavigate={onSidebarNavigate}
-      >
-        {children}
-      </LayoutFrame>
+      <div className="docs-shell">
+        <header className="docs-header">
+          <button type="button" className="docs-brand" onClick={onHome}>
+            <img src="/logo.ico" alt="NFX" width={28} height={28} />
+            <span>
+              <strong>NFX</strong>
+              <em>Documentation</em>
+            </span>
+          </button>
+          <ChromeControls />
+        </header>
+        <div className="docs-body">
+          <nav className="docs-nav" aria-label="docs">
+            <NavLink to={ROUTES.HOME} className="docs-nav-link" end>
+              <Home size={16} />
+              {t("nav.home")}
+            </NavLink>
+            <div className="docs-nav-group">
+              <span className="docs-nav-label">
+                <GraduationCap size={16} />
+                {t("nav.chapters")}
+              </span>
+              {chapterLinks.map((item) => (
+                <NavLink key={item.to} to={item.to} className="docs-nav-link docs-nav-link-child">
+                  <FileText size={14} />
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
+            <NavLink to={ROUTES.REPO} className="docs-nav-link">
+              <Folders size={16} />
+              {t("nav.repo")}
+            </NavLink>
+            <NavLink to={ROUTES.ABOUT} className="docs-nav-link">
+              <Info size={16} />
+              {t("nav.about")}
+            </NavLink>
+          </nav>
+          <main className="docs-main" data-path={location.pathname}>
+            {children}
+          </main>
+        </div>
+        <footer className="docs-footer">
+          <Text size="2" color="gray">
+            © {year} {t("footer.copyright")}
+          </Text>
+          <Flex gap="4">
+            <Link to={ROUTES.ABOUT}>{t("footer.about")}</Link>
+            <a href="https://github.com/NebulaForgeX/NFX-Documentation" target="_blank" rel="noopener noreferrer">
+              {t("footer.github")}
+            </a>
+          </Flex>
+        </footer>
+      </div>
     </>
   );
 });

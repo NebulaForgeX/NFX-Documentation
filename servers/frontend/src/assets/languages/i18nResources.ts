@@ -3,11 +3,6 @@ import zh from "./zh";
 
 const NAME_SPACES_MAP = {
   common: "common",
-  chapter01: "chapter01",
-  chapter02: "chapter02",
-  chapter03: "chapter03",
-  chapter04: "chapter04",
-  chapter05: "chapter05",
   repo: "repo",
   about: "about",
   notFound: "notFound",

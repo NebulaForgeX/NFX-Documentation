@@ -1,0 +1,74 @@
+{
+  "chapters": [
+    {
+      "slug": "chapter-01-router-configuration",
+      "title": {
+        "zh": "第一章：路由器配置与网络安全",
+        "en": "Chapter 1: Router Configuration"
+      }
+    },
+    {
+      "slug": "chapter-02-nas-setup",
+      "title": {
+        "zh": "第二章：NAS 初始化与开发环境",
+        "en": "Chapter 2: NAS Setup"
+      }
+    },
+    {
+      "slug": "chapter-03-nfx-stack-deployment",
+      "title": {
+        "zh": "第三章：NFX-Stack 资源栈",
+        "en": "Chapter 3: NFX-Stack"
+      }
+    },
+    {
+      "slug": "chapter-04-nfx-edge-deployment",
+      "title": {
+        "zh": "第四章：NFX-Edge 反向代理",
+        "en": "Chapter 4: NFX-Edge"
+      }
+    },
+    {
+      "slug": "chapter-05-nfx-vault-deployment",
+      "title": {
+        "zh": "第五章：NFX-Vault 证书",
+        "en": "Chapter 5: NFX-Vault"
+      }
+    },
+    {
+      "slug": "chapter-06-nfx-identity-deployment",
+      "title": {
+        "zh": "第六章：NFX-Identity 身份",
+        "en": "Chapter 6: NFX-Identity"
+      }
+    },
+    {
+      "slug": "chapter-07-nfx-ui",
+      "title": {
+        "zh": "第七章：NFX-UI 前端库",
+        "en": "Chapter 7: NFX-UI"
+      }
+    },
+    {
+      "slug": "chapter-08-nfx-news-deployment",
+      "title": {
+        "zh": "第八章：NFX-News 资讯",
+        "en": "Chapter 8: NFX-News"
+      }
+    },
+    {
+      "slug": "chapter-09-nfx-storages-deployment",
+      "title": {
+        "zh": "第九章：NFX-Storages 对象存储",
+        "en": "Chapter 9: NFX-Storages"
+      }
+    },
+    {
+      "slug": "chapter-10-nfx-documentation",
+      "title": {
+        "zh": "第十章：NFX-Documentation 文档站",
+        "en": "Chapter 10: NFX-Documentation"
+      }
+    }
+  ]
+}

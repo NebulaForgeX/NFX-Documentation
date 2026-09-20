@@ -1,25 +1,28 @@
 {
   "title": "Repositories",
-  "description": "The NFX ecosystem includes multiple open-source projects, each with its specific purpose and functionality.",
+  "description": "NebulaForgeX product repos. HTTP ingress is NFX-Edge only; data plane is NFX-Stack; login is NFX-Identity.",
   "nfxStack": {
-    "description": "NFX-Stack is the core resource stack of the NFX ecosystem, providing foundational services such as MySQL, Redis, and Kafka."
+    "description": "Infrastructure: MySQL, PostgreSQL, MongoDB, Redis, Kafka, MinIO, Centrifugo, OTEL, OpenSearch. Network nfx-stack. Host ports start at 10100."
   },
   "nfxEdge": {
-    "description": "NFX-Edge is a multi-website reverse proxy solution based on Traefik, providing unified multi-website management and automatic HTTPS support."
+    "description": "The only HTTP/HTTPS reverse proxy (Traefik). Owns host 80/443 and the nfx-edge network. Products attach labels; they do not run Traefik."
   },
   "nfxVault": {
-    "description": "NFX-Vault is a modern SSL certificate management and monitoring system, providing unified certificate application, checking, export, and management functions."
-  },
-  "nfxDocumentation": {
-    "description": "NFX-Documentation is the deployment and configuration strategy documentation for NFX projects, providing detailed deployment guides and best practices."
-  },
-  "nfxUi": {
-    "description": "NFX-UI is the shared frontend UI library of the NebulaForgeX ecosystem, providing React components, design tokens, theme system, and utilities for consistent look and behavior across NFX applications."
-  },
-  "nfxNews": {
-    "description": "NFX-News is a smart trending news aggregation platform with multi-platform crawl, AI-powered analysis, and microservices architecture; it provides RESTful API, HTML reports, and AI conversational interface."
+    "description": "Go certificate and DNS console. Issues TLS for Edge. Host gRPC 10219–10223, console 10224."
   },
   "nfxIdentity": {
-    "description": "NFX-Identity is the centralized identity and authentication platform for the NFX ecosystem, providing auth, authorization, user and permission management, built with Go and DDD/CQRS."
+    "description": "Central login and profiles. Forger / Authority route trees. Host gRPC 10200–10202, console 10203. nfx-ui@0.28.0."
+  },
+  "nfxUi": {
+    "description": "Shared React library: theme, layout, AuthRepository and hooks. Hosts pin 0.28.0 exactly. Do not mix file: and registry."
+  },
+  "nfxNews": {
+    "description": "Go news microservices (source / news / crawl / report / notify / mcp / system). No local auth. Host gRPC 10204–10210, console 10211."
+  },
+  "nfxStorages": {
+    "description": "Go S3 object storage on NAS volumes. Identity issues temporary AK/SK. Host gRPC 10212–10217, console 10218."
+  },
+  "nfxDocumentation": {
+    "description": "This handbook. Canonical text lives in books/, published through Edge Host DOCS_HOST."
   }
 }

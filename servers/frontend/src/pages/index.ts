@@ -1,9 +1,5 @@
 export { default as HomePage } from "./HomePage";
-export { default as Chapter01Page } from "./Chapter01Page";
-export { default as Chapter02Page } from "./Chapter02Page";
-export { default as Chapter03Page } from "./Chapter03Page";
-export { default as Chapter04Page } from "./Chapter04Page";
-export { default as Chapter05Page } from "./Chapter05Page";
+export { default as ChapterReader } from "./ChapterReader";
 export { default as NotFoundPage } from "./NotFoundPage";
 export { default as RepoPage } from "./RepoPage";
 export { default as AboutPage } from "./AboutPage";

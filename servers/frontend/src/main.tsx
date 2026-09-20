@@ -3,11 +3,10 @@ import { createRoot } from "react-dom/client";
 
 import "@radix-ui/themes/styles.css";
 import "nfx-ui/themes/fonts";
-import "nfx-ui/themes/styles.css";
+import "nfx-ui/themes/index.css";
 
 import { LanguageEnum } from "nfx-ui/enums";
-import { LanguageProvider, ThemeProvider, ModalProvider } from "nfx-ui/providers";
-import { LayoutProvider } from "nfx-ui/layouts";
+import { LanguageProvider, ThemeProvider } from "nfx-ui/providers";
 
 import "./index.css";
 
@@ -21,15 +20,11 @@ createRoot(document.getElementById("root")!).render(
     <QueryProvider>
       <LanguageProvider getBuiltinBundles={getBuiltinI18nBundles} fallbackLng={LanguageEnum.ZH}>
         <ThemeProvider>
-          <LayoutProvider>
-            <DataProvider>
-              <RouterProvider>
-                <ModalProvider>
-                  <App />
-                </ModalProvider>
-              </RouterProvider>
-            </DataProvider>
-          </LayoutProvider>
+          <DataProvider>
+            <RouterProvider>
+              <App />
+            </RouterProvider>
+          </DataProvider>
         </ThemeProvider>
       </LanguageProvider>
     </QueryProvider>

@@ -1,367 +1,172 @@
-# 第三章节：NFX Stack 核心资源栈部署
+# 第三章：NFX-Stack 资源栈
 
-[NFX Stack (Resources)](https://github.com/NebulaForgeX/NFX-Stack) 是 NFX 生态系统的核心基础设施层，提供了所有服务所需的基础资源，包括数据库、缓存和消息队列服务。本章节将指导您完成 NFX Stack 的部署和配置。
+[NFX-Stack](https://github.com/NebulaForgeX/NFX-Stack) 是数据面。产品容器加入 Docker 网络 `nfx-stack`，用 **容器名** 连库。不要在 Identity / Vault / News / Storages 里再起一套 Postgres / Redis / Kafka / MinIO / OTEL。
 
-## 为什么 NFX Stack 是核心服务？
+HTTP/HTTPS **不**走本仓。入口在第四章的 Edge。本仓 **不**跑 Traefik。
 
-NFX Stack 是整个 NFX 生态系统的基石，原因如下：
+## 为什么必须先于一切产品
 
-- **统一的数据存储** - 为所有服务提供统一的数据库和存储解决方案
-- **标准化的配置** - 统一管理所有数据库的连接配置、端口和认证信息
-- **集中化的资源管理** - 在一个地方管理所有基础设施服务
-- **简化服务集成** - 其他 NFX 服务只需连接到 NFX Stack，无需单独配置数据库
-- **一致的开发环境** - 确保所有开发者和服务使用相同的资源栈配置
+Identity / Vault / News / Storages 的 Postgres、Redis、Kafka、OTEL、MinIO 都假定 Stack 已在跑。没有 Stack 就没有 Atlas 迁移、没有 token 时钟依赖的库、没有 Kafka topic、没有 Identity 头像用的 MinIO。
 
-## 1. 克隆项目仓库
+## 仓库结构
 
-完成 NAS 系统配置（第二章节）后，您已经可以通过 SSH 连接到 NAS。现在，让我们开始部署 NFX Stack。
-
-### 步骤 1：进入部署目录
-
-首先，切换到您选择的部署目录。您可以根据自己的 NAS 配置选择适合的目录位置：
-
-```bash
-# 示例：如果您的部署目录是 /volume1
-cd /volume1
-
-# 或者您可以选择其他目录，例如：
-# cd /mnt/data
-# cd /home/user/projects
-# 等等，根据您的实际情况选择
+```
+NFX-Stack/
+├── .example.env                 # 模板；复制为 .env，勿提交 .env
+├── start.sh                     # 建网络、chown 数据目录、按序 up
+├── version.sh                   # 镜像版本检查
+├── Infrastructure/
+│   ├── docker-compose.<name>.yml
+│   ├── docker-compose.example.<name>.yml   # 模板，start.sh 会跳过 *.example.*
+│   └── config/                  # Centrifugo / OTEL / Grafana / OpenSearch
+└── Databases/                   # 默认数据卷（路径以 .env 为准）
 ```
 
-**说明：**
-- 选择您 NAS 上的合适位置作为项目部署目录
-- 确保该目录有足够的磁盘空间
-- 建议使用一个统一的父目录来管理所有 NFX 项目
+`./start.sh` 读取根目录 `.env`，按固定顺序启动（跳过 `docker-compose.example.*`）：
 
-### 步骤 2：克隆 NFX Stack 仓库
+1. mysql → 2. mongodb → 3. postgresql → 4. redis → 5. kafka → 6. rabbitmq → 7. minio → 8. centrifugo → 9. otel → 10. opensearch
 
-使用 Git 克隆 [NFX Stack](https://github.com/NebulaForgeX/NFX-Stack) 仓库：
+## 前置
 
-```bash
-git clone https://github.com/NebulaForgeX/NFX-Stack.git
-```
+- Docker 20.10+、Compose v2
+- 磁盘建议 ≥ 10GB；内存建议 ≥ 4GB（OpenSearch / OTEL 再占一截）
+- 本机 CPU **无 AVX** 时不要把 MongoDB 升到 5.0+（Stack 固定 `mongo:4.4`）
 
-**说明：**
-- 默认情况下，仓库会被克隆到 `NFX-Stack` 目录
-- 假设您的部署目录是 `<YOUR_DEPLOYMENT_DIR>`，那么完整路径就是 `<YOUR_DEPLOYMENT_DIR>/NFX-Stack`
-- 例如：如果部署目录是 `/volume1`，则路径为 `/volume1/NFX-Stack`
-- 如果部署目录是 `/mnt/data`，则路径为 `/mnt/data/NFX-Stack`
-
-**可选：重命名目录**
-
-如果您希望使用不同的目录名称（例如 `Resources`），可以在克隆后重命名：
+## 部署
 
 ```bash
-# 先克隆
-git clone https://github.com/NebulaForgeX/NFX-Stack.git
-
-# 然后重命名（可选）
-mv NFX-Stack Resources
-```
-
-或者直接在克隆时指定目录名：
-
-```bash
-git clone https://github.com/NebulaForgeX/NFX-Stack.git Resources
-```
-
-### 步骤 3：进入项目目录
-
-```bash
-# 如果使用默认名称
-cd NFX-Stack
-
-# 或者如果您重命名了目录（例如为 Resources）
-# cd Resources
-```
-
-## 2. 配置环境变量
-
-### 步骤 1：复制环境变量模板
-
-NFX Stack 提供了一个 `.example.env` 文件作为配置模板。我们需要复制它并创建实际的 `.env` 文件：
-
-```bash
+cd /volume1/Projects/NebulaForgeX/NFX-Stack   # 改成你的路径
 cp .example.env .env
+# 填密码、绑定 IP、端口、数据目录。模板里的 /home/kali/repo 必须改掉
+./start.sh          # 创建 nfx-stack 并 up -d
+./start.sh ps
+./start.sh logs     # 每个 compose 最近 50 行
+./start.sh down     # 停容器；bind 数据目录保留
 ```
 
-**重要提示：**
-- `.env` 文件包含敏感信息（密码、密钥等），不会提交到 Git 仓库
-- `.example.env` 是模板文件，用于参考和文档说明
-- 永远不要将 `.env` 文件提交到版本控制系统
-
-### 步骤 2：编辑环境变量文件
-
-使用您喜欢的文本编辑器打开 `.env` 文件：
+单独拉某一栈：
 
 ```bash
-# 使用 nano（简单易用）
-nano .env
-
-# 或使用 vi/vim
-vi .env
-
-# 或使用其他编辑器
+docker compose --project-directory Infrastructure --env-file .env \
+  -f Infrastructure/docker-compose.mysql.yml up -d
 ```
 
-## 3. 配置 IP 地址和端口
+改 `.env` 里的端口或密码后：`./start.sh down && ./start.sh`。
 
-### IP 地址配置
+## 宿主机端口（从 10100 起，连续无洞）
 
-将所有 `*_HOST` 参数设置为您的 NAS IP 地址。
+以 `.env` 为准。当前 NAS 约定（绑定 IP 常用局域网地址，例如 `192.168.1.64`，不要用 `0.0.0.0` 对着公网）：
 
-**示例：** 如果您的 NAS IP 地址是 `192.168.1.66`，则所有 HOST 配置项都应该设置为 `192.168.1.66`
+| 服务 | 数据/API | UI |
+|------|----------|-----|
+| MySQL | **10100** | 10101 phpMyAdmin |
+| MongoDB | 10102 | 10103 mongo-express |
+| PostgreSQL | **10104** | 10105 pgAdmin |
+| Redis | **10106** | 10107 RedisInsight |
+| Kafka EXTERNAL | **10108** | 10109 Kafka UI |
+| RabbitMQ AMQP | 10110 | 10111 Management |
+| MinIO S3 | **10112** | 10113 Console（path-style） |
+| Centrifugo | 10114 | 同端口 Admin |
+| Jaeger | — | 10115 |
+| OTLP gRPC / HTTP | **10116** / 10117 | Collector health 10118 |
+| Collector Prometheus / Prometheus / Loki | 10119 / 10120 / 10121 | Grafana 10122 |
+| OpenSearch | 10123 HTTPS | 10124 Dashboards HTTP |
 
-**需要配置的 HOST 参数包括：**
-- `MYSQL_DATABASE_HOST=192.168.1.66`
-- `MYSQL_UI_HOST=192.168.1.66`
-- `MONGO_DATABASE_HOST=192.168.1.66`
-- `MONGO_UI_HOST=192.168.1.66`
-- `POSTGRESQL_DATABASE_HOST=192.168.1.66`
-- `POSTGRESQL_UI_HOST=192.168.1.66`
-- `REDIS_DATABASE_HOST=192.168.1.66`
-- `REDIS_UI_HOST=192.168.1.66`
-- `KAFKA_EXTERNAL_HOST=192.168.1.66`
-- `KAFKA_INTERNAL_HOST_IP=192.168.1.66`（注意：这个是 Kafka 内部使用的 IP）
-- `KAFKA_UI_HOST=192.168.1.66`
-- `MINIO_API_HOST=192.168.1.66`（如果使用 MinIO）
-- `MINIO_UI_HOST=192.168.1.66`（如果使用 MinIO）
+产品仓客户端默认连：**Postgres 10104、Redis 10106、Kafka 10108、MinIO 10112、OTLP gRPC 10116**。
 
-**安全提示：**
-- 使用实际的 NAS IP 地址，而不是 `0.0.0.0`（所有接口）或 `127.0.0.1`（仅本地）
-- 这样可以限制服务只在指定 IP 上监听，提高安全性
-- 如果您的 NAS 有多个网络接口，使用需要暴露服务的接口 IP
+对应 `.env` 变量：`MYSQL_DATABASE_PORT` / `MYSQL_UI_PORT`、`MONGO_*`、`POSTGRESQL_DATABASE_PORT` / `POSTGRESQL_UI_PORT`、`REDIS_DATABASE_PORT` / `REDIS_UI_PORT`、`KAFKA_EXTERNAL_PORT` / `KAFKA_UI_PORT`、`RABBITMQ_AMQP_PORT` / `RABBITMQ_UI_PORT`、`MINIO_API_PORT` / `MINIO_UI_PORT`、`CENTRIFUGO_PORT`、`OTEL_JAEGER_UI_PORT`、`OTEL_COLLECTOR_OTLP_GRPC_PORT` / `OTEL_COLLECTOR_OTLP_HTTP_PORT` / `OTEL_COLLECTOR_HEALTH_PORT` / `OTEL_COLLECTOR_PROMETHEUS_PORT`、`OTEL_PROMETHEUS_PORT` / `OTEL_LOKI_PORT` / `OTEL_GRAFANA_PORT`、`OPENSEARCH_EXTERNAL_PORT` / `OPENSEARCH_DASHBOARDS_PORT`。
 
-### 端口配置
+`KAFKA_ADVERTISED_LISTENERS` 使用 `KAFKA_INTERNAL_HOST_IP` + `KAFKA_EXTERNAL_PORT`。宿主机上的 Kafka 客户端必须能解析到该 IP。
 
-为每个服务配置不同的端口，确保端口不冲突。
+## 绑定 IP（`*_HOST`）
 
-⚠️ **重要安全提示：端口不应配置在光猫的端口转发规则中**
+- `127.0.0.1`：仅本机
+- `192.168.1.64`：指定 LAN（推荐 NAS）
+- `0.0.0.0`：所有网卡——只有在路由器已经挡住这些端口时才考虑
 
-**注意：配置的端口最好不要包含在光猫（路由器）的端口转发（Port Forwarding）规则内，否则外网就可以访问这些服务了！**
+## 容器内主机名（产品 compose 必须 `external: true` 加入 `nfx-stack`）
 
-这非常重要，因为：
-- 数据库和管理界面不应该对外网开放
-- 只有在光猫端口转发中配置的端口才会被转发到内网设备
-- 未配置端口转发的端口只能在内网访问，提高了安全性
+| 服务 | 地址 |
+|------|------|
+| MySQL | `mysql:3306` |
+| PostgreSQL | `postgresql:5432` |
+| MongoDB | `mongodb:27017`（`authSource=admin`） |
+| Redis | `redis:6379` |
+| Kafka | `kafka:9092` |
+| RabbitMQ | `rabbitmq:5672` |
+| MinIO | `http://minio:9000`（AWS SDK **必须** path-style） |
+| Centrifugo API | `http://centrifugo:8000/api` |
+| OTLP | `otel-collector:4317`（`OTEL_EXPORTER_OTLP_INSECURE=true`） |
+| OpenSearch | `https://opensearch:9200`（自签证书，开发可关 TLS 校验） |
 
-**端口配置建议：**
-
-- **数据库端口** - 使用高端口号（如 10013、10014、10015、10016 等）
-- **管理界面端口** - 使用不同的高端口号（如 10101、10106、10111、10121、10131 等）
-- **避免使用常用端口** - 不要使用 3306（MySQL 默认）、5432（PostgreSQL 默认）等标准端口
-- **端口范围建议** - 使用 10000-65535 范围内的端口
-
-**示例端口配置：**
-
-```bash
-# MySQL
-MYSQL_DATABASE_PORT=10013
-MYSQL_UI_PORT=10101
-
-# MongoDB
-MONGO_DATABASE_PORT=10014
-MONGO_UI_PORT=10111
-
-# PostgreSQL
-POSTGRESQL_DATABASE_PORT=10016
-POSTGRESQL_UI_PORT=10106
-
-# Redis
-REDIS_DATABASE_PORT=10015
-REDIS_UI_PORT=10121
-
-# Kafka
-KAFKA_EXTERNAL_PORT=10109
-KAFKA_UI_PORT=10131
-
-# MinIO（如果使用）
-MINIO_API_PORT=9000
-MINIO_UI_PORT=9001
+```yaml
+networks:
+  nfx-stack:
+    external: true
+    name: nfx-stack
 ```
 
-**端口冲突检查：**
+网络由 `start.sh` 创建；各 compose `external: true`，单个栈 `down` **不会**删掉网络。
 
-在配置端口之前，建议检查端口是否已被占用：
+## 编排文件与镜像（以仓库 compose 为准）
 
-```bash
-# 检查端口是否被占用
-netstat -tuln | grep <PORT>
-# 或
-ss -tuln | grep <PORT>
-```
+| 文件 | 服务 | 镜像（版本随仓库更新） |
+|------|------|------------------------|
+| `docker-compose.mysql.yml` | mysql、mysql-ui | `mysql:9.7.2`、`phpmyadmin:5.2.3` |
+| `docker-compose.mongodb.yml` | mongodb、mongodb-ui | `mongo:4.4`、`mongo-express` |
+| `docker-compose.postgresql.yml` | postgresql、postgresql-ui | `postgres:18.6`、`dpage/pgadmin4` |
+| `docker-compose.redis.yml` | redis、redis-ui | `redis:8.8.2`、`redis/redisinsight` |
+| `docker-compose.kafka.yml` | kafka、kafka-ui | `apache/kafka`、`provectuslabs/kafka-ui` |
+| `docker-compose.rabbitmq.yml` | rabbitmq | `rabbitmq:*-management` |
+| `docker-compose.minio.yml` | minio | `quay.io/minio/minio` |
+| `docker-compose.centrifugo.yml` | centrifugo | `centrifugo/centrifugo` |
+| `docker-compose.otel.yml` | otel-collector、jaeger、prometheus、loki、grafana | Collector / Jaeger / Prometheus / Loki / Grafana |
+| `docker-compose.opensearch.yml` | opensearch、opensearch-dashboards | OpenSearch 3.x |
 
-## 4. 配置数据持久化路径
+## 数据路径
 
-数据持久化路径决定了数据库文件在宿主机上的存储位置。正确配置这些路径对于数据安全和备份非常重要。
+`.env` 里 `MYSQL_DATA_PATH` / `POSTGRESQL_DATA_PATH` / `REDIS_DATA_PATH` / `KAFKA_DATA_PATH` / `MINIO_DATA_PATH` / `PROMETHEUS_DATA_PATH` / `LOKI_DATA_PATH` / `GRAFANA_DATA_PATH` / `OPENSEARCH_DATA_PATH` 以及对应 `*_LOG_PATH` / `*_INIT_PATH`。Windows 用盘符路径，例如 `D:/Code/NFX-Stack/Databases/mysql`。
 
-### 默认数据目录结构
+`./start.sh` 在 `up` 前会 `chown`：
 
-NFX Stack 仓库在项目目录下提供了 `Databases` 文件夹用于存储数据。假设您的项目部署在 `<YOUR_DEPLOYMENT_DIR>/NFX-Stack`（或您重命名后的目录名），则数据目录结构如下：
+- Grafana 数据目录 → uid/gid **472**
+- Prometheus → **65534**
+- Loki → **10001**
+- OpenSearch → **1000**
 
-```
-<YOUR_DEPLOYMENT_DIR>/NFX-Stack/Databases/
-├── mysql/              # MySQL 数据目录
-├── mysql-init/         # MySQL 初始化脚本目录
-├── mongodb/            # MongoDB 数据目录
-├── mongodb-init/       # MongoDB 初始化脚本目录
-├── postgresql/         # PostgreSQL 数据目录
-├── postgresql-init/    # PostgreSQL 初始化脚本目录
-├── redis/              # Redis 数据目录
-└── kafka/              # Kafka 数据目录
-```
+否则 `sudo docker` 建成 `root:root` 后，镜像内非 root 进程会 Restarting。
 
-> **注意：** `<YOUR_DEPLOYMENT_DIR>` 是您选择的部署目录，项目目录名默认为 `NFX-Stack`（或您重命名后的名称）。例如，如果部署在 `/volume1`，则路径为 `/volume1/NFX-Stack/Databases/`；如果部署在 `/mnt/data`，则路径为 `/mnt/data/NFX-Stack/Databases/`。
+## 管理 UI（把 `<lan-ip>` 换成 `.env` 绑定 IP；账号在 `.env`）
 
-### 配置数据路径
+| UI | URL | 登录 |
+|----|-----|------|
+| phpMyAdmin | `http://<lan-ip>:${MYSQL_UI_PORT}` | MySQL `root` / `MYSQL_ROOT_PASSWORD`；服务器填 `mysql` |
+| pgAdmin | `http://<lan-ip>:${POSTGRESQL_UI_PORT}` | `POSTGRESQL_UI_USERNAME` / `POSTGRESQL_UI_PASSWORD` |
+| mongo-express | `http://<lan-ip>:${MONGO_UI_PORT}` | Basic Auth `MONGO_UI_*`，再连 Mongo root |
+| RedisInsight | `http://<lan-ip>:${REDIS_UI_PORT}` | `redis:6379` 或宿主机 Redis 端口，密码 `REDIS_PASSWORD` |
+| Kafka UI | `http://<lan-ip>:${KAFKA_UI_PORT}` | 集群名常见 `nfx_stack_public`，broker `kafka:9092` |
+| RabbitMQ | `http://<lan-ip>:${RABBITMQ_UI_PORT}` | `RABBITMQ_DEFAULT_USER` / `RABBITMQ_DEFAULT_PASS` |
+| MinIO Console | `http://<lan-ip>:${MINIO_UI_PORT}` | `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD` |
+| Centrifugo Admin | `http://<lan-ip>:${CENTRIFUGO_PORT}` | 见 `Infrastructure/config/centrifugo.json` 的 `admin` |
+| Jaeger | `http://<lan-ip>:${OTEL_JAEGER_UI_PORT}` | 无 |
+| Prometheus | `http://<lan-ip>:${OTEL_PROMETHEUS_PORT}` | 无 |
+| Grafana | `http://<lan-ip>:${OTEL_GRAFANA_PORT}` | `GRAFANA_ADMIN_USER` / `GRAFANA_ADMIN_PASSWORD` |
+| OpenSearch Dashboards | `http://<lan-ip>:${OPENSEARCH_DASHBOARDS_PORT}` | `admin` / `OPENSEARCH_PASSWORD` |
 
-在 `.env` 文件中配置数据持久化路径。请将 `<YOUR_DEPLOYMENT_DIR>` 替换为您实际的部署目录路径，将 `<PROJECT_DIR>` 替换为项目目录名（默认为 `NFX-Stack`，或您重命名后的名称）：
+Collector 健康：`http://<lan-ip>:${OTEL_COLLECTOR_HEALTH_PORT}`。
 
-```bash
-# MySQL
-MYSQL_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/mysql
-MYSQL_INIT_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/mysql-init
+`CENTRIFUGO_API_KEY` / `CENTRIFUGO_CLIENT_SECRET` 必须与 `Infrastructure/config/centrifugo.json` 一致。
 
-# MongoDB
-MONGO_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/mongodb
-MONGO_INIT_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/mongodb-init
+## 故障
 
-# Redis
-REDIS_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/redis
+- 网络不存在：`./start.sh` 会 `docker network create nfx-stack`
+- 端口占用：改 `.env` 对应 `*_PORT`，不要把 Stack 端口塞进产品 `GRPC_EXT` 段
+- Mongo 起不来：镜像必须仍是 `mongo:4.4`
+- OpenSearch 起不来：`OPENSEARCH_PASSWORD` 须过 zxcvbn（过短或过于常见会被拒）；数据目录须对 uid 1000 可写；堆内存见 `OPENSEARCH_JAVA_OPTS`（NAS 示例 `-Xms512m -Xmx512m`）。**该密码仅首次初始化数据目录时生效**；改密需清空 `OPENSEARCH_DATA_PATH` 再启动
+- Grafana / Prometheus / Loki Restarting：见上面 chown
+- MinIO 数据目录报错：从 AIStor 换成社区版后若 `/data` 格式不兼容，清空 `MINIO_DATA_PATH` 再 `./start.sh`
+- 日志：`./start.sh logs` 或 `docker logs -f NFX-Stack-PostgreSQL`。多数栈 json-file `10m × 10`；Kafka 更大
 
-# Kafka
-KAFKA_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/kafka
+这些端口只给受信 LAN。公网只应看到 Edge 的 80/443。
 
-# MinIO
-MINIO_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/minio
-
-# PostgreSQL
-POSTGRESQL_DATA_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/postgresql
-POSTGRESQL_INIT_PATH=<YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/postgresql-init
-```
-
-**示例：** 如果您的部署目录是 `/volume1`，项目目录名为 `NFX-Stack`，则配置如下：
-
-```bash
-# MySQL
-MYSQL_DATA_PATH=/volume1/NFX-Stack/Databases/mysql
-MYSQL_INIT_PATH=/volume1/NFX-Stack/Databases/mysql-init
-
-# MongoDB
-MONGO_DATA_PATH=/volume1/NFX-Stack/Databases/mongodb
-MONGO_INIT_PATH=/volume1/NFX-Stack/Databases/mongodb-init
-
-# Redis
-REDIS_DATA_PATH=/volume1/NFX-Stack/Databases/redis
-
-# Kafka
-KAFKA_DATA_PATH=/volume1/NFX-Stack/Databases/kafka
-
-# MinIO
-MINIO_DATA_PATH=/volume1/NFX-Stack/Databases/minio
-
-# PostgreSQL
-POSTGRESQL_DATA_PATH=/volume1/NFX-Stack/Databases/postgresql
-POSTGRESQL_INIT_PATH=/volume1/NFX-Stack/Databases/postgresql-init
-```
-
-**如果重命名了目录：** 如果您将项目目录重命名为 `Resources`，则相应地将路径中的 `NFX-Stack` 替换为 `Resources`。
-
-### 自定义数据路径（可选）
-
-如果您希望将数据存储在其他位置，可以修改这些路径。例如：
-
-- 存储在不同的卷或磁盘上
-- 使用网络存储（NFS、SMB 等）
-- 分离不同类型的数据存储
-
-**注意事项：**
-- 确保路径存在或 Docker 有权限创建目录
-- 路径应该使用绝对路径，避免相对路径
-- 确保有足够的磁盘空间
-- 考虑备份和恢复的便利性
-
-### 创建数据目录（如果需要）
-
-如果目录不存在，Docker 会自动创建，但您也可以手动创建以确保权限正确：
-
-```bash
-# 创建所有数据目录（将 <YOUR_DEPLOYMENT_DIR> 和 <PROJECT_DIR> 替换为实际路径）
-mkdir -p <YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases/{mysql,mysql-init,mongodb,mongodb-init,postgresql,postgresql-init,redis,kafka}
-
-# 设置适当的权限（如果需要）
-# chmod 755 <YOUR_DEPLOYMENT_DIR>/<PROJECT_DIR>/Databases
-```
-
-**示例：** 如果您的部署目录是 `/volume1`，项目目录名为 `NFX-Stack`：
-
-```bash
-mkdir -p /volume1/NFX-Stack/Databases/{mysql,mysql-init,mongodb,mongodb-init,postgresql,postgresql-init,redis,kafka}
-# chmod 755 /volume1/NFX-Stack/Databases
-```
-
-**如果重命名了目录：** 如果您将项目目录重命名为 `Resources`，则将路径中的 `NFX-Stack` 替换为 `Resources`。
-
-## 5. 配置密码和认证信息
-
-### 设置强密码
-
-为所有服务设置强密码：
-
-- **数据库 root 密码** - 至少 16 位，包含大小写字母、数字和特殊字符
-- **Redis 密码** - 避免使用默认或弱密码
-- **MongoDB 认证信息** - 使用强密码
-- **MinIO 访问密钥** - 使用随机生成的强密钥对
-
-### 密码管理建议
-
-- 使用密码管理器生成和存储密码
-- 不要在不同服务间重复使用相同密码
-- 定期更换生产环境密码
-- 将 `.env` 文件备份到安全位置（脱敏后）
-
-## 6. 其他配置项说明
-
-### Kafka 内部 IP 配置
-
-`KAFKA_INTERNAL_HOST_IP` 是 Kafka 内部使用的 IP 地址，用于 `ADVERTISED_LISTENERS` 配置。通常设置为：
-
-- 与 `KAFKA_EXTERNAL_HOST` 相同的 IP 地址（如果 Kafka 客户端在同一网络）
-- 或者使用容器网络内的 IP
-
-## 7. 验证配置
-
-完成配置后，建议检查以下内容：
-
-1. **配置文件格式** - 确保没有语法错误
-2. **IP 地址一致性** - 所有 HOST 参数使用相同的 NAS IP
-3. **端口不冲突** - 所有端口都是唯一的，且不在端口转发列表中
-4. **路径正确性** - 数据路径指向正确的目录
-5. **密码强度** - 所有密码符合安全要求
-
-## 8. 查看详细文档
-
-在启动服务之前，强烈建议您详细阅读 [NFX Stack 官方文档](https://github.com/NebulaForgeX/NFX-Stack)，了解：
-
-- 各服务的详细配置说明
-- 默认端口和推荐配置
-- 服务间的依赖关系
-- 常见问题和解决方案
-- 高级配置选项
-
-官方文档包含完整的使用指南、API 文档和最佳实践，对于深入理解和使用 NFX Stack 非常重要。
-
-## 下一步
-
-完成 NFX Stack 的配置后，您可以：
-
-1. 启动 NFX Stack 服务（参考 [NFX Stack README](https://github.com/NebulaForgeX/NFX-Stack)）
-2. 验证所有服务正常运行
-3. 进入下一章节，部署其他 NFX 服务
-
----
-
-**NFX Stack 是整个 NFX 生态系统的核心，正确配置它是后续所有服务成功部署的基础。**
-
+下一章：NFX-Edge。

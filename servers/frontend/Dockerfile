@@ -10,7 +10,7 @@ ENV BACKEND_PORT=${BACKEND_PORT}
 
 COPY package.json package-lock.json ./
 COPY --from=nfx-ui . /NFX-UI
-RUN npm ci
+RUN npm install
 
 COPY . .
 RUN npm run build

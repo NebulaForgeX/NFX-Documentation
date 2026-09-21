@@ -15,7 +15,7 @@
 | Forger | `/forger/desk`、`/forger/profile/overview\|edit\|identity\|security`、`/forger/assets`、`/forger/settings` |
 | Authority | 同上前缀 `/authority/*`，另加 `/authority/directory` |
 
-错树会被 `ScopeRoute` 打回 `profileHome(kind)`（Forger → `/forger/desk`，Authority → `/authority/desk`）。页面只走 **nfx-ui hooks**，禁止直调 repository。`nfx-ui` 钉 **0.29.0**。
+错树会被 `ScopeRoute` 打回 `profileHome(kind)`（Forger → `/forger/desk`，Authority → `/authority/desk`）。页面只走 **nfx-ui hooks**，禁止直调 repository。`nfx-ui` 钉 **0.31.0**。
 
 ## 端口与网关
 

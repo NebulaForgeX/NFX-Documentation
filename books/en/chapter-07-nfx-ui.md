@@ -2,13 +2,13 @@
 
 [NFX-UI](https://github.com/NebulaForgeX/NFX-UI) is a React library, **not** a standalone site. Hosts: Identity, Vault, News, Storages, Documentation. Not LSR / PQTTEC / SJGZ.
 
-Current version **0.29.0** on npm. Hosts pin **exactly** `"nfx-ui": "0.29.0"` (no `^0.29.0`).
+Current version **0.31.0** on npm. Hosts pin **exactly** `"nfx-ui": "0.31.0"` (no `^0.31.0`).
 
 ## No dual path
 
 Do not combine a registry version with `"nfx-ui": "file:../../NFX-UI"`. If Docker needs sources, copy them with compose `additional_contexts`; the dependency declaration stays one source.
 
-## What 0.29.0 actually exports (do not copy stale docs)
+## What 0.31.0 actually exports (do not copy stale docs)
 
 There is **no** `nfx-ui/layouts`, `LayoutFrame`, `PageFrame`, or `ModalProvider`. `nfx-ui/elements` is an empty `export {}`. `nfx-ui/icons` resolves to `src/animations`.
 
@@ -43,7 +43,7 @@ Cache invalidation: **only** `invalidateEventEmitter` + `useInvalidateInv`. Page
 
 ### Other subpaths
 
-`nfx-ui/apis`, `nfx-ui/apis/repositories` (hooks / DataProvider only), `nfx-ui/config`, `nfx-ui/constants`, `nfx-ui/enums` (`ProfileKindEnum.FORGER|AUTHORITY`), `nfx-ui/events`, `nfx-ui/languages`, `nfx-ui/schemas`, `nfx-ui/stores`, `nfx-ui/themes`, `nfx-ui/types`, `nfx-ui/utils`.
+`nfx-ui/apis`, `nfx-ui/apis/repositories` (hooks / DataProvider only), `nfx-ui/config`, `nfx-ui/constants`, `nfx-ui/enums` (`ProfileKindEnum.COMMUNITY|AUTHORITY`), `nfx-ui/events`, `nfx-ui/languages`, `nfx-ui/schemas`, `nfx-ui/stores`, `nfx-ui/themes`, `nfx-ui/types`, `nfx-ui/utils`.
 
 HTTP is axios inside the library (Bearer + 401 refresh). Hosts must not wrap another `fetch` client.
 
@@ -60,6 +60,6 @@ npm run build
 npm run typecheck
 ```
 
-After hook changes (e.g. phone login): **bump → publish npm → pin every host and `npm install`**. Do not leave Identity on 0.29.0 and News on 0.28.0.
+After hook changes (e.g. phone login): **bump → push `main` (wait a few minutes for GitHub Actions to publish npm) → pin every host and `npm install`**. Do not leave Identity on 0.31.0 and News on 0.29.0.
 
 Next: News.

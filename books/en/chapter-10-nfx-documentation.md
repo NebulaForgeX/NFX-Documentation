@@ -45,7 +45,7 @@ npm run dev
 
 A Vite plugin maps `/books/*` onto repo `books/`. Edit markdown and refresh; no image rebuild. Docker serves the same files via the read-only mount.
 
-Pin **nfx-ui 0.29.0**. Chrome is local `DocsLayout` + `@radix-ui/themes` + lucide (do not import missing `nfx-ui/layouts`).
+Pin **nfx-ui 0.31.0**. Chrome is local `DocsLayout` + `@radix-ui/themes` + lucide (do not import missing `nfx-ui/layouts`).
 
 ## Editing the handbook
 

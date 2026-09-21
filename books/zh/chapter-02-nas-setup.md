@@ -75,7 +75,7 @@ Go 产品（Identity / Vault / News / Storages）需要：
 
 - Go **1.26.x**（各仓 `Taskfile.yml` 的 `GO_VERSION`）
 - `task`（Taskfile）
-- Node.js + npm（console；nfx-ui 钉 **0.29.0**）
+- Node.js + npm（console；nfx-ui 钉 **0.31.0**）
 - `buf`（`task proto:gen`）
 - Atlas CLI（`task atlas:pipeline:run`，经 Docker 连 Stack 的 Postgres）
 

@@ -2,13 +2,13 @@
 
 [NFX-UI](https://github.com/NebulaForgeX/NFX-UI) 是 React 库，**不是**独立站点。宿主：Identity、Vault、News、Storages、Documentation。不含 LSR / PQTTEC / SJGZ。
 
-当前版本 **0.29.0**，发布到 npm。宿主 `package.json` **精确钉** `"nfx-ui": "0.29.0"`（不要 `^0.29.0`）。
+当前版本 **0.31.0**，发布到 npm。宿主 `package.json` **精确钉** `"nfx-ui": "0.31.0"`（不要 `^0.31.0`）。
 
 ## 禁止双路径
 
 不要同时写 registry 版本和 `"nfx-ui": "file:../../NFX-UI"`。Docker 构建若需要源码，用 compose `additional_contexts` 拷进镜像，依赖声明只保留一个来源。
 
-## 0.29.0 真实导出（不要抄过期文档）
+## 0.31.0 真实导出（不要抄过期文档）
 
 **没有** `nfx-ui/layouts`、`LayoutFrame`、`PageFrame`、`ModalProvider`。`nfx-ui/elements` 桶文件是空的 `export {}`。`nfx-ui/icons` 实际指向 `src/animations`。
 
@@ -45,7 +45,7 @@ Asset：`useAssetFileURL`、`usePrepareUpload`、`useConfirmUpload`、`useDelete
 
 ### 其它子路径
 
-`nfx-ui/apis`、`nfx-ui/apis/repositories`（只给 hooks / DataProvider 用）、`nfx-ui/config`、`nfx-ui/constants`、`nfx-ui/enums`（`ProfileKindEnum.FORGER|AUTHORITY`）、`nfx-ui/events`、`nfx-ui/languages`、`nfx-ui/schemas`、`nfx-ui/stores`、`nfx-ui/themes`、`nfx-ui/types`、`nfx-ui/utils`。
+`nfx-ui/apis`、`nfx-ui/apis/repositories`（只给 hooks / DataProvider 用）、`nfx-ui/config`、`nfx-ui/constants`、`nfx-ui/enums`（`ProfileKindEnum.COMMUNITY|AUTHORITY`）、`nfx-ui/events`、`nfx-ui/languages`、`nfx-ui/schemas`、`nfx-ui/stores`、`nfx-ui/themes`、`nfx-ui/types`、`nfx-ui/utils`。
 
 HTTP 客户端在库内 axios；拦截器处理 Bearer 与 401 refresh。宿主 **不要**再包一层 `fetch`。
 
@@ -62,6 +62,6 @@ npm run build
 npm run typecheck
 ```
 
-改 hooks（例如手机号登录）后：**升版本 → 发布 npm → 所有宿主把 pin 改成新版本并 `npm install`**。不要让 Identity 用 0.29.0、News 用 0.28.0。
+改 hooks（例如手机号登录）后：**升版本 → push `main`（等几分钟让 GitHub Actions 发布 npm）→ 所有宿主把 pin 改成新版本并 `npm install`**。不要让 Identity 用 0.31.0、News 用 0.29.0。
 
 下一章：News。

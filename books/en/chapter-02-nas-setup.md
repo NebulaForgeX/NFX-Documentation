@@ -75,7 +75,7 @@ Go products (Identity / Vault / News / Storages) need:
 
 - Go **1.26.x** (`GO_VERSION` in each `Taskfile.yml`)
 - `task` (Taskfile)
-- Node.js + npm (consoles; nfx-ui pinned to **0.29.0**)
+- Node.js + npm (consoles; nfx-ui pinned to **0.31.0**)
 - `buf` (`task proto:gen`)
 - Atlas CLI (`task atlas:pipeline:run`, talks to Stack Postgres through Docker)
 

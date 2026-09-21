@@ -11,10 +11,10 @@
     "description": "Go certificate and DNS console. Issues TLS for Edge. Host gRPC 10219–10223, console 10224."
   },
   "nfxIdentity": {
-    "description": "Central login and profiles. Forger / Authority route trees. Host gRPC 10200–10202, console 10203. nfx-ui@0.29.0."
+    "description": "Central login and profiles. Forger / Authority route trees. Host gRPC 10200–10202, console 10203. nfx-ui@0.31.0."
   },
   "nfxUi": {
-    "description": "Shared React library: theme, layout, AuthRepository and hooks. Hosts pin 0.29.0 exactly. Do not mix file: and registry."
+    "description": "Shared React library: theme, layout, AuthRepository and hooks. Hosts pin 0.31.0 exactly. Do not mix file: and registry."
   },
   "nfxNews": {
     "description": "Go news microservices (source / news / crawl / report / notify / mcp / system). No local auth. Host gRPC 10204–10210, console 10211."

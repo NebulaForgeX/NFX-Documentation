@@ -16,7 +16,7 @@ Older Fastify / TrendRadar / Node `news_server`, `crawl_server`, `mcp_server`, a
 | **report** | Keyword DSL (`+must` / `!exclude`) and snapshots |
 | **notify** | Feishu / DingTalk / WeCom / Telegram webhooks (secrets only in `.env`) |
 | **mcp** | MCP tool list and invocation |
-| **system** | Health and bootstrap |
+
 
 ## Ports
 
@@ -30,10 +30,9 @@ Older Fastify / TrendRadar / Node `news_server`, `crawl_server`, `mcp_server`, a
 | REPORT | 50075 | **10207** |
 | NOTIFY | 50076 | **10208** |
 | MCP | 50077 | **10209** |
-| SYSTEM | 50078 | **10210** |
 | Console | — | **10211** |
 
-Vite `VITE_PORT=5174`. Gateway `API_GATEWAY_PREFIX=/nfx-news`. Fiber prefixes: `/source` `/news` `/crawl` `/report` `/notify` `/mcp` `/system`. Browser `VITE_API_URL` → Edge `/nfx-news`, `VITE_IDENTITY_API_URL` → `/nfx-identity`. `GRPC_HOST_AUTH` points at the Identity auth container.
+Vite `VITE_PORT=5174`. Gateway `API_GATEWAY_PREFIX=/nfx-news`. Fiber prefixes: `/source` `/news` `/crawl` `/report` `/notify` `/mcp`. Browser `VITE_API_URL` → Edge `/nfx-news`, `VITE_IDENTITY_API_URL` → `/nfx-identity`. `GRPC_HOST_AUTH` points at the Identity auth container.
 
 ## Deploy
 
@@ -75,10 +74,6 @@ Public: `GET /items`, `GET /search`, i18n. Protected: `GET/PUT /preferences`.
 
 `GET /tools`, `POST /tools/:name`, `POST /run`.
 
-### system `/system` (token)
-
-`GET /system-state/latest`, `POST /system-state/initialize`.
-
 ## Console (`console/src/navigations/routes.ts`)
 
 Guest: `/`, `/auth/login`, `/auth/signup`. After login there are still `/user`, `/user/profile/overview|edit|identities`, `/user/settings` (not Identity `/forger/*`). Product pages:
@@ -86,7 +81,7 @@ Guest: `/`, `/auth/login`, `/auth/signup`. After login there are still `/user`, 
 - `/reader`
 - `/sources`
 - `/reports`, `/reports/:id`
-- `/crawl` `/mcp` `/notify` `/system`
+- `/crawl` `/mcp` `/notify`
 
 `App.tsx` redirects legacy `/user` and `/user/overview` to `/reader`.
 
@@ -99,7 +94,6 @@ Guest: `/`, `/auth/login`, `/auth/signup`. After login there are still `/user`, 
 - `report.keywords` / `report.snapshots`
 - `notify.channels` / `notify.deliveries`
 - `mcp.tool_calls`
-- `system.system_state`
 
 ## Kafka
 

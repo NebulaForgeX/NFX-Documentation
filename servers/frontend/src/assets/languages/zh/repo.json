@@ -5,22 +5,19 @@
     "description": "基础设施：MySQL、PostgreSQL、MongoDB、Redis、Kafka、MinIO、Centrifugo、OTEL、OpenSearch。网络 nfx-stack。宿主机端口从 10100 起。"
   },
   "nfxEdge": {
-    "description": "唯一 HTTP/HTTPS 反向代理（Traefik）。占用主机 80/443 与 nfx-edge 网络。产品只打标签，不再自建 Traefik。"
-  },
-  "nfxVault": {
-    "description": "Go 证书与 DNS 控制台。为 Edge 申请/续签 TLS。主机 gRPC 10219–10223，console 10224。"
+    "description": "唯一 HTTP/HTTPS 反向代理（Traefik）+ 证书/DNS 控制台（sites-base）。占用主机 80/443 与 nfx-edge 网络。库名 nfxedge。产品只打标签，不再自建 Traefik。主机 gRPC 10219，console 10221。"
   },
   "nfxIdentity": {
-    "description": "统一登录与资料。Forger / Authority 两套路由。主机 gRPC 10200–10202，console 10203。nfx-ui@0.31.0。"
+    "description": "统一登录与资料。Forger / Authority 两套路由。主机 gRPC 10200–10201，console 10203。nfx-ui@0.33.0。"
   },
   "nfxUi": {
-    "description": "共享 React 库：主题、布局、AuthRepository 与 hooks。宿主精确钉 0.31.0，不要 file: 与 registry 双路径。"
+    "description": "共享 React 库：主题、布局、AuthRepository 与 hooks。宿主精确钉 0.33.0，不要 file: 与 registry 双路径。"
   },
   "nfxNews": {
-    "description": "Go 资讯微服务（source / news / crawl / report / notify / mcp / system）。无本地 auth。主机 gRPC 10204–10210，console 10211。"
+    "description": "Go 资讯微服务（source / news / crawl / report / notify / mcp）。无本地 auth。主机 gRPC 10204–10209，console 10211。"
   },
   "nfxStorages": {
-    "description": "Go S3 对象存储，对象在 NAS 卷。Identity 换临时 AK/SK。主机 gRPC 10212–10217，console 10218。"
+    "description": "Go S3 对象存储，对象在 NAS 卷。Identity 换临时 AK/SK。主机 gRPC 10212–10216，console 10218。"
   },
   "nfxDocumentation": {
     "description": "本手册站点。正文在 books/，经 Edge Host DOCS_HOST 发布。"

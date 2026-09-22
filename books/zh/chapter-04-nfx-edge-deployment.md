@@ -1,86 +1,78 @@
 # 第四章：NFX-Edge 反向代理
 
-[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) 是 NebulaForgeX **唯一** 的 HTTP/HTTPS 反向代理（Traefik v3.7）。对齐 CityPulso：一个 Traefik，产品只挂网络、打标签。
+[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) 是 NebulaForgeX **唯一** 的 HTTP/HTTPS 反向代理（Traefik v3.7）。对齐 CityPulso：一个 Traefik，产品只挂网络、打标签。证书由本仓 **sites-base** 申请并落盘，Traefik **不**内置 ACME。
 
 - 创建并占用 Docker 网络 `nfx-edge`
 - 独占主机 **80 / 443**（容器 `NFX-Edge-Reverse-Proxy`）
-- 证书来自文件（推荐第五章 Vault 写出的目录），**不用** Traefik 内置 ACME 去打产品栈
-- Identity / Vault / News / Storages / Documentation **禁止** 再起 `reverse-proxy` / Traefik
+- 证书在 `websites/<site>/cert.crt` + `key.key`，由 `dynamic/tls.yaml` 挂给 Traefik
+- Identity / News / Storages / Documentation **禁止** 再起 Traefik
 
 ## 先决
 
 - 第二章已释放 NAS 的 80/443
-- 第三章 Stack 已运行（产品稍后还要连 `nfx-stack`；Edge 本身可以先起）
-- `nfx-edge` 网络由本仓 compose 创建；产品 compose 用 `external: true`
+- 第三章 Stack 已运行（产品与 sites-base 还要连 `nfx-stack`；Traefik 本身可以先起）
+- `nfx-edge` 由 `task traefik` 创建；产品 compose 与 Traefik compose 都用 `external: true`
 
 ## 仓库结构
 
 ```
 NFX-Edge/
-├── .env.example
-├── docker-compose.yml           # 实际运行
-├── docker-compose.example.yml   # 可复制的模板
-├── start.sh                     # sudo docker compose -f docker-compose.yml up --build -d
+├── .example.env / .example.secure.env
+├── docker-compose.traefik.yml   # Reverse-Proxy：task traefik
+├── docker-compose.dev.yml       # sites-base + console（dev）
+├── docker-compose.yml           # sites-base + console（secure）
 ├── dynamic/
-│   ├── acme-challenge.yml       # 现为 http: {}；ACME 由 Vault 标签承接
+│   ├── sites.example.yml        # 复制为 sites.yml
+│   ├── sites.yml                # 本机 Host 规则（gitignore）
 │   ├── tls.example.yaml         # 复制为 tls.yaml
-│   └── *.yml                    # 静态站点 Host 规则（example / 本机站点）
-└── public/nginx.conf            # 可选 Nginx 静态站
+│   └── tls.yaml                 # 文件证书列表（gitignore）
+└── websites/<site>/             # sites-base 写出的证书
 ```
 
 ## `.env`
 
 ```bash
-cp .env.example .env
+cp .example.env .env
 ```
 
-至少改：
-
-| 变量 | 含义 |
-|------|------|
-| `CERTS_DIR` | 证书根目录绝对路径，挂进 Traefik 为 `/certs/websites:ro` |
-| `DASHBOARD_HOST` | Traefik dashboard 的 Host（compose 里也可能写死，以仓库为准） |
-| `SITE*_WWW_DIR` / `SITE*_ADMIN_DIR` | 可选静态站目录 |
-| `NGINX_CONFIG_FILE` | 静态站 nginx 配置 |
-
-路径必须在宿主机上真实存在。
+`TRAEFIK_API_HOST` / `TRAEFIK_CONSOLE_HOST` 给 sites-base 与 console 的 Docker 标签用。证书根目录就是仓库内 `./websites`，没有单独的 `CERTS_DIR`。
 
 ## 启动
 
 ```bash
 cd /volume1/Projects/NebulaForgeX/NFX-Edge
-./start.sh
-sudo docker compose ps
-sudo docker compose logs --tail 200 NFX-Edge-Reverse-Proxy
+task traefik
+task proto:gen
+task atlas:pipeline:run
+task run
+sudo docker compose -f docker-compose.traefik.yml ps
+sudo docker compose -f docker-compose.traefik.yml logs --tail 200
 ```
+
+- `task traefik`：起 `NFX-Edge-Reverse-Proxy`，创建 `nfx-edge`
+- `task traefik:down` / `task traefik:logs` / `task traefik:restart`
+- `task run`：sites-base + console（**不**动 Traefik；网络不存在会提示先 `task traefik`）
+- `task run:down`：只停应用栈
 
 验证：
 
-- `http://<your-host>` 是否 **301/308** 到 `https://`
+- `:80` 是否 **301/308** 到 `:443`（entrypoint `redirections`；`/.well-known/acme-challenge/` 由 `allowACMEByPass` 留给 sites-base）
 - Dashboard Host 是否要求 BasicAuth
-- `sudo docker compose config` 无插值错误
+- `sudo docker compose -f docker-compose.traefik.yml config` 无插值错误
 
-运维：
-
-```bash
-sudo docker compose up --build -d
-sudo docker compose logs -f NFX-Edge-Reverse-Proxy
-sudo docker compose restart NFX-Edge-Reverse-Proxy
-```
-
-## Traefik 关键命令行（`docker-compose.yml`）
+## Traefik 关键命令行（`docker-compose.traefik.yml`）
 
 - `--entrypoints.web.address=:80`
-- `--entrypoints.web.http.redirections.entrypoint.to=websecure`
-- `--entrypoints.web.http.redirections.entrypoint.scheme=https`
-- `--entrypoints.web.http.redirections.entrypoint.permanent=true`
-- `--entrypoints.web.http.redirections.entrypoint.priority=1`
+- `--entrypoints.web.allowACMEByPass=true`
+- `--entrypoints.web.http.redirections.entryPoint.to=websecure`
+- `--entrypoints.web.http.redirections.entryPoint.scheme=https`
+- `--entrypoints.web.http.redirections.entryPoint.permanent=true`
 - `--entrypoints.websecure.address=:443`
-- `--entrypoints.websecure.http.tls=true`
+- `--entrypoints.websecure.http.tls=true`（文件证书，**没有** `certificatesresolvers`）
 - `--providers.file.directory=/dynamic` + `--providers.file.watch=true`
 - `--providers.docker=true`
 - `--providers.docker.exposedbydefault=false`
-- `--providers.docker.constraints=LabelRegex(\`traefik.project\`, \`^(nfx-edge|nfx-identity|nfx-vault|nfx-news|nfx-storages|nfx-documentation)$\`)`
+- `--providers.docker.constraints=LabelRegex(\`traefik.project\`, \`^(nfx-edge|nfx-identity|nfx-news|nfx-storages|nfx-documentation)$\`)`
 - `--providers.docker.network=nfx-edge`
 - `--api.dashboard=true`、`--api.insecure=false`
 
@@ -115,8 +107,8 @@ Documentation 用 `Host(\`${DOCS_HOST}\`)`，`traefik.project=nfx-documentation`
 ## 证书
 
 1. 复制 `dynamic/tls.example.yaml` → `dynamic/tls.yaml`
-2. 路径相对于容器内 `/certs/websites`（即宿主机 `CERTS_DIR`）
-3. 目录名通常与 Vault 写出的站点文件夹一致：
+2. 路径相对于容器内 `/certs/websites`（宿主机 `./websites`）
+3. 目录名与 sites-base 写出的站点文件夹一致：
 
 ```yaml
 tls:
@@ -125,19 +117,21 @@ tls:
       keyFile: /certs/websites/<site1>/key.key
 ```
 
-4. ACME HTTP-01：**不要**再转发到已删除的产品 Traefik 端口。`dynamic/acme-challenge.yml` 当前是空的 `http: {}`。挑战由 NFX-Vault **tls-api** 的 Docker 标签承接（`GET /.well-known/acme-challenge/:token`，见第五章）
+4. ACME HTTP-01：sites-base 的 Docker 标签承接 `PathPrefix(\`/.well-known/acme-challenge\`)`（见第五章）。**不要**给 Traefik 开 `httpchallenge` / `tlschallenge` / `certResolver`。
+5. 文件不存在时不要写进 `tls.yaml`，否则 Traefik 会整份 file provider 加载失败。
 
 私钥不要提交 Git；文件权限 `600`。
 
 ## 静态站点
 
-Edge 仓库可挂 Nginx 站点目录 + `dynamic/www-*.yml` 的 Host 规则。业务 API 走产品容器 + 标签，不要为每个产品再起一层代理。
+`dynamic/sites.example.yml` 复制为 `dynamic/sites.yml`（gitignore）。一份文件里放 www / admin / 静态站 Host 规则。业务 API 走产品容器 + 标签，不要为每个产品再起一层代理。
 
 ## 故障
 
 - 外网不通但内网可通：检查端口转发、NAT loopback、双重 NAT（第一章）
-- challenge 失败：Vault tls-api 是否已加入 `nfx-edge`、标签是否被 LabelRegex 收进去
+- challenge 失败：sites-base 是否已加入 `nfx-edge`、ACME 标签是否被 LabelRegex 收进去
 - 路由错乱：Host / PathPrefix 是否重叠；`priority`（Identity API 常用 `20`，console `1`）
-- Dashboard 进不去：BasicAuth 用户在 compose labels 里，不是 Stack Grafana 账号
+- Dashboard 进不去：BasicAuth 用户在 `docker-compose.traefik.yml` labels 里，不是 Stack Grafana 账号
+- `task run` 报网络不存在：先 `task traefik`
 
-下一章：Vault，给 Edge 发证书。
+下一章：sites-base 给 Edge 发证书。

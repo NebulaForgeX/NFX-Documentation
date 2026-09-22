@@ -10,8 +10,7 @@
     "description": "Start in dependency order. Do not skip Edge or Identity:",
     "items": [
       "<strong>NFX-Stack</strong>: databases, cache, Kafka, MinIO, OTEL",
-      "<strong>NFX-Edge</strong>: the only 80/443 ingress",
-      "<strong>NFX-Vault</strong>: TLS certificates for Edge",
+      "<strong>NFX-Edge</strong>: the only 80/443 ingress plus TLS/DNS console",
       "<strong>NFX-Identity</strong>: login and Forger/Authority profiles",
       "<strong>NFX-UI</strong>: shared console library",
       "<strong>NFX-News / NFX-Storages</strong>: product services; login through Identity",

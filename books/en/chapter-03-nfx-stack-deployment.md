@@ -1,12 +1,12 @@
 # Chapter 3: NFX-Stack
 
-[NFX-Stack](https://github.com/NebulaForgeX/NFX-Stack) is the data plane. Product containers join the Docker network `nfx-stack` and connect by **container name**. Do not run a second Postgres / Redis / Kafka / MinIO / OTEL inside Identity, Vault, News, or Storages.
+[NFX-Stack](https://github.com/NebulaForgeX/NFX-Stack) is the data plane. Product containers join the Docker network `nfx-stack` and connect by **container name**. Do not run a second Postgres / Redis / Kafka / MinIO / OTEL inside Identity, Edge, News, or Storages.
 
 HTTP/HTTPS does **not** live here. Ingress is Edge (Chapter 4). This repo does **not** run Traefik.
 
 ## Why it comes first
 
-Identity / Vault / News / Storages assume Stack is already up for Postgres, Redis, Kafka, OTEL, and MinIO. Without it there is no Atlas migration, no Kafka topics, no MinIO for Identity avatars.
+Identity / Edge / News / Storages assume Stack is already up for Postgres, Redis, Kafka, OTEL, and MinIO. Without it there is no Atlas migration, no Kafka topics, no MinIO for Identity avatars.
 
 ## Layout
 

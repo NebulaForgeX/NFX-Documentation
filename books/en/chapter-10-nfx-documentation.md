@@ -45,7 +45,7 @@ npm run dev
 
 A Vite plugin maps `/books/*` onto repo `books/`. Edit markdown and refresh; no image rebuild. Docker serves the same files via the read-only mount.
 
-Pin **nfx-ui 0.31.0**. Chrome is local `DocsLayout` + `@radix-ui/themes` + lucide (do not import missing `nfx-ui/layouts`).
+Pin **nfx-ui 0.33.0**. Chrome is local `DocsLayout` + `@radix-ui/themes` + lucide (do not import missing `nfx-ui/layouts`).
 
 ## Editing the handbook
 
@@ -58,7 +58,7 @@ Pin **nfx-ui 0.31.0**. Chrome is local `DocsLayout` + `@radix-ui/themes` + lucid
 
 ## Product README contract
 
-Every NFX product repo (Stack, Edge, Vault, Identity, UI, News, Storages, this repo):
+Every NFX product repo (Stack, Edge, Identity, UI, News, Storages, this repo):
 
 - Root **only** `README.md` (Chinese) + `README.en.md` (English)
 - Contents: one-line what/what-not, handbook link, shortest start commands, one-line ports

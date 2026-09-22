@@ -65,17 +65,17 @@ Suggested split:
 |------|--------|
 | Git checkouts | SSD / app volume (this handbook uses `/volume1/Projects/NebulaForgeX`) |
 | Stack data (Postgres, Kafka, MinIO, OpenSearch …) | Large data volume via `*_DATA_PATH` / `STORAGES_VOLUME_*` in `.env` |
-| Vault-written certificates | Edge `CERTS_DIR` (absolute path, tight permissions) |
+| Certs written by sites-base | Edge repo `websites/<site>/` (tight permissions; do not commit) |
 
 Do not commit database directories. Do not commit `.env` / `.secure.env`.
 
 ## 6. Toolchain (product repos)
 
-Go products (Identity / Vault / News / Storages) need:
+Go products (Identity / Edge / News / Storages) need:
 
 - Go **1.26.x** (`GO_VERSION` in each `Taskfile.yml`)
 - `task` (Taskfile)
-- Node.js + npm (consoles; nfx-ui pinned to **0.31.0**)
+- Node.js + npm (consoles; nfx-ui pinned to **0.33.0**)
 - `buf` (`task proto:gen`)
 - Atlas CLI (`task atlas:pipeline:run`, talks to Stack Postgres through Docker)
 

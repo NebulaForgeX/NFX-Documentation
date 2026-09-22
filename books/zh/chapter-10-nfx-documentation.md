@@ -45,7 +45,7 @@ npm run dev
 
 Vite 插件把 `/books/*` 映射到仓库 `books/`。改 markdown 刷新即可，不必重建镜像（Docker 部署则靠只读挂载，改文件后 nginx 直接读到新内容）。
 
-`nfx-ui` 钉 **0.31.0**。站点壳是本地 `DocsLayout` + `@radix-ui/themes` + lucide（不要再 import 不存在的 `nfx-ui/layouts`）。
+`nfx-ui` 钉 **0.33.0**。站点壳是本地 `DocsLayout` + `@radix-ui/themes` + lucide（不要再 import 不存在的 `nfx-ui/layouts`）。
 
 ## 改文档
 
@@ -58,7 +58,7 @@ Vite 插件把 `/books/*` 映射到仓库 `books/`。改 markdown 刷新即可�
 
 ## 产品仓 README 契约
 
-每个 NFX 产品仓（Stack、Edge、Vault、Identity、UI、News、Storages、本仓）：
+每个 NFX 产品仓（Stack、Edge、Identity、UI、News、Storages、本仓）：
 
 - 根目录 **仅** `README.md`（中文）+ `README.en.md`（英文）
 - 内容：一句话是什么、手册链接、最短启动命令、一行端口提示

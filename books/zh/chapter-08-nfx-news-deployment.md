@@ -16,7 +16,7 @@
 | **report** | 关键词 DSL（`+必须` / `!排除`）与快照 |
 | **notify** | 飞书/钉钉/企微/Telegram 等 webhook（密钥只在 `.env`） |
 | **mcp** | MCP 工具列表与调用 |
-| **system** | 健康与 bootstrap |
+
 
 ## 端口
 
@@ -30,10 +30,9 @@
 | REPORT | 50075 | **10207** |
 | NOTIFY | 50076 | **10208** |
 | MCP | 50077 | **10209** |
-| SYSTEM | 50078 | **10210** |
 | Console | — | **10211** |
 
-Vite `VITE_PORT=5174`。网关 `API_GATEWAY_PREFIX=/nfx-news`。Fiber 前缀：`/source` `/news` `/crawl` `/report` `/notify` `/mcp` `/system`。浏览器 `VITE_API_URL` → Edge `/nfx-news`，`VITE_IDENTITY_API_URL` → `/nfx-identity`。`GRPC_HOST_AUTH` 指向 Identity auth 容器。
+Vite `VITE_PORT=5174`。网关 `API_GATEWAY_PREFIX=/nfx-news`。Fiber 前缀：`/source` `/news` `/crawl` `/report` `/notify` `/mcp`。浏览器 `VITE_API_URL` → Edge `/nfx-news`，`VITE_IDENTITY_API_URL` → `/nfx-identity`。`GRPC_HOST_AUTH` 指向 Identity auth 容器。
 
 ## 部署
 
@@ -76,10 +75,6 @@ sudo docker compose -f docker-compose.dev.yml up --build
 
 `GET /tools`、`POST /tools/:name`、`POST /run`。
 
-### system `/system`（Token）
-
-`GET /system-state/latest`、`POST /system-state/initialize`。
-
 ## Console（`console/src/navigations/routes.ts`）
 
 访客：`/`、`/auth/login`、`/auth/signup`。登录后 **仍有** `/user`、`/user/profile/overview|edit|identities`、`/user/settings`（未改成 Identity `/forger/*`）。业务：
@@ -87,7 +82,7 @@ sudo docker compose -f docker-compose.dev.yml up --build
 - `/reader` 阅读
 - `/sources` 源
 - `/reports`、`/reports/:id`
-- `/crawl` `/mcp` `/notify` `/system`
+- `/crawl` `/mcp` `/notify`
 
 `App.tsx` 把旧 `/user`、`/user/overview` **重定向到** `/reader`。
 
@@ -100,7 +95,6 @@ sudo docker compose -f docker-compose.dev.yml up --build
 - `report.keywords` / `report.snapshots`
 - `notify.channels` / `notify.deliveries`
 - `mcp.tool_calls`
-- `system.system_state`
 
 ## Kafka
 

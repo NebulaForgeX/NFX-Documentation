@@ -22,12 +22,11 @@
 | IAM | 50074 | **10214** |
 | ADMIN | 50075 | **10215** |
 | NOTIFY | 50076 | **10216** |
-| SYSTEM | 50077 | **10217** |
 | Console | — | **10218** |
 
-Vite `5176`。网关 `API_GATEWAY_PREFIX=/nfx-storages`。前缀：`API_PREFIX_PATH_ADMIN=/admin/v3`、`/object`、`/iam`、`/notify`、`/system`。S3 用独立 Host `TRAEFIK_S3_HOST`。Console Host `TRAEFIK_CONSOLE_HOST`。
+Vite `5176`。网关 `API_GATEWAY_PREFIX=/nfx-storages`。前缀：`API_PREFIX_PATH_ADMIN=/admin/v3`、`/object`、`/iam`、`/notify`。S3 用独立 Host `TRAEFIK_S3_HOST`。Console Host `TRAEFIK_CONSOLE_HOST`。
 
-注意：`modules/object|iam|notify` 的 HTTP router **当前**只挂了 `/system` 的 locales 与 system-state（与 system 模块重复）。浏览器管理面走 **admin `/admin/v3`**；对象字节走 **s3** catch-all。
+浏览器管理面走 **admin `/admin/v3`**（含 locales/messages）；对象字节走 **s3** catch-all。
 
 ## 部署
 
@@ -82,12 +81,12 @@ IAM 导入导出：`GET /export-iam`、`PUT /import-iam`。
 
 `/config`、`/browser`、`/browser/:bucket`、`/buckets/:key`、`/access-keys`、`/policies`、`/users`、`/user-groups`、`/import-export`、`/performance`、`/pools`、`/events`、`/replication`、`/lifecycle`、`/tiers`、`/events-target`、`/sse`、`/license`。
 
-页面走 hooks（buckets / objects / iam），不要在 page 里 `useQuery` + repository。`nfx-ui` **0.31.0**。
+页面走 hooks（buckets / objects / iam），不要在 page 里 `useQuery` + repository。`nfx-ui` **0.33.0**。
 
 ## 数据库 `storages`
 
-`access_keys`、`policies`、`groups`、`tiers`、`event_targets`、`remote_targets`、`kms_keys`、`kms_state`；外加 `system.system_state`。
+`access_keys`、`policies`、`groups`、`tiers`、`event_targets`、`remote_targets`、`kms_keys`、`kms_state`。
 
-Kafka：`nfxstorages.system` / `nfxstorages.system_poison`（s3 模块 toml）。kafkax 见第六章。
+Kafka：按模块 `nfxstorages.s3` / `nfxstorages.admin` / `nfxstorages.object` / `nfxstorages.iam` / `nfxstorages.notify`（以及对应 `*_poison`）。kafkax 见第六章。
 
 下一章：Documentation 站点本身。

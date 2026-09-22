@@ -1,12 +1,12 @@
 # 第三章：NFX-Stack 资源栈
 
-[NFX-Stack](https://github.com/NebulaForgeX/NFX-Stack) 是数据面。产品容器加入 Docker 网络 `nfx-stack`，用 **容器名** 连库。不要在 Identity / Vault / News / Storages 里再起一套 Postgres / Redis / Kafka / MinIO / OTEL。
+[NFX-Stack](https://github.com/NebulaForgeX/NFX-Stack) 是数据面。产品容器加入 Docker 网络 `nfx-stack`，用 **容器名** 连库。不要在 Identity / Edge / News / Storages 里再起一套 Postgres / Redis / Kafka / MinIO / OTEL。
 
 HTTP/HTTPS **不**走本仓。入口在第四章的 Edge。本仓 **不**跑 Traefik。
 
 ## 为什么必须先于一切产品
 
-Identity / Vault / News / Storages 的 Postgres、Redis、Kafka、OTEL、MinIO 都假定 Stack 已在跑。没有 Stack 就没有 Atlas 迁移、没有 token 时钟依赖的库、没有 Kafka topic、没有 Identity 头像用的 MinIO。
+Identity / Edge / News / Storages 的 Postgres、Redis、Kafka、OTEL、MinIO 都假定 Stack 已在跑。没有 Stack 就没有 Atlas 迁移、没有 token 时钟依赖的库、没有 Kafka topic、没有 Identity 头像用的 MinIO。
 
 ## 仓库结构
 

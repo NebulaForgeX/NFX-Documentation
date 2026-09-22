@@ -5,22 +5,19 @@
     "description": "Infrastructure: MySQL, PostgreSQL, MongoDB, Redis, Kafka, MinIO, Centrifugo, OTEL, OpenSearch. Network nfx-stack. Host ports start at 10100."
   },
   "nfxEdge": {
-    "description": "The only HTTP/HTTPS reverse proxy (Traefik). Owns host 80/443 and the nfx-edge network. Products attach labels; they do not run Traefik."
-  },
-  "nfxVault": {
-    "description": "Go certificate and DNS console. Issues TLS for Edge. Host gRPC 10219–10223, console 10224."
+    "description": "The only HTTP/HTTPS reverse proxy (Traefik) plus cert/DNS console (sites-base). Owns host 80/443 and nfx-edge. Database nfxedge. Products attach labels; they do not run Traefik. Host gRPC 10219, console 10221."
   },
   "nfxIdentity": {
-    "description": "Central login and profiles. Forger / Authority route trees. Host gRPC 10200–10202, console 10203. nfx-ui@0.31.0."
+    "description": "Central login and profiles. Forger / Authority route trees. Host gRPC 10200–10201, console 10203. nfx-ui@0.33.0."
   },
   "nfxUi": {
-    "description": "Shared React library: theme, layout, AuthRepository and hooks. Hosts pin 0.31.0 exactly. Do not mix file: and registry."
+    "description": "Shared React library: theme, layout, AuthRepository and hooks. Hosts pin 0.33.0 exactly. Do not mix file: and registry."
   },
   "nfxNews": {
-    "description": "Go news microservices (source / news / crawl / report / notify / mcp / system). No local auth. Host gRPC 10204–10210, console 10211."
+    "description": "Go news microservices (source / news / crawl / report / notify / mcp). No local auth. Host gRPC 10204–10209, console 10211."
   },
   "nfxStorages": {
-    "description": "Go S3 object storage on NAS volumes. Identity issues temporary AK/SK. Host gRPC 10212–10217, console 10218."
+    "description": "Go S3 object storage on NAS volumes. Identity issues temporary AK/SK. Host gRPC 10212–10216, console 10218."
   },
   "nfxDocumentation": {
     "description": "This handbook. Canonical text lives in books/, published through Edge Host DOCS_HOST."

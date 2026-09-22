@@ -4,8 +4,7 @@ import { Container, Flex, Heading, Text } from "@radix-ui/themes";
 
 const REPOS = [
   { key: "nfxStack", name: "NFX-Stack", url: "https://github.com/NebulaForgeX/NFX-Stack", stack: "Docker Compose" },
-  { key: "nfxEdge", name: "NFX-Edge", url: "https://github.com/NebulaForgeX/NFX-Edge", stack: "Traefik / Docker" },
-  { key: "nfxVault", name: "NFX-Vault", url: "https://github.com/NebulaForgeX/NFX-Vault", stack: "Go / React" },
+  { key: "nfxEdge", name: "NFX-Edge", url: "https://github.com/NebulaForgeX/NFX-Edge", stack: "Traefik / Go / React" },
   { key: "nfxIdentity", name: "NFX-Identity", url: "https://github.com/NebulaForgeX/NFX-Identity", stack: "Go / React" },
   { key: "nfxUi", name: "NFX-UI", url: "https://github.com/NebulaForgeX/NFX-UI", stack: "React / TypeScript" },
   { key: "nfxNews", name: "NFX-News", url: "https://github.com/NebulaForgeX/NFX-News", stack: "Go / React" },

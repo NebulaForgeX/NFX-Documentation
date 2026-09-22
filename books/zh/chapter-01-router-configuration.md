@@ -27,13 +27,13 @@ Docker 官方说明：发布容器端口默认不安全。所以：
 
 | 端口 | 用途 |
 |------|------|
-| 80 | HTTP → HTTPS 永久重定向；Let's Encrypt HTTP-01（`/.well-known/acme-challenge/`，由 Vault tls-api 承接） |
-| 443 | 全部产品 HTTPS（Identity / Vault / News / Storages / Documentation 的 Host 或 PathPrefix） |
+| 80 | HTTP → HTTPS 永久重定向；Let's Encrypt HTTP-01（`/.well-known/acme-challenge/`，由 Edge sites-base 承接） |
+| 443 | 全部产品 HTTPS（Identity / Edge / News / Storages / Documentation 的 Host 或 PathPrefix） |
 
 **不要**把下列端口映射到公网（它们只应出现在 `nfx-stack` 内网或受信 LAN）：
 
 - Stack 数据面 **10100–10124**（MySQL / Postgres / Redis / Kafka / MinIO / OTEL / OpenSearch …）
-- 产品主机 gRPC **10200–10224**（`GRPC_EXT_*`、各 console 可选映射）
+- 产品主机 gRPC **10200–10221**（`GRPC_EXT_*`、各 console 可选映射）
 - 容器内部 HTTP 8080+、gRPC 50071+
 - SSH（22 或 NAS 自定义端口）
 
@@ -43,7 +43,7 @@ Docker 官方说明：发布容器端口默认不安全。所以：
 
 1. 局域网能打开路由器管理页
 2. NAS 有固定内网 IP（和转发目标一致）
-3. 从 **外网**（手机关 Wi-Fi 或外部 VPS）探测：`80` 与 `443` 到达该 IP。证书可以稍后由 Vault 签发，先确认端口通
+3. 从 **外网**（手机关 Wi-Fi 或外部 VPS）探测：`80` 与 `443` 到达该 IP。证书可以稍后由 Edge sites-base 签发，先确认端口通
 4. 关掉路由器 UPnP
 5. 确认没有第二条转发把 3306 / 5432 / 6379 / 9092 漏出去
 

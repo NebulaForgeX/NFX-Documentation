@@ -65,17 +65,17 @@ bash --version
 |------|------|
 | Git 仓库 | SSD / 应用卷（本手册示例 `/volume1/Projects/NebulaForgeX`） |
 | Stack 数据（Postgres、Kafka、MinIO、OpenSearch …） | 大容量数据盘，写入各仓 `.env` 的 `*_DATA_PATH` / `STORAGES_VOLUME_*` |
-| Vault 写出的证书 | Edge 的 `CERTS_DIR`（绝对路径，权限收紧） |
+| sites-base 写出的证书 | Edge 仓库 `websites/<site>/`（权限收紧，勿提交 Git） |
 
 不要把数据库目录提交进 Git。`.env` / `.secure.env` 也不要提交。
 
 ## 6. 工具链（产品仓）
 
-Go 产品（Identity / Vault / News / Storages）需要：
+Go 产品（Identity / Edge / News / Storages）需要：
 
 - Go **1.26.x**（各仓 `Taskfile.yml` 的 `GO_VERSION`）
 - `task`（Taskfile）
-- Node.js + npm（console；nfx-ui 钉 **0.31.0**）
+- Node.js + npm（console；nfx-ui 钉 **0.33.0**）
 - `buf`（`task proto:gen`）
 - Atlas CLI（`task atlas:pipeline:run`，经 Docker 连 Stack 的 Postgres）
 

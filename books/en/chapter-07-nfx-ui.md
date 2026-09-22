@@ -1,14 +1,14 @@
 # Chapter 7: NFX-UI
 
-[NFX-UI](https://github.com/NebulaForgeX/NFX-UI) is a React library, **not** a standalone site. Hosts: Identity, Vault, News, Storages, Documentation. Not LSR / PQTTEC / SJGZ.
+[NFX-UI](https://github.com/NebulaForgeX/NFX-UI) is a React library, **not** a standalone site. Hosts: Identity, Edge, News, Storages, Documentation. Not LSR / PQTTEC / SJGZ.
 
-Current version **0.31.0** on npm. Hosts pin **exactly** `"nfx-ui": "0.31.0"` (no `^0.31.0`).
+Current version **0.33.0** on npm. Hosts pin **exactly** `"nfx-ui": "0.33.0"` (no `^0.31.0`).
 
 ## No dual path
 
 Do not combine a registry version with `"nfx-ui": "file:../../NFX-UI"`. If Docker needs sources, copy them with compose `additional_contexts`; the dependency declaration stays one source.
 
-## What 0.31.0 actually exports (do not copy stale docs)
+## What 0.33.0 actually exports (do not copy stale docs)
 
 There is **no** `nfx-ui/layouts`, `LayoutFrame`, `PageFrame`, or `ModalProvider`. `nfx-ui/elements` is an empty `export {}`. `nfx-ui/icons` resolves to `src/animations`.
 
@@ -60,6 +60,6 @@ npm run build
 npm run typecheck
 ```
 
-After hook changes (e.g. phone login): **bump → push `main` (wait a few minutes for GitHub Actions to publish npm) → pin every host and `npm install`**. Do not leave Identity on 0.31.0 and News on 0.29.0.
+After hook changes (e.g. phone login): **bump → push `main` (wait a few minutes for GitHub Actions to publish npm) → pin every host and `npm install`**. Do not leave Identity on 0.33.0 and News on 0.29.0.
 
 Next: News.

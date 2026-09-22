@@ -1,8 +1,8 @@
 # 第六章：NFX-Identity 身份
 
-[NFX-Identity](https://github.com/NebulaForgeX/NFX-Identity) 是登录与资料中心。三个 Go 模块：**auth / asset / system**。其它产品 **没有** 本地账号表；它们校验 Identity 签发的 JWT，并用 gRPC 调用 `EnsureOwnedProfile` / `HasForgerRole`。
+[NFX-Identity](https://github.com/NebulaForgeX/NFX-Identity) 是登录与资料中心。两个 Go 模块：**auth / asset**。其它产品 **没有** 本地账号表；它们校验 Identity 签发的 JWT，并用 gRPC 调用 `EnsureOwnedProfile` / `HasForgerRole`。
 
-不要再用已删除的 tenants / access / directory / clients 表文档。当前权威 schema 只有 `auth`、`asset`、`system`。
+不要再用已删除的 tenants / access / directory / clients 表文档。当前权威 schema 只有 `auth`、`asset`。首个 owner 由 `scripts/init.sql` 与 auth gRPC `BootstrapOwner` 写入。
 
 ## Console 路由（按 kind 分树）
 
@@ -15,23 +15,23 @@
 | Forger | `/forger/desk`、`/forger/profile/overview\|edit\|identity\|security`、`/forger/assets`、`/forger/settings` |
 | Authority | 同上前缀 `/authority/*`，另加 `/authority/directory` |
 
-错树会被 `ScopeRoute` 打回 `profileHome(kind)`（Forger → `/forger/desk`，Authority → `/authority/desk`）。页面只走 **nfx-ui hooks**，禁止直调 repository。`nfx-ui` 钉 **0.31.0**。
+错树会被 `ScopeRoute` 打回 `profileHome(kind)`（Forger → `/forger/desk`，Authority → `/authority/desk`）。页面只走 **nfx-ui hooks**，禁止直调 repository。`nfx-ui` 钉 **0.33.0**。
 
 ## 端口与网关
 
 | 用途 | 变量 | 值 |
 |------|------|-----|
 | 容器 HTTP | `HTTP_PORT` | 8080（仅 expose，不占主机 80） |
-| AUTH / ASSET / SYSTEM gRPC 容器 | `GRPC_PORT_*` | 50071 / 50072 / 50073 |
-| 主机 gRPC | `GRPC_EXT_PORT_*` | **10200 / 10201 / 10202** |
+| AUTH / ASSET gRPC 容器 | `GRPC_PORT_*` | 50071 / 50072 |
+| 主机 gRPC | `GRPC_EXT_PORT_*` | **10200 / 10201** |
 | Console 主机映射 | `CONSOLE_EXTERNAL_PORT` | **10203** |
 | Vite | `VITE_PORT` | 5173 |
 | 网关前缀 | `API_GATEWAY_PREFIX` | `/nfx-identity` |
-| Fiber 挂载 | `API_PREFIX_PATH_*` | `/auth` `/asset` `/system` |
+| Fiber 挂载 | `API_PREFIX_PATH_*` | `/auth` `/asset` |
 
-Edge：PathPrefix `/nfx-identity/auth|asset|system` + StripPrefix `/nfx-identity`；console 用 Host `TRAEFIK_CONSOLE_HOST`。dev 浏览器 `VITE_API_URL=http://<lan>/nfx-identity`（走 Edge，不是公网域名）。
+Edge：PathPrefix `/nfx-identity/auth|asset` + StripPrefix `/nfx-identity`；console 用 Host `TRAEFIK_CONSOLE_HOST`。dev 浏览器 `VITE_API_URL=http://<lan>/nfx-identity`（走 Edge，不是公网域名）。
 
-compose 服务名：`auth-base` / `asset-base` / `system-base`（容器名 `NFX-Identity-*-Base-Dev`）。同时加入 `nfx-identity`、`nfx-edge`、`nfx-stack`。
+compose 服务名：`auth-base` / `asset-base`（容器名 `NFX-Identity-*-Base-Dev`）。同时加入 `nfx-identity`、`nfx-edge`、`nfx-stack`。
 
 ## Token（全产品共用）
 
@@ -43,7 +43,7 @@ TOKEN_REFRESH_TTL=168h
 TOKEN_ALGORITHM=HS256
 ```
 
-Vault / News / Storages 必须复制同一组。**不要**把真实密钥写进 Git 或本手册。JWT `profile_scope` 枚举：`forger` | `authority`。
+Edge / News / Storages 必须复制同一组。**不要**把真实密钥写进 Git 或本手册。JWT `profile_scope` 枚举：`forger` | `authority`。
 
 ## 部署
 
@@ -69,7 +69,7 @@ sudo docker compose -f docker-compose.dev.yml up --build
 | `task atlas:gen` | 从库生成 models/enums/views（仍不要手改 `*_dbgen.go` 来「对齐」） |
 | `task fmt` / `task lint` / `task ci` | goimports+golines / golangci-lint |
 | `task run` | compose up（dev `--watch`） |
-| `task scripts:clear-data` | 清空 auth/asset/system（仅 dev，需 `-- --yes`） |
+| `task scripts:clear-data` | 清空 auth/asset（仅 dev，需 `-- --yes`） |
 | `task console` | `npm run dev` |
 
 Schema 源头：`databases/src/**.sql`。改表先改 SQL，再跑 Atlas。
@@ -151,10 +151,6 @@ SMTP：`.env` 的 `EMAIL_SMTP_*`（注册验证码）。
 
 对象字节在 Stack **MinIO**（`MINIO_ENDPOINT=minio:9000`，path-style；密钥与 Stack `MINIO_ROOT_*` 一致）。这不是 Storages。
 
-## HTTP：system `/system`
-
-`GET /system/system-state/latest`、`POST /system/system-state/initialize`、i18n locales/messages。供 bootstrap。
-
 ## 数据库（`databases/src/schemas`）
 
 ### auth
@@ -178,10 +174,6 @@ SMTP：`.env` 的 `EMAIL_SMTP_*`（注册验证码）。
 
 `Images` / `Files` / `Audios` / `Videos`：路径、MIME、`uploader_id`（应用层对应 `Accounts.id`，无 FK）。
 
-### system
-
-`system_state`：取 `ORDER BY created_at DESC LIMIT 1`；无行或 `initialized=false` 视为未初始化。
-
 库名：`nfxidentity_dev` / `nfxidentity` / shadow `nfxidentity_diff`。Postgres 端口 **10104**，Redis **10106**。
 
 ## 其它产品如何验票
@@ -190,7 +182,7 @@ SMTP：`.env` 的 `EMAIL_SMTP_*`（注册验证码）。
 2. gRPC 打 Identity AUTH：`EnsureOwnedProfile(account_id, profile_id, profile_scope)`
 3. 需要 Forger 能力时 `HasForgerRole`
 
-Vault/News/Storages 的 `GRPC_HOST_AUTH` 指向 Identity auth 容器，`GRPC_PORT_AUTH=50071`。
+Edge/News/Storages 的 `GRPC_HOST_AUTH` 指向 Identity auth 容器，`GRPC_PORT_AUTH=50071`。
 
 ## kafkax（各 Go 仓同一套包）
 
@@ -214,7 +206,7 @@ Vault/News/Storages 的 `GRPC_HOST_AUTH` 指向 Identity auth 容器，`GRPC_POR
         enabled = false
 ```
 
-要点：`producer_topics` / `consumer_topics` 把 **逻辑键**（如 `auth`）映射到真实 topic 名。创建 Publisher / Subscriber 前 `cfg.Validate()`。Stack Kafka 未开 SASL 时 `security.enabled=false`。其它产品 topic 前缀：Vault `nfxvault.cert`、News `nfxnews.*`、Storages `nfxstorages.system`。包内示例若仍写 `nfx-identity-access` / `directory`，以 **各仓 toml 为准**（那些键属于已删除的 directory 模块）。
+要点：`producer_topics` / `consumer_topics` 把 **逻辑键**（如 `auth`）映射到真实 topic 名。创建 Publisher / Subscriber 前 `cfg.Validate()`。Stack Kafka 未开 SASL 时 `security.enabled=false`。其它产品 topic 前缀：Edge `nfxedge.cert`、News `nfxnews.*`、Storages `nfxstorages.s3`。包内示例若仍写 `nfx-identity-access` / `directory`，以 **各仓 toml 为准**（那些键属于已删除的 directory 模块）。
 
 错误码：`errors/src` 里 `var ErrXxx = errx.XXX("CODE")`，同文件底部：
 

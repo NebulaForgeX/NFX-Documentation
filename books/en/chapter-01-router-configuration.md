@@ -27,13 +27,13 @@ Docker documents published ports as insecure by default. Therefore:
 
 | Port | Use |
 |------|-----|
-| 80 | HTTP → HTTPS permanent redirect; Let’s Encrypt HTTP-01 (`/.well-known/acme-challenge/`, served by Vault tls-api) |
-| 443 | All product HTTPS (Identity / Vault / News / Storages / Documentation Host or PathPrefix rules) |
+| 80 | HTTP → HTTPS permanent redirect; Let’s Encrypt HTTP-01 (`/.well-known/acme-challenge/`, served by Edge sites-base) |
+| 443 | All product HTTPS (Identity / Edge / News / Storages / Documentation Host or PathPrefix rules) |
 
 **Do not** publish these to the internet (LAN / `nfx-stack` only):
 
 - Stack data plane **10100–10124** (MySQL / Postgres / Redis / Kafka / MinIO / OTEL / OpenSearch …)
-- Product host gRPC **10200–10224** (`GRPC_EXT_*`, optional console maps)
+- Product host gRPC **10200–10221** (`GRPC_EXT_*`, optional console maps)
 - Container-internal HTTP 8080+ and gRPC 50071+
 - SSH (22 or the NAS custom port)
 
@@ -43,7 +43,7 @@ Docker documents published ports as insecure by default. Therefore:
 
 1. Router admin page opens on the LAN
 2. NAS LAN IP is static and matches the forward target
-3. From **outside** the LAN (phone off Wi-Fi, or a VPS), ports `80` and `443` reach that IP. Certificates can wait for Vault; first prove the ports
+3. From **outside** the LAN (phone off Wi-Fi, or a VPS), ports `80` and `443` reach that IP. Certificates can wait for Edge; first prove the ports
 4. UPnP is off
 5. No leftover forwards for 3306 / 5432 / 6379 / 9092
 

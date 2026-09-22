@@ -1,8 +1,8 @@
 # Chapter 6: NFX-Identity
 
-[NFX-Identity](https://github.com/NebulaForgeX/NFX-Identity) is the login and profile hub. Three Go modules: **auth / asset / system**. Other products have **no** local account tables; they verify JWTs issued here and call gRPC `EnsureOwnedProfile` / `HasForgerRole`.
+[NFX-Identity](https://github.com/NebulaForgeX/NFX-Identity) is the login and profile hub. Two Go modules: **auth / asset**. Other products have **no** local account tables; they verify JWTs issued here and call gRPC `EnsureOwnedProfile` / `HasForgerRole`.
 
-Do not resurrect the deleted tenants / access / directory / clients table docs. Canonical schemas are `auth`, `asset`, and `system` only.
+Do not resurrect the deleted tenants / access / directory / clients table docs. Canonical schemas are `auth` and `asset` only. The first owner is seeded by `scripts/init.sql` and auth gRPC `BootstrapOwner`.
 
 ## Console routes (split by kind)
 
@@ -15,23 +15,23 @@ Do not use `/user/*`. Kind is `FORGER` or `AUTHORITY` (not HL COMMUNITY). Source
 | Forger | `/forger/desk`, `/forger/profile/overview\|edit\|identity\|security`, `/forger/assets`, `/forger/settings` |
 | Authority | same under `/authority/*`, plus `/authority/directory` |
 
-The wrong tree is bounced by `ScopeRoute` to `profileHome(kind)` (Forger → `/forger/desk`, Authority → `/authority/desk`). Pages use **nfx-ui hooks** only. Pin **nfx-ui 0.31.0**.
+The wrong tree is bounced by `ScopeRoute` to `profileHome(kind)` (Forger → `/forger/desk`, Authority → `/authority/desk`). Pages use **nfx-ui hooks** only. Pin **nfx-ui 0.33.0**.
 
 ## Ports and gateway
 
 | Use | Variable | Value |
 |-----|----------|--------|
 | Container HTTP | `HTTP_PORT` | 8080 (expose only; not host 80) |
-| AUTH / ASSET / SYSTEM gRPC | `GRPC_PORT_*` | 50071 / 50072 / 50073 |
-| Host gRPC | `GRPC_EXT_PORT_*` | **10200 / 10201 / 10202** |
+| AUTH / ASSET gRPC | `GRPC_PORT_*` | 50071 / 50072 |
+| Host gRPC | `GRPC_EXT_PORT_*` | **10200 / 10201** |
 | Console host map | `CONSOLE_EXTERNAL_PORT` | **10203** |
 | Vite | `VITE_PORT` | 5173 |
 | Gateway prefix | `API_GATEWAY_PREFIX` | `/nfx-identity` |
-| Fiber mounts | `API_PREFIX_PATH_*` | `/auth` `/asset` `/system` |
+| Fiber mounts | `API_PREFIX_PATH_*` | `/auth` `/asset` |
 
-Edge: PathPrefix `/nfx-identity/auth|asset|system` + StripPrefix `/nfx-identity`; console Host `TRAEFIK_CONSOLE_HOST`. Dev browser `VITE_API_URL=http://<lan>/nfx-identity` (through Edge).
+Edge: PathPrefix `/nfx-identity/auth|asset` + StripPrefix `/nfx-identity`; console Host `TRAEFIK_CONSOLE_HOST`. Dev browser `VITE_API_URL=http://<lan>/nfx-identity` (through Edge).
 
-Compose service names: `auth-base` / `asset-base` / `system-base` (containers `NFX-Identity-*-Base-Dev`). Networks: `nfx-identity`, `nfx-edge`, `nfx-stack`.
+Compose service names: `auth-base` / `asset-base` (containers `NFX-Identity-*-Base-Dev`). Networks: `nfx-identity`, `nfx-edge`, `nfx-stack`.
 
 ## Tokens (shared across products)
 
@@ -43,7 +43,7 @@ TOKEN_REFRESH_TTL=168h
 TOKEN_ALGORITHM=HS256
 ```
 
-Vault / News / Storages must copy the same set. **Do not** put real secrets in Git or this handbook. JWT `profile_scope` enum: `forger` | `authority`.
+Edge / News / Storages must copy the same set. **Do not** put real secrets in Git or this handbook. JWT `profile_scope` enum: `forger` | `authority`.
 
 ## Deploy
 
@@ -68,7 +68,7 @@ Tasks (`task start` for the menu; `ENV=dev|secure`):
 | `task atlas:gen` | models/enums/views from DB |
 | `task fmt` / `lint` / `ci` | goimports+golines / golangci-lint |
 | `task run` | compose up (dev `--watch`) |
-| `task scripts:clear-data` | truncate auth/asset/system (dev only, `-- --yes`) |
+| `task scripts:clear-data` | truncate auth/asset (dev only, `-- --yes`) |
 | `task console` | `npm run dev` |
 
 Schema source of truth: `databases/src/**.sql`. Change SQL first, then Atlas.
@@ -150,10 +150,6 @@ SMTP: `EMAIL_SMTP_*` in `.env`.
 
 Bytes live in Stack **MinIO** (`MINIO_ENDPOINT=minio:9000`, path-style; keys match Stack `MINIO_ROOT_*`). That is not NFX-Storages.
 
-## HTTP: system `/system`
-
-`GET /system/system-state/latest`, `POST /system/system-state/initialize`, i18n. Bootstrap.
-
 ## Database (`databases/src/schemas`)
 
 ### auth
@@ -177,10 +173,6 @@ Roles are **array membership**, not a hierarchy: SQL `@>` / `= ANY`, Go `HasRole
 
 `Images` / `Files` / `Audios` / `Videos`: path, MIME, `uploader_id` (application-level `Accounts.id`, no FK).
 
-### system
-
-`system_state`: latest row by `created_at DESC`; missing or `initialized=false` means not bootstrapped.
-
 Databases: `nfxidentity_dev` / `nfxidentity` / shadow `nfxidentity_diff`. Postgres **10104**, Redis **10106**.
 
 ## How other products verify
@@ -189,7 +181,7 @@ Databases: `nfxidentity_dev` / `nfxidentity` / shadow `nfxidentity_diff`. Postgr
 2. gRPC Identity AUTH: `EnsureOwnedProfile(account_id, profile_id, profile_scope)`
 3. `HasForgerRole` when a Forger capability is required
 
-Vault/News/Storages `GRPC_HOST_AUTH` points at the Identity auth container, `GRPC_PORT_AUTH=50071`.
+Edge/News/Storages `GRPC_HOST_AUTH` points at the Identity auth container, `GRPC_PORT_AUTH=50071`.
 
 ## kafkax (same package in every Go product)
 
@@ -201,7 +193,7 @@ Configured under `[kafka]` in `inputs/*/configuration/dev.toml`. In-compose brok
     auth_poison = "nfxidentity.auth_poison"
 ```
 
-Map **logical keys** to real topic names. Call `cfg.Validate()` before Publisher/Subscriber. Leave `security.enabled=false` when Stack Kafka has no SASL. Other prefixes: Vault `nfxvault.cert`, News `nfxnews.*`, Storages `nfxstorages.system`. Ignore leftover `nfx-identity-access` / `directory` samples in the package — those modules were removed; **toml in each repo wins**.
+Map **logical keys** to real topic names. Call `cfg.Validate()` before Publisher/Subscriber. Leave `security.enabled=false` when Stack Kafka has no SASL. Other prefixes: Edge `nfxedge.cert`, News `nfxnews.*`, Storages `nfxstorages.s3`. Ignore leftover `nfx-identity-access` / `directory` samples in the package — those modules were removed; **toml in each repo wins**.
 
 Error codes: `var ErrXxx = errx.XXX("CODE")` in `errors/src`, plus a footer block:
 

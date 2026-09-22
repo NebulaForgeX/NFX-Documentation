@@ -22,12 +22,11 @@
 | IAM | 50074 | **10214** |
 | ADMIN | 50075 | **10215** |
 | NOTIFY | 50076 | **10216** |
-| SYSTEM | 50077 | **10217** |
 | Console | — | **10218** |
 
-Vite `5176`. Gateway `API_GATEWAY_PREFIX=/nfx-storages`. Prefixes: `API_PREFIX_PATH_ADMIN=/admin/v3`, `/object`, `/iam`, `/notify`, `/system`. S3 uses Host `TRAEFIK_S3_HOST`. Console uses `TRAEFIK_CONSOLE_HOST`.
+Vite `5176`. Gateway `API_GATEWAY_PREFIX=/nfx-storages`. Prefixes: `API_PREFIX_PATH_ADMIN=/admin/v3`, `/object`, `/iam`, `/notify`. S3 uses Host `TRAEFIK_S3_HOST`. Console uses `TRAEFIK_CONSOLE_HOST`.
 
-Note: HTTP routers under `modules/object|iam|notify` currently only mount `/system` locales and system-state (duplicate of the system module). The browser admin UI uses **admin `/admin/v3`**; object bytes use the **s3** catch-all.
+The browser admin UI uses **admin `/admin/v3`** (including locales/messages); object bytes use the **s3** catch-all.
 
 ## Deploy
 
@@ -82,12 +81,12 @@ Guest login uses Identity hooks. Profile pages are still `/user/profile/*`. Prod
 
 `/config`, `/browser`, `/browser/:bucket`, `/buckets/:key`, `/access-keys`, `/policies`, `/users`, `/user-groups`, `/import-export`, `/performance`, `/pools`, `/events`, `/replication`, `/lifecycle`, `/tiers`, `/events-target`, `/sse`, `/license`.
 
-Pages use hooks (buckets / objects / iam), not `useQuery` + repository in the page file. Pin **nfx-ui 0.31.0**.
+Pages use hooks (buckets / objects / iam), not `useQuery` + repository in the page file. Pin **nfx-ui 0.33.0**.
 
 ## Database `storages`
 
-`access_keys`, `policies`, `groups`, `tiers`, `event_targets`, `remote_targets`, `kms_keys`, `kms_state`, plus `system.system_state`.
+`access_keys`, `policies`, `groups`, `tiers`, `event_targets`, `remote_targets`, `kms_keys`, `kms_state`.
 
-Kafka: `nfxstorages.system` / `nfxstorages.system_poison` (s3 module toml). kafkax: Chapter 6.
+Kafka: per-module `nfxstorages.s3` / `nfxstorages.admin` / `nfxstorages.object` / `nfxstorages.iam` / `nfxstorages.notify` (and matching `*_poison`). kafkax: Chapter 6.
 
 Next: the Documentation site itself.

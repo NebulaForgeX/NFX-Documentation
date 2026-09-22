@@ -10,8 +10,7 @@
     "description": "按依赖启动，不要跳过 Edge 或 Identity：",
     "items": [
       "<strong>NFX-Stack</strong>：数据库、缓存、Kafka、MinIO、OTEL",
-      "<strong>NFX-Edge</strong>：唯一 80/443 入口",
-      "<strong>NFX-Vault</strong>：TLS 证书（给 Edge）",
+      "<strong>NFX-Edge</strong>：唯一 80/443 入口 + TLS/DNS 控制台",
       "<strong>NFX-Identity</strong>：登录与 Forger/Authority 资料",
       "<strong>NFX-UI</strong>：各 console 共用前端库",
       "<strong>NFX-News / NFX-Storages</strong>：产品服务，登录走 Identity",

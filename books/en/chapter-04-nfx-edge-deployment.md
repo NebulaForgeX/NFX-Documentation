@@ -1,81 +1,77 @@
 # Chapter 4: NFX-Edge reverse proxy
 
-[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) is the **only** HTTP/HTTPS reverse proxy in NebulaForgeX (Traefik v3.7). Same pattern as CityPulso: one Traefik; products attach a network and labels.
+[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) is the **only** HTTP/HTTPS reverse proxy in NebulaForgeX (Traefik v3.7). Same pattern as CityPulso: one Traefik; products attach a network and labels. **sites-base** in this repo issues and writes TLS; Traefik has **no** built-in ACME.
 
 - Creates and owns Docker network `nfx-edge`
 - Owns host **80 / 443** (container `NFX-Edge-Reverse-Proxy`)
-- Certificates come from files (Vault in Chapter 5). Traefik built-in ACME is **not** aimed at the product stacks
-- Identity / Vault / News / Storages / Documentation must **not** run another Traefik
+- Certs live at `websites/<site>/cert.crt` + `key.key`, listed in `dynamic/tls.yaml`
+- Identity / News / Storages / Documentation must **not** run another Traefik
 
 ## Prerequisites
 
 - Chapter 2 freed 80/443 on the NAS
-- Chapter 3 Stack is up (products also need `nfx-stack`; Edge itself can start first)
-- This compose creates `nfx-edge`; product compose files mark it `external: true`
+- Chapter 3 Stack is up (products and sites-base also need `nfx-stack`; Traefik itself can start first)
+- `task traefik` creates `nfx-edge`; product compose files and Traefik compose mark it `external: true`
 
 ## Layout
 
 ```
 NFX-Edge/
-├── .env.example
-├── docker-compose.yml
-├── docker-compose.example.yml
-├── start.sh                     # sudo docker compose -f docker-compose.yml up --build -d
+├── .example.env / .example.secure.env
+├── docker-compose.traefik.yml   # Reverse-Proxy: task traefik
+├── docker-compose.dev.yml       # sites-base + console (dev)
+├── docker-compose.yml           # sites-base + console (secure)
 ├── dynamic/
-│   ├── acme-challenge.yml       # currently http: {}; ACME is Vault labels
+│   ├── sites.example.yml        # copy to sites.yml
+│   ├── sites.yml                # local Host rules (gitignored)
 │   ├── tls.example.yaml         # copy to tls.yaml
-│   └── *.yml                    # static Host rules
-└── public/nginx.conf
+│   └── tls.yaml                 # file cert list (gitignored)
+└── websites/<site>/             # certs written by sites-base
 ```
 
 ## `.env`
 
 ```bash
-cp .env.example .env
+cp .example.env .env
 ```
 
-Set at least:
-
-| Variable | Meaning |
-|----------|---------|
-| `CERTS_DIR` | Absolute cert root, mounted read-only as `/certs/websites` |
-| `DASHBOARD_HOST` | Traefik dashboard Host (compose may hard-code; follow the repo) |
-| `SITE*_WWW_DIR` / `SITE*_ADMIN_DIR` | Optional static site dirs |
-| `NGINX_CONFIG_FILE` | Nginx config for static sites |
-
-Paths must exist on the host.
+`TRAEFIK_API_HOST` / `TRAEFIK_CONSOLE_HOST` feed sites-base and console Docker labels. The cert root is `./websites` in this repo — there is no separate `CERTS_DIR`.
 
 ## Start
 
 ```bash
 cd /volume1/Projects/NebulaForgeX/NFX-Edge
-./start.sh
-sudo docker compose ps
-sudo docker compose logs --tail 200 NFX-Edge-Reverse-Proxy
+task traefik
+task proto:gen
+task atlas:pipeline:run
+task run
+sudo docker compose -f docker-compose.traefik.yml ps
+sudo docker compose -f docker-compose.traefik.yml logs --tail 200
 ```
+
+- `task traefik`: start `NFX-Edge-Reverse-Proxy`, create `nfx-edge`
+- `task traefik:down` / `task traefik:logs` / `task traefik:restart`
+- `task run`: sites-base + console (**does not** touch Traefik; missing network tells you to run `task traefik` first)
+- `task run:down`: app stack only
 
 Check:
 
-- `http://<your-host>` **301/308** to `https://`
+- `:80` **301/308** to `:443` (entrypoint `redirections`; `/.well-known/acme-challenge/` stays on HTTP via `allowACMEByPass` for sites-base)
 - Dashboard Host challenges BasicAuth
-- `sudo docker compose config` interpolates cleanly
+- `sudo docker compose -f docker-compose.traefik.yml config` interpolates cleanly
 
-Ops:
-
-```bash
-sudo docker compose up --build -d
-sudo docker compose logs -f NFX-Edge-Reverse-Proxy
-sudo docker compose restart NFX-Edge-Reverse-Proxy
-```
-
-## Traefik flags (`docker-compose.yml`)
+## Traefik flags (`docker-compose.traefik.yml`)
 
 - `--entrypoints.web.address=:80`
-- permanent HTTP → HTTPS redirect onto `websecure`, priority `1`
+- `--entrypoints.web.allowACMEByPass=true`
+- `--entrypoints.web.http.redirections.entryPoint.to=websecure`
+- `--entrypoints.web.http.redirections.entryPoint.scheme=https`
+- `--entrypoints.web.http.redirections.entryPoint.permanent=true`
 - `--entrypoints.websecure.address=:443` with TLS
+- `--entrypoints.websecure.http.tls=true` (file certs; **no** `certificatesresolvers`)
 - file provider `/dynamic` with watch
 - Docker provider, `exposedbydefault=false`
-- `--providers.docker.constraints=LabelRegex(\`traefik.project\`, \`^(nfx-edge|nfx-identity|nfx-vault|nfx-news|nfx-storages|nfx-documentation)$\`)`
+- `--providers.docker.constraints=LabelRegex(\`traefik.project\`, \`^(nfx-edge|nfx-identity|nfx-news|nfx-storages|nfx-documentation)$\`)`
 - `--providers.docker.network=nfx-edge`
 - dashboard on, `api.insecure=false`
 
@@ -107,8 +103,8 @@ Documentation uses `Host(\`${DOCS_HOST}\`)` and `traefik.project=nfx-documentati
 ## Certificates
 
 1. Copy `dynamic/tls.example.yaml` → `dynamic/tls.yaml`
-2. Paths are inside the container at `/certs/websites` (host `CERTS_DIR`)
-3. Folder names usually match Vault site folders:
+2. Paths are inside the container at `/certs/websites` (host `./websites`)
+3. Folder names match the site folders sites-base writes:
 
 ```yaml
 tls:
@@ -117,19 +113,21 @@ tls:
       keyFile: /certs/websites/<site1>/key.key
 ```
 
-4. ACME HTTP-01: **do not** proxy to a deleted per-app Traefik port. `dynamic/acme-challenge.yml` is empty `http: {}`. Challenges are served by NFX-Vault **tls-api** Docker labels (`GET /.well-known/acme-challenge/:token`, Chapter 5)
+4. ACME HTTP-01: sites-base Docker labels take `PathPrefix(\`/.well-known/acme-challenge\`)` (Chapter 5). **Do not** enable Traefik `httpchallenge` / `tlschallenge` / `certResolver`.
+5. Do not list a path in `tls.yaml` until the files exist — Traefik fails the whole file provider.
 
 Do not commit private keys. Mode `600`.
 
 ## Static sites
 
-Edge can host Nginx dirs plus `dynamic/www-*.yml` Host rules. Product APIs stay on product containers + labels.
+Copy `dynamic/sites.example.yml` to `dynamic/sites.yml` (gitignored). One file holds www / admin / static Host rules. Product APIs stay on product containers + labels.
 
 ## Troubleshooting
 
 - Public fail, LAN works: port forward, NAT loopback, double NAT (Chapter 1)
-- Challenge fail: Vault tls-api on `nfx-edge` and inside the LabelRegex
+- Challenge fail: sites-base on `nfx-edge` and inside the LabelRegex
 - Wrong routes: overlapping Host / PathPrefix; `priority` (Identity API often `20`, console `1`)
-- Dashboard: BasicAuth users are compose labels, not Grafana
+- Dashboard: BasicAuth users are `docker-compose.traefik.yml` labels, not Grafana
+- `task run` says the network is missing: run `task traefik` first
 
-Next: Vault issues certificates for Edge.
+Next: sites-base issues certificates for Edge.

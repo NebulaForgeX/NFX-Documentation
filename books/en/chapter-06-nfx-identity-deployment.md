@@ -29,7 +29,7 @@ The wrong tree is bounced by `ScopeRoute` to `profileHome(kind)` (Forger → `/f
 | Gateway prefix | `API_GATEWAY_PREFIX` | `/nfx-identity` |
 | Fiber mounts | `API_PREFIX_PATH_*` | `/auth` `/asset` |
 
-Edge: PathPrefix `/nfx-identity/auth|asset` + StripPrefix `/nfx-identity`; console Host `TRAEFIK_CONSOLE_HOST`. Dev browser `VITE_API_URL=http://<lan>/nfx-identity` (through Edge).
+Edge: PathPrefix `/nfx-identity/auth|asset` + StripPrefix `/nfx-identity`; console PathPrefix `/console/nfx-identity` (public Host or LAN IP). `VITE_API_URL=/nfx-identity` (same origin, baked into the console).
 
 Compose service names: `auth-base` / `asset-base` (containers `NFX-Identity-*-Base-Dev`). Networks: `nfx-identity`, `nfx-edge`, `nfx-stack`.
 

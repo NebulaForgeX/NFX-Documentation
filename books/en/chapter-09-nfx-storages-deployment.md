@@ -24,7 +24,7 @@
 | NOTIFY | 50076 | **10216** |
 | Console | — | **10218** |
 
-Vite `5176`. Gateway `API_GATEWAY_PREFIX=/nfx-storages`. Prefixes: `API_PREFIX_PATH_ADMIN=/admin/v3`, `/object`, `/iam`, `/notify`. S3 uses Host `TRAEFIK_S3_HOST`. Console uses `TRAEFIK_CONSOLE_HOST`.
+Vite `5176`. Gateway `API_GATEWAY_PREFIX=/nfx-storages`. Prefixes: `API_PREFIX_PATH_ADMIN=/admin/v3`, `/object`, `/iam`, `/notify`. S3 uses Host `TRAEFIK_S3_HOST`. Console uses PathPrefix `/console/nfx-storages`.
 
 The browser admin UI uses **admin `/admin/v3`** (including locales/messages); object bytes use the **s3** catch-all.
 

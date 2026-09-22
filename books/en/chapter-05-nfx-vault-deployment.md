@@ -20,7 +20,7 @@ In-container `GRPC_PORT_*` = 50072. The host only maps `GRPC_EXT_*` (**never** s
 |---------|-------------|------------|-------------------------------|
 | AUTH client | 50071 | (not mapped; talks to Identity) | — |
 | SITES | 50072 | **10219** | `/edge` (Fiber still serves `/edge/tls` `/edge/dns` `/edge/file` `/edge/analysis`) |
-| Console | — | **10221** (`CONSOLE_EXTERNAL_PORT`) | Host `TRAEFIK_CONSOLE_HOST` |
+| Console | — | **10221** (`CONSOLE_EXTERNAL_PORT`) | PathPrefix `/console/nfx-edge` |
 | Vite | — | `VITE_PORT=5175` | local dev |
 
 Gateway: `API_GATEWAY_PREFIX=/nfx-edge`. Browser `VITE_API_URL` is Edge `/nfx-edge`; `VITE_IDENTITY_API_URL` is `/nfx-identity`.

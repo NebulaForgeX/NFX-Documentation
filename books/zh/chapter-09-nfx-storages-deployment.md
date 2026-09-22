@@ -24,7 +24,7 @@
 | NOTIFY | 50076 | **10216** |
 | Console | — | **10218** |
 
-Vite `5176`。网关 `API_GATEWAY_PREFIX=/nfx-storages`。前缀：`API_PREFIX_PATH_ADMIN=/admin/v3`、`/object`、`/iam`、`/notify`。S3 用独立 Host `TRAEFIK_S3_HOST`。Console Host `TRAEFIK_CONSOLE_HOST`。
+Vite `5176`。网关 `API_GATEWAY_PREFIX=/nfx-storages`。前缀：`API_PREFIX_PATH_ADMIN=/admin/v3`、`/object`、`/iam`、`/notify`。S3 用独立 Host `TRAEFIK_S3_HOST`。Console 用 PathPrefix `/console/nfx-storages`。
 
 浏览器管理面走 **admin `/admin/v3`**（含 locales/messages）；对象字节走 **s3** catch-all。
 

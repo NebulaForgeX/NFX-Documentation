@@ -35,7 +35,7 @@ NFX-Edge/
 cp .example.env .env
 ```
 
-`TRAEFIK_API_HOST` / `TRAEFIK_CONSOLE_HOST` 给 sites-base 与 console 的 Docker 标签用。证书根目录就是仓库内 `./websites`，没有单独的 `CERTS_DIR`。
+`TRAEFIK_API_HOST` / `TRAEFIK_CONSOLE_HOST` 是公网域名备忘；产品路由只看 PathPrefix，局域网 IP 也能进。证书根目录就是仓库内 `./websites`，没有单独的 `CERTS_DIR`。
 
 ## 启动
 
@@ -100,7 +100,7 @@ labels:
 
 浏览器打 `http://<lan>/nfx-identity/auth/...`；StripPrefix 掉 `/nfx-identity` 后，Fiber 仍挂在 `/auth`。
 
-Console 用 **Host** 规则（`TRAEFIK_CONSOLE_HOST`），不要给每个产品再映射 80/443。
+Console 用 PathPrefix `/console/nfx-<product>`，API 用 `/nfx-<product>/...`。Host 不参与匹配（Documentation 站点、S3、静态站除外）。不要给每个产品再映射 80/443。
 
 Documentation 用 `Host(\`${DOCS_HOST}\`)`，`traefik.project=nfx-documentation`。
 

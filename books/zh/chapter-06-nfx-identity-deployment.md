@@ -29,7 +29,7 @@
 | 网关前缀 | `API_GATEWAY_PREFIX` | `/nfx-identity` |
 | Fiber 挂载 | `API_PREFIX_PATH_*` | `/auth` `/asset` |
 
-Edge：PathPrefix `/nfx-identity/auth|asset` + StripPrefix `/nfx-identity`；console 用 Host `TRAEFIK_CONSOLE_HOST`。dev 浏览器 `VITE_API_URL=http://<lan>/nfx-identity`（走 Edge，不是公网域名）。
+Edge：PathPrefix `/nfx-identity/auth|asset` + StripPrefix `/nfx-identity`；console 用 PathPrefix `/console/nfx-identity`（域名或局域网 IP 都行）。`VITE_API_URL=/nfx-identity`（同源，构建进 console）。
 
 compose 服务名：`auth-base` / `asset-base`（容器名 `NFX-Identity-*-Base-Dev`）。同时加入 `nfx-identity`、`nfx-edge`、`nfx-stack`。
 

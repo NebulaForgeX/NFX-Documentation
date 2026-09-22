@@ -35,7 +35,7 @@ NFX-Edge/
 cp .example.env .env
 ```
 
-`TRAEFIK_API_HOST` / `TRAEFIK_CONSOLE_HOST` feed sites-base and console Docker labels. The cert root is `./websites` in this repo — there is no separate `CERTS_DIR`.
+`TRAEFIK_API_HOST` / `TRAEFIK_CONSOLE_HOST` are public hostnames for DNS/certs. Product routers match PathPrefix only, so a LAN IP works. The cert root is `./websites` in this repo — there is no separate `CERTS_DIR`.
 
 ## Start
 
@@ -96,7 +96,7 @@ labels:
 
 The browser hits `http://<lan>/nfx-identity/auth/...`. After StripPrefix of `/nfx-identity`, Fiber still mounts `/auth`.
 
-Consoles use **Host** rules (`TRAEFIK_CONSOLE_HOST`). Do not map 80/443 on product compose files.
+Consoles use PathPrefix `/console/nfx-<product>`; APIs use `/nfx-<product>/...`. Host is not part of the match (except the Documentation site, S3, and static sites). Do not map 80/443 on product compose files.
 
 Documentation uses `Host(\`${DOCS_HOST}\`)` and `traefik.project=nfx-documentation`.
 

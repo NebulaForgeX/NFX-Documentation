@@ -20,7 +20,7 @@
 |------|-------------|------------|------------------------------|
 | AUTH 客户端 | 50071 | （不映射；连 Identity） | — |
 | SITES | 50072 | **10219** | `/edge`（Fiber 仍是 `/edge/tls` `/edge/dns` `/edge/file` `/edge/analysis`） |
-| Console | — | **10221**（`CONSOLE_EXTERNAL_PORT`） | Host `TRAEFIK_CONSOLE_HOST` |
+| Console | — | **10221**（`CONSOLE_EXTERNAL_PORT`） | PathPrefix `/console/nfx-edge` |
 | Vite | — | `VITE_PORT=5175` | 开发 |
 
 网关：`API_GATEWAY_PREFIX=/nfx-edge`。浏览器 `VITE_API_URL` 指向 Edge 上的 `/nfx-edge`；`VITE_IDENTITY_API_URL` 指向 `/nfx-identity`。

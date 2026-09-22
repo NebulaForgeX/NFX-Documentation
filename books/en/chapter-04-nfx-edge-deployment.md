@@ -57,7 +57,7 @@ sudo docker compose -f docker-compose.traefik.yml logs --tail 200
 Check:
 
 - `:80` **301/308** to `:443` (entrypoint `redirections`; `/.well-known/acme-challenge/` stays on HTTP via `allowACMEByPass` for sites-base)
-- Dashboard Host challenges BasicAuth
+- Dashboard `/dashboard/` challenges BasicAuth
 - `sudo docker compose -f docker-compose.traefik.yml config` interpolates cleanly
 
 ## Traefik flags (`docker-compose.traefik.yml`)

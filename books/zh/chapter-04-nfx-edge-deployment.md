@@ -57,7 +57,7 @@ sudo docker compose -f docker-compose.traefik.yml logs --tail 200
 验证：
 
 - `:80` 是否 **301/308** 到 `:443`（entrypoint `redirections`；`/.well-known/acme-challenge/` 由 `allowACMEByPass` 留给 sites-base）
-- Dashboard Host 是否要求 BasicAuth
+- Dashboard `/dashboard/` 是否要求 BasicAuth
 - `sudo docker compose -f docker-compose.traefik.yml config` 无插值错误
 
 ## Traefik 关键命令行（`docker-compose.traefik.yml`）

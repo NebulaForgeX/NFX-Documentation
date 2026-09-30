@@ -1,8 +1,12 @@
-import { memo } from "react";
-import { useTranslation } from "react-i18next";
-import { Container, Flex, Heading, Text } from "@radix-ui/themes";
+import type { ReactNode } from "react";
 
-import { Html } from "@/components";
+import { memo } from "react";
+import { Box, Container, Flex, Heading, Section, Text } from "@radix-ui/themes";
+import { useTranslation } from "react-i18next";
+
+import { Html, PageIntro } from "@/components";
+
+import styles from "./s.module.css";
 
 const AboutPage = memo(() => {
   const { t } = useTranslation("about");
@@ -10,44 +14,59 @@ const AboutPage = memo(() => {
   const ecosystemItems = Array.isArray(items) ? items.map(String) : [];
 
   return (
-    <Container size="3" py="6">
-      <Flex direction="column" gap="6">
-        <Flex direction="column" gap="2" className="docs-masthead">
-          <Heading size="8">{t("title")}</Heading>
-          <Text as="p" size="4" color="gray">
-            {t("subtitle")}
-          </Text>
-        </Flex>
+    <Container size="3">
+      <Box py="6">
+        <Flex direction="column" gap="6">
+          <PageIntro title={t("title")}>
+            <Text as="p" size="4" color="gray">
+              {t("subtitle")}
+            </Text>
+          </PageIntro>
 
-        <Flex direction="column" gap="2" className="docs-section">
-          <Heading size="5">{t("what.title")}</Heading>
-          <Text as="p" color="gray">
-            <Html html={t("what.description")} />
-          </Text>
-        </Flex>
+          <AboutBlock title={t("what.title")}>
+            <Text as="p" color="gray">
+              <Html html={t("what.description")} />
+            </Text>
+          </AboutBlock>
 
-        <Flex direction="column" gap="2" className="docs-section">
-          <Heading size="5">{t("ecosystem.title")}</Heading>
-          <Text as="p" color="gray">
-            <Html html={t("ecosystem.description")} />
-          </Text>
-          <ul className="docs-plain-list">
-            {ecosystemItems.map((item) => (
-              <Html as="li" key={item} html={item} />
-            ))}
-          </ul>
-        </Flex>
+          <AboutBlock title={t("ecosystem.title")}>
+            <Text as="p" color="gray">
+              <Html html={t("ecosystem.description")} />
+            </Text>
+            <Box pl="5">
+              <ul className={styles.flush}>
+                {ecosystemItems.map((item) => (
+                  <Html as="li" key={item} html={item} />
+                ))}
+              </ul>
+            </Box>
+          </AboutBlock>
 
-        <Flex direction="column" gap="2" className="docs-section">
-          <Heading size="5">{t("contribute.title")}</Heading>
-          <Text as="p" color="gray">
-            <Html html={t("contribute.description")} />
-          </Text>
+          <AboutBlock title={t("contribute.title")}>
+            <Text as="p" color="gray">
+              <Html html={t("contribute.description")} />
+            </Text>
+          </AboutBlock>
         </Flex>
-      </Flex>
+      </Box>
     </Container>
   );
 });
+
+function AboutBlock({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <Box className={styles.rule}>
+      <Box pt="4">
+        <Section size="1">
+          <Flex direction="column" gap="2">
+            <Heading size="5">{title}</Heading>
+            {children}
+          </Flex>
+        </Section>
+      </Box>
+    </Box>
+  );
+}
 
 AboutPage.displayName = "AboutPage";
 export default AboutPage;

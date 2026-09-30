@@ -83,6 +83,8 @@ Guest: `/`, `/auth/login`, `/auth/signup`. After login there are still `/user`, 
 - `/reports`, `/reports/:id`
 - `/crawl` `/mcp` `/notify`
 
+On `/crawl`, choosing one source shows that source's `home` and `intervalMs` from the catalog already loaded. "All sources" hides that line.
+
 `App.tsx` redirects legacy `/user` and `/user/overview` to `/reader`.
 
 ## Database

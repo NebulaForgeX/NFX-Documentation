@@ -19,13 +19,20 @@ function contentTypeFor(file: string): string {
   }
 }
 
-function serveBooks(req: IncomingMessage, res: ServerResponse, next: () => void) {
+function normalizeBase(value: string | undefined): string {
+  const raw = (value || "/documentation/").trim() || "/documentation/";
+  const withLead = raw.startsWith("/") ? raw : `/${raw}`;
+  return withLead.endsWith("/") ? withLead : `${withLead}/`;
+}
+
+function serveBooks(base: string, req: IncomingMessage, res: ServerResponse, next: () => void) {
   const raw = req.url?.split("?")[0] ?? "";
-  if (!raw.startsWith("/books/")) {
+  const booksPrefix = `${base}books/`;
+  if (!raw.startsWith(booksPrefix)) {
     next();
     return;
   }
-  const rel = decodeURIComponent(raw.slice("/books/".length));
+  const rel = decodeURIComponent(raw.slice(booksPrefix.length));
   const file = path.resolve(booksRoot, rel);
   const root = path.resolve(booksRoot);
   if (!file.startsWith(root + path.sep) && file !== root) {
@@ -76,14 +83,14 @@ function killListenPortPlugin(port: number): Plugin {
   };
 }
 
-function serveBooksPlugin(): Plugin {
+function serveBooksPlugin(base: string): Plugin {
   return {
     name: "serve-nfx-books",
     configureServer(server) {
-      server.middlewares.use(serveBooks);
+      server.middlewares.use((req, res, next) => serveBooks(base, req, res, next));
     },
     configurePreviewServer(server) {
-      server.middlewares.use(serveBooks);
+      server.middlewares.use((req, res, next) => serveBooks(base, req, res, next));
     },
   };
 }
@@ -92,10 +99,11 @@ export default defineConfig(({ mode }) => {
   const envDir = path.resolve(__dirname, "../../");
   const env = loadEnv(mode, envDir, "");
   const port = Number(env.VITE_PORT) || 5173;
+  const base = normalizeBase(process.env.VITE_BASE || env.VITE_BASE);
 
   return {
-    plugins: [killListenPortPlugin(port), react(), serveBooksPlugin()],
-    base: "/",
+    plugins: [killListenPortPlugin(port), react(), serveBooksPlugin(base)],
+    base,
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),

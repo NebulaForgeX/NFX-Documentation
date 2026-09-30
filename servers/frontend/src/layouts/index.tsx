@@ -1,18 +1,20 @@
 import type { ReactNode } from "react";
 
 import { memo, useCallback, useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { Link, NavLink, useLocation, useNavigate } from "react-router";
-import { Button, Flex, Text } from "@radix-ui/themes";
+import { Button, Box, Flex, Grid, Text } from "@radix-ui/themes";
 import { Appearance, AppearanceEnum, Language, LanguageEnum } from "nfx-ui/enums";
 import { useSyncPreference } from "nfx-ui/hooks";
 import { PreferenceStore, usePreferenceStore } from "nfx-ui/stores";
+import { useTranslation } from "react-i18next";
+import { Link, NavLink, useLocation, useNavigate } from "react-router";
 
 import { FileText, Folders, GraduationCap, Home, Info } from "@/assets/icons/lucide";
 import { routerEventEmitter } from "@/events/router";
 import { useBooksManifest } from "@/hooks/books";
 import { ROUTES, chapterPath } from "@/navigations";
 import { chapterLocale } from "@/utils/i18nContent";
+
+import styles from "./s.module.css";
 
 interface DocsLayoutProps {
   children: ReactNode;
@@ -47,8 +49,7 @@ function ChromeControls() {
   const { syncPreference } = useSyncPreference();
   const language = usePreferenceStore((s) => s.language);
   const appearance = usePreferenceStore((s) => s.theme.appearance);
-  const nextAppearance =
-    appearance === AppearanceEnum.DARK ? AppearanceEnum.LIGHT : AppearanceEnum.DARK;
+  const nextAppearance = appearance === AppearanceEnum.DARK ? AppearanceEnum.LIGHT : AppearanceEnum.DARK;
 
   return (
     <Flex align="center" gap="2">
@@ -63,15 +64,31 @@ function ChromeControls() {
       >
         {language === LanguageEnum.ZH ? "EN" : "中文"}
       </Button>
-      <Button
-        size="1"
-        variant="ghost"
-        onClick={() => syncPreference({ theme: { appearance: Appearance(nextAppearance) } })}
-      >
+      <Button size="1" variant="ghost" onClick={() => syncPreference({ theme: { appearance: Appearance(nextAppearance) } })}>
         {t("theme.toggle")}
       </Button>
     </Flex>
   );
+}
+
+function NavItem({ to, end, icon, children, inset = false }: { to: string; end?: boolean; icon: ReactNode; children: ReactNode; inset?: boolean }) {
+  const link = (
+    <NavLink to={to} end={end} className={`${styles.flat} ${styles.ink}`}>
+      {({ isActive }) => (
+        <Box className={isActive ? styles.activeRule : undefined}>
+          <Box py="2">
+            <Flex align="center" gap="2">
+              {icon}
+              <Text size="2">{children}</Text>
+            </Flex>
+          </Box>
+        </Box>
+      )}
+    </NavLink>
+  );
+
+  if (!inset) return link;
+  return <Box pl="4">{link}</Box>;
 }
 
 export const DocsLayout = memo(({ children }: DocsLayoutProps) => {
@@ -98,60 +115,88 @@ export const DocsLayout = memo(({ children }: DocsLayoutProps) => {
   return (
     <>
       <LanguagePathSync />
-      <div className="docs-shell">
-        <header className="docs-header">
-          <button type="button" className="docs-brand" onClick={onHome}>
-            <img src="/logo.ico" alt="NFX" width={28} height={28} />
-            <span>
-              <strong>NFX</strong>
-              <em>Documentation</em>
-            </span>
-          </button>
-          <ChromeControls />
-        </header>
-        <div className="docs-body">
-          <nav className="docs-nav" aria-label="docs">
-            <NavLink to={ROUTES.HOME} className="docs-nav-link" end>
-              <Home size={16} />
-              {t("nav.home")}
-            </NavLink>
-            <div className="docs-nav-group">
-              <span className="docs-nav-label">
-                <GraduationCap size={16} />
-                {t("nav.chapters")}
-              </span>
-              {chapterLinks.map((item) => (
-                <NavLink key={item.to} to={item.to} className="docs-nav-link docs-nav-link-child">
-                  <FileText size={14} />
-                  {item.label}
-                </NavLink>
-              ))}
-            </div>
-            <NavLink to={ROUTES.REPO} className="docs-nav-link">
-              <Folders size={16} />
-              {t("nav.repo")}
-            </NavLink>
-            <NavLink to={ROUTES.ABOUT} className="docs-nav-link">
-              <Info size={16} />
-              {t("nav.about")}
-            </NavLink>
-          </nav>
-          <main className="docs-main" data-path={location.pathname}>
-            {children}
-          </main>
-        </div>
-        <footer className="docs-footer">
-          <Text size="2" color="gray">
-            © {year} {t("footer.copyright")}
-          </Text>
-          <Flex gap="4">
-            <Link to={ROUTES.ABOUT}>{t("footer.about")}</Link>
-            <a href="https://github.com/NebulaForgeX/NFX-Documentation" target="_blank" rel="noopener noreferrer">
-              {t("footer.github")}
-            </a>
-          </Flex>
-        </footer>
-      </div>
+      <Box className={styles.frame}>
+        <Flex direction="column">
+          <Box className={styles.ruleBottom}>
+            <Box py="3">
+              <Box px="4">
+                <Flex align="center" justify="between" gap="3">
+                  <Button variant="ghost" onClick={onHome}>
+                    <Flex align="center" gap="3">
+                      <img src="/logo.ico" alt="NFX" width={28} height={28} />
+                      <Flex direction="column" align="start" gap="0">
+                        <Text weight="bold">NFX</Text>
+                        <Text size="1" color="gray">
+                          Documentation
+                        </Text>
+                      </Flex>
+                    </Flex>
+                  </Button>
+                  <ChromeControls />
+                </Flex>
+              </Box>
+            </Box>
+          </Box>
+          <Box className={styles.grow}>
+            <Grid columns={{ initial: "1", md: "16rem minmax(0, 1fr)" }}>
+              <Box className={styles.navRule}>
+                <Box className={styles.scroll}>
+                  <Box py="3">
+                    <Box px="3">
+                      <Flex direction="column" gap="1">
+                        <NavItem to={ROUTES.HOME} end icon={<Home size={16} />}>
+                          {t("nav.home")}
+                        </NavItem>
+                        <Box py="2">
+                          <Flex align="center" gap="2">
+                            <GraduationCap size={16} />
+                            <Text size="2" color="gray">
+                              {t("nav.chapters")}
+                            </Text>
+                          </Flex>
+                        </Box>
+                        {chapterLinks.map((item) => (
+                          <NavItem key={item.to} to={item.to} inset icon={<FileText size={14} />}>
+                            {item.label}
+                          </NavItem>
+                        ))}
+                        <NavItem to={ROUTES.REPO} icon={<Folders size={16} />}>
+                          {t("nav.repo")}
+                        </NavItem>
+                        <NavItem to={ROUTES.ABOUT} icon={<Info size={16} />}>
+                          {t("nav.about")}
+                        </NavItem>
+                      </Flex>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+              <Box className={styles.scroll} data-path={location.pathname}>
+                {children}
+              </Box>
+            </Grid>
+          </Box>
+          <Box className={styles.ruleTop}>
+            <Box py="3">
+              <Box px="4">
+                <Flex align="center" justify="between" gap="3" wrap="wrap">
+                  <Text size="2" color="gray">
+                    © {year} {t("footer.copyright")}
+                  </Text>
+                  <Flex gap="4">
+                    <Link to={ROUTES.ABOUT} className={`${styles.flat} ${styles.ink}`}>
+                      {t("footer.about")}
+                    </Link>
+                    <a href="https://github.com/NebulaForgeX/NFX-Documentation" target="_blank" rel="noopener noreferrer" className={`${styles.flat} ${styles.ink}`}>
+                      {t("footer.github")}
+                    </a>
+                  </Flex>
+                </Flex>
+              </Box>
+            </Box>
+          </Box>
+        </Flex>
+      </Box>
     </>
   );
 });

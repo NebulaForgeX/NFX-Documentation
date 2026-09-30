@@ -1,0 +1,68 @@
+/* Markdown HTML is not our boxes. Each rule below is one job on those generated nodes. */
+
+.ink h1 {
+  display: none;
+}
+
+.ink h2,
+.ink h3,
+.ink h4,
+.ink h5,
+.ink p,
+.ink li {
+  color: var(--gray-12);
+}
+
+.edge h2 {
+  border-bottom: 1px solid var(--gray-a6);
+}
+
+.space h2,
+.space h3,
+.space h4,
+.space h5 {
+  margin-top: var(--space-5);
+}
+
+.space p,
+.space ul,
+.space ol,
+.space pre,
+.space img,
+.space table {
+  margin-bottom: var(--space-3);
+}
+
+.list ul,
+.list ol {
+  padding-left: var(--space-5);
+}
+
+.fill pre {
+  background: var(--gray-a3);
+}
+
+.edge pre,
+.edge th,
+.edge td {
+  border: 1px solid var(--gray-a6);
+}
+
+.pad pre,
+.pad th,
+.pad td {
+  padding: var(--space-2);
+}
+
+.scroll pre {
+  overflow-x: auto;
+}
+
+.ink a {
+  color: var(--accent-11);
+}
+
+.wide img,
+.wide table {
+  max-width: 100%;
+}

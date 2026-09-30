@@ -84,6 +84,8 @@ sudo docker compose -f docker-compose.dev.yml up --build
 - `/reports`、`/reports/:id`
 - `/crawl` `/mcp` `/notify`
 
+`/crawl` 选中单个源时，用已经加载的源列表显示该源的 `home` 和 `intervalMs`。选「全部来源」时不显示。
+
 `App.tsx` 把旧 `/user`、`/user/overview` **重定向到** `/reader`。
 
 ## 数据库

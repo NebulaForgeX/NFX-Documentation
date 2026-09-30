@@ -96,9 +96,23 @@ labels:
 
 The browser hits `http://<lan>/nfx-identity/auth/...`. After StripPrefix of `/nfx-identity`, Fiber still mounts `/auth`.
 
-Consoles use PathPrefix `/console/nfx-<product>`; APIs use `/nfx-<product>/...`. Host is not part of the match (except the Documentation site, S3, and static sites). Do not map 80/443 on product compose files.
+Consoles use PathPrefix `/console/nfx-<product>`; APIs use `/nfx-<product>/...`. Host is not part of the match (except S3 and static sites). Do not map 80/443 on product compose files.
 
-Documentation uses `Host(\`${DOCS_HOST}\`)` and `traefik.project=nfx-documentation`.
+Documentation (`NFX-Documentation/docker-compose.yml`) does not get its own hostname either. The browser path is `/documentation/`. nginx inside the container only matches `/nfx-documentation/`. Label shape:
+
+```yaml
+labels:
+  traefik.enable: "true"
+  traefik.project: "nfx-documentation"
+  traefik.docker.network: nfx-edge
+  traefik.http.services.docs-frontend.loadbalancer.server.port: "80"
+  traefik.http.middlewares.nfx-documentation-gw.replacepathregex.regex: ^/documentation(/.*)$$
+  traefik.http.middlewares.nfx-documentation-gw.replacepathregex.replacement: /nfx-documentation$$1
+  traefik.http.routers.docs-frontend.rule: "HostRegexp(`^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$$`) && (Path(`/documentation`) || PathPrefix(`/documentation/`))"
+  traefik.http.routers.docs-frontend.middlewares: nfx-documentation-slash,nfx-documentation-gw
+```
+
+The same rule also exists on `websecure`, plus two `Host(${TRAEFIK_CONSOLE_HOST})` routers (priority 200). There is no `DOCS_HOST`. The request walkthrough is in chapter 10.
 
 ## Certificates
 
@@ -121,6 +135,10 @@ Do not commit private keys. Mode `600`.
 ## Static sites
 
 Copy `dynamic/sites.example.yml` to `dynamic/sites.yml` (gitignored). One file holds www / admin / static Host rules. Product APIs stay on product containers + labels.
+
+## Console overlays
+
+Confirm, search, file, and tooltip overlays are mounted by Edge `ModalProvider` as `@radix-ui/themes` `Dialog`s. Overlay and border come from Radix tokens. Do not use a native `<dialog>` or a hardcoded `rgba` scrim.
 
 ## Troubleshooting
 

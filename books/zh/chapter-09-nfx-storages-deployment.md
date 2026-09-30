@@ -63,7 +63,7 @@ sudo docker compose up -d
 
 集群信息：`GET /info` `/storageinfo` `/datausageinfo` `/metrics` `/license`。
 
-事件目标：`GET /target/list` `/target/arns`、`PUT /target/:type/:name`、`DELETE /target/:type/:name/reset`。
+事件目标：`GET /target/list` `/target/arns`、`PUT /target/:type/:name`、`DELETE /target/:type/:name/reset`。`/target/list` 的每条除 `account_id` / `service` / `status` 外，带上已存的 `config`。
 
 分层：`GET/PUT /tier`、`POST/DELETE /tier/:name`。
 
@@ -77,9 +77,16 @@ IAM 导入导出：`GET /export-iam`、`PUT /import-iam`。
 
 ## Console 路由
 
-访客登录同 Identity hooks。资料仍是 `/user/profile/*`。业务：
+访客登录同 Identity hooks。资料仍是 `/user/profile/*`。内容列在 `Outlet` 之上有 `UserTopBar`（资料、设置）。侧栏账号按钮进入资料总览。业务：
 
 `/config`、`/browser`、`/browser/:bucket`、`/buckets/:key`、`/access-keys`、`/policies`、`/users`、`/user-groups`、`/import-export`、`/performance`、`/pools`、`/events`、`/replication`、`/lifecycle`、`/tiers`、`/events-target`、`/sse`、`/license`。
+
+表单深度（仍走现有 API，不另开接口）：
+
+- **Tiers** 类型仍是 `s3`。创建和更新提交 endpoint、bucket、prefix、region、access key、secret key。
+- **Event Target** 按类型收字段：SQS 队列 URL；AMQP 的 URL、exchange、routing key；Webhook 的 endpoint。列表能看到这段地址。
+- **Lifecycle**（桶设置与 `/lifecycle` 同一块）除过期天数外，可写非当前版本过期天数、未完成分片中止天数。配置经 S3 lifecycle 存取；引擎没有执行过期的 worker。
+- **Policy** 详情里的 JSON 可改。保存走已有的 `POST /add-canned-policy`（同名覆盖）。
 
 页面走 hooks（buckets / objects / iam），不要在 page 里 `useQuery` + repository。`nfx-ui` **0.33.0**。
 

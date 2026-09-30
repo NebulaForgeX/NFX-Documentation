@@ -63,7 +63,7 @@ Service accounts: list/add/info/update/delete plus `POST /service-account-creden
 
 Cluster: `GET /info` `/storageinfo` `/datausageinfo` `/metrics` `/license`.
 
-Event targets: `GET /target/list` `/target/arns`, `PUT /target/:type/:name`, `DELETE /target/:type/:name/reset`.
+Event targets: `GET /target/list` `/target/arns`, `PUT /target/:type/:name`, `DELETE /target/:type/:name/reset`. Each `/target/list` row includes the stored `config` alongside `account_id` / `service` / `status`.
 
 Tiers: `GET/PUT /tier`, `POST/DELETE /tier/:name`.
 
@@ -77,9 +77,16 @@ Remote: `PUT /set-remote-target`, `GET /list-remote-targets`, `DELETE /remove-re
 
 ## Console routes
 
-Guest login uses Identity hooks. Profile pages are still `/user/profile/*`. Product:
+Guest login uses Identity hooks. Profile pages are still `/user/profile/*`. `UserTopBar` sits above `Outlet` (profile and settings). The sidebar account button opens the profile overview. Product:
 
 `/config`, `/browser`, `/browser/:bucket`, `/buckets/:key`, `/access-keys`, `/policies`, `/users`, `/user-groups`, `/import-export`, `/performance`, `/pools`, `/events`, `/replication`, `/lifecycle`, `/tiers`, `/events-target`, `/sse`, `/license`.
+
+Form depth (same APIs, no new routes):
+
+- **Tiers** stay type `s3`. Create and update send endpoint, bucket, prefix, region, access key, and secret key.
+- **Event targets** take SQS queue URL, AMQP URL / exchange / routing key, or a webhook endpoint. The list shows that address.
+- **Lifecycle** (bucket settings and `/lifecycle` share one panel) adds noncurrent-version expiration days and abort-incomplete-multipart days. The blob is stored through the S3 lifecycle API. There is no worker that applies the rules.
+- **Policies:** the detail JSON is editable. Save uses the existing `POST /add-canned-policy` (same name overwrites).
 
 Pages use hooks (buckets / objects / iam), not `useQuery` + repository in the page file. Pin **nfx-ui 0.33.0**.
 

@@ -1,6 +1,8 @@
 import { memo } from "react";
+import { Box, Container, Flex, Text } from "@radix-ui/themes";
 import { useTranslation } from "react-i18next";
-import { Container, Flex, Heading, Text } from "@radix-ui/themes";
+
+import { LedgerLink, PageIntro } from "@/components";
 
 const REPOS = [
   { key: "nfxStack", name: "NFX-Stack", url: "https://github.com/NebulaForgeX/NFX-Stack", stack: "Docker Compose" },
@@ -21,30 +23,31 @@ const RepoPage = memo(() => {
   const { t } = useTranslation("repo");
 
   return (
-    <Container size="3" py="6">
-      <Flex direction="column" gap="5">
-        <Flex direction="column" gap="2" className="docs-masthead">
-          <Heading size="8">{t("title")}</Heading>
-          <Text as="p" size="4" color="gray">
-            {t("description")}
-          </Text>
+    <Container size="3">
+      <Box py="6">
+        <Flex direction="column" gap="5">
+          <PageIntro title={t("title")}>
+            <Text as="p" size="4" color="gray">
+              {t("description")}
+            </Text>
+          </PageIntro>
+          <Flex direction="column">
+            {REPOS.map((repo) => (
+              <LedgerLink key={repo.name} href={repo.url}>
+                <Text size="3" weight="medium">
+                  {repo.name}
+                </Text>
+                <Text size="2" color="gray">
+                  {repo.stack}
+                </Text>
+                <Text as="p" size="2" color="gray">
+                  {t(`${repo.key}.description`)}
+                </Text>
+              </LedgerLink>
+            ))}
+          </Flex>
         </Flex>
-        <Flex direction="column">
-          {REPOS.map((repo) => (
-            <a key={repo.name} href={repo.url} target="_blank" rel="noopener noreferrer" className="docs-ledger-row">
-              <Text size="3" weight="medium" className="docs-ledger-name">
-                {repo.name}
-              </Text>
-              <Text size="2" color="gray" className="docs-ledger-stack">
-                {repo.stack}
-              </Text>
-              <Text as="p" size="2" color="gray">
-                {t(`${repo.key}.description`)}
-              </Text>
-            </a>
-          ))}
-        </Flex>
-      </Flex>
+      </Box>
     </Container>
   );
 });

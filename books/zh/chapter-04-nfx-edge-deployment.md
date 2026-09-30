@@ -100,9 +100,23 @@ labels:
 
 浏览器打 `http://<lan>/nfx-identity/auth/...`；StripPrefix 掉 `/nfx-identity` 后，Fiber 仍挂在 `/auth`。
 
-Console 用 PathPrefix `/console/nfx-<product>`，API 用 `/nfx-<product>/...`。Host 不参与匹配（Documentation 站点、S3、静态站除外）。不要给每个产品再映射 80/443。
+Console 用 PathPrefix `/console/nfx-<product>`，API 用 `/nfx-<product>/...`。Host 不参与匹配（S3、静态站除外）。不要给每个产品再映射 80/443。
 
-Documentation 用 `Host(\`${DOCS_HOST}\`)`，`traefik.project=nfx-documentation`。
+Documentation（`NFX-Documentation/docker-compose.yml`）也不占独立域名。浏览器路径是 `/documentation/`，容器内 nginx 只认 `/nfx-documentation/`。标签形状：
+
+```yaml
+labels:
+  traefik.enable: "true"
+  traefik.project: "nfx-documentation"
+  traefik.docker.network: nfx-edge
+  traefik.http.services.docs-frontend.loadbalancer.server.port: "80"
+  traefik.http.middlewares.nfx-documentation-gw.replacepathregex.regex: ^/documentation(/.*)$$
+  traefik.http.middlewares.nfx-documentation-gw.replacepathregex.replacement: /nfx-documentation$$1
+  traefik.http.routers.docs-frontend.rule: "HostRegexp(`^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$$`) && (Path(`/documentation`) || PathPrefix(`/documentation/`))"
+  traefik.http.routers.docs-frontend.middlewares: nfx-documentation-slash,nfx-documentation-gw
+```
+
+同一组规则还有 `websecure`，以及 `Host(${TRAEFIK_CONSOLE_HOST})` 两条（priority 200）。没有 `DOCS_HOST`。逐步请求见第十章。
 
 ## 证书
 
@@ -125,6 +139,10 @@ tls:
 ## 静态站点
 
 `dynamic/sites.example.yml` 复制为 `dynamic/sites.yml`（gitignore）。一份文件里放 www / admin / 静态站 Host 规则。业务 API 走产品容器 + 标签，不要为每个产品再起一层代理。
+
+## Console 弹层
+
+确认、搜索、文件、提示都挂在 Edge `ModalProvider` 上，用 `@radix-ui/themes` 的 `Dialog`。遮罩和边框走 Radix token，不用原生 `<dialog>`，也不写死 `rgba` 遮罩。
 
 ## 故障
 

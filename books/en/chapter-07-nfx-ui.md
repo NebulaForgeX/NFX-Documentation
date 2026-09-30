@@ -47,6 +47,14 @@ Cache invalidation: **only** `invalidateEventEmitter` + `useInvalidateInv`. Page
 
 HTTP is axios inside the library (Bearer + 401 refresh). Hosts must not wrap another `fetch` client.
 
+## Host UI
+
+Console CSS uses Radix scales: `--gray-*`, `--accent-*`, `--color-background`, `--color-panel-solid`. Use `color-mix` for alpha. Do not use the legacy aliases `--color-primary` / `--color-bg` / `--color-fg-*`, and do not add `#hex` fallbacks. The `--color-*` block in `nfx-ui/themes/index.css` is only the 0.17 alias layer.
+
+Overlays are `@radix-ui/themes` `Dialog`, mounted by each host `ModalProvider` and opened from the modal store. Do not use a native `<dialog>`.
+
+Do not use `input type="date"`. The reference is CityPulso PulsoNear `DateTimePicker`: `ModalProvider` mounts a Radix `Dialog` calendar, and the page only renders a read-only trigger. Identity implements this in `console/src/providers/ModalProvider/components/DateTimePicker` and opens it with `showDateTimePickerModal`.
+
 ## Peer dependencies
 
 `react` / `react-dom` `^19.2.8`, `react-router` `^8.3.1`, `@radix-ui/themes` `^3.3.0`, `@tanstack/react-query` `^5`, `axios` `^1.20`, `vite` `^8.2.2` (see `package.json`).

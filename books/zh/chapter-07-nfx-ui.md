@@ -49,6 +49,14 @@ Asset：`useAssetFileURL`、`usePrepareUpload`、`useConfirmUpload`、`useDelete
 
 HTTP 客户端在库内 axios；拦截器处理 Bearer 与 401 refresh。宿主 **不要**再包一层 `fetch`。
 
+## 宿主界面
+
+Console CSS 用 Radix 色阶：`--gray-*`、`--accent-*`、`--color-background`、`--color-panel-solid`。需要透明度用 `color-mix`。不要写遗留别名 `--color-primary` / `--color-bg` / `--color-fg-*`，也不要写 `#hex` 兜底。`nfx-ui/themes/index.css` 里的 `--color-*` 只是 0.17 旧宿主的别名，新样式不要依赖它们。
+
+弹层用 `@radix-ui/themes` 的 `Dialog`，挂在各仓 `ModalProvider` 上，由 modal store 打开。不要用原生 `<dialog>`。
+
+日期不要用 `input type="date"`。参考 CityPulso PulsoNear 的 `DateTimePicker`：`ModalProvider` 挂一个 Radix `Dialog` 日历，页面只放只读触发器。Identity 的实现在 `console/src/providers/ModalProvider/components/DateTimePicker`，`showDateTimePickerModal` 打开它。
+
 ## 对等依赖（与 PulsoLink-WEB 对齐，以 `package.json` peerDependencies 为准）
 
 `react` / `react-dom` `^19.2.8`，`react-router` `^8.3.1`，`@radix-ui/themes` `^3.3.0`，`@tanstack/react-query` `^5`，`axios` `^1.20`，`vite` `^8.2.2`。

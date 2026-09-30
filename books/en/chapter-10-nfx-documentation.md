@@ -16,8 +16,29 @@ cp .example.env .env
 
 | Variable | Role |
 |----------|------|
-| `DOCS_HOST` | Edge Host rule, e.g. `docs.example.com` |
+| `TRAEFIK_CONSOLE_HOST` | Same console hostname as Identity / Edge |
+| `VITE_BASE` | Browser path, default `/documentation/` |
 | `BACKEND_HOST` / `BACKEND_PORT` | Frontend image build ARGS (the reader does not call product APIs) |
+
+## Paths (browser ≠ container)
+
+| Who sees it | Path | Meaning |
+|-------------|------|---------|
+| Browser, Vite `base`, React `basename` | `/documentation/` | The URL people open. `VITE_BASE` is baked into the image |
+| After Traefik rewrite, nginx `location` | `/nfx-documentation/` | Container only. Do not open this in a browser |
+| After nginx `rewrite`, on disk | `/usr/share/nginx/html` | `index.html`, `assets/`; `books/` is the read-only volume |
+
+One request:
+
+1. `GET http://<lan-ip>/documentation` matches the exact path. `nfx-documentation-slash` returns 301 to `/documentation/`.
+2. `GET http://<lan-ip>/documentation/zh/chapter-01-router-configuration` matches `PathPrefix(/documentation/)`. `nfx-documentation-gw` rewrites the path to `/nfx-documentation/zh/chapter-01-router-configuration`.
+3. nginx `location ^~ /nfx-documentation/` rewrites that to `/zh/chapter-01-router-configuration`. That file does not exist, so `try_files` serves `/index.html`.
+4. Script URLs in the page are `/documentation/assets/...` (Vite base). Traefik rewrites those to `/nfx-documentation/assets/...`, and nginx serves `html/assets/...`.
+5. Chapter text is `/documentation/books/zh/<slug>.md`. After rewrite, nginx reads the volume `./books:/usr/share/nginx/html/books:ro`.
+
+The hostname form is the same, with the host set to `TRAEFIK_CONSOLE_HOST` (the same console name as Identity / Edge; the example is `identity.nebulaforgex.com`). HTTPS uses `websecure` and `tls: "true"`.
+
+Do not set `DOCS_HOST`. Do not publish host ports 80/443 from this repo.
 
 ## Run (Docker)
 
@@ -26,14 +47,29 @@ cd /volume1/Projects/NebulaForgeX/NFX-Documentation
 ./start.sh
 ```
 
-`docker-compose.yml`:
+`start.sh` exits if the `nfx-edge` network is missing, then runs `docker compose up -d --build`. `VITE_BASE` is applied at **image build**. Changing it requires a rebuild; restarting the container is not enough.
 
-- service `frontend`, container `NFX-Documentation-Frontend`
-- `traefik.project=nfx-documentation`
-- `Host(\`${DOCS_HOST}\`)` on both `web` and `websecure`
-- loadBalancer port `80`
-- volume `./books:/usr/share/nginx/html/books:ro`
-- networks `nfx-documentation` + external `nfx-edge`
+`docker-compose.yml` has one service, `frontend` (container `NFX-Documentation-Frontend`). It `expose`s 80 and does not bind a host port. Networks: `nfx-documentation` plus external `nfx-edge`. `traefik.project=nfx-documentation` (already in Edge's LabelRegex). `traefik.docker.network=nfx-edge`.
+
+Four routers. Every one uses middlewares `nfx-documentation-slash,nfx-documentation-gw` and service `docs-frontend` (upstream port 80):
+
+| Router | Entrypoint | Rule | priority |
+|--------|------------|------|----------|
+| `docs-frontend` | `web` | LAN IP and (`Path(/documentation)` or `PathPrefix(/documentation/)`) | 30 |
+| `docs-frontend-tls` | `websecure` | same, plus `tls: "true"` | 30 |
+| `docs-frontend-host` | `web` | `Host(TRAEFIK_CONSOLE_HOST)` and the same path | 200 |
+| `docs-frontend-host-tls` | `websecure` | same, plus `tls: "true"` | 200 |
+
+Middlewares (compose `$$` becomes Traefik `$`):
+
+```yaml
+traefik.http.middlewares.nfx-documentation-slash.redirectregex.regex: ^(https?)://([^/]+)/documentation$$
+traefik.http.middlewares.nfx-documentation-slash.redirectregex.replacement: $${1}://$${2}/documentation/
+traefik.http.middlewares.nfx-documentation-gw.replacepathregex.regex: ^/documentation(/.*)$$
+traefik.http.middlewares.nfx-documentation-gw.replacepathregex.replacement: /nfx-documentation$$1
+```
+
+nginx (`servers/frontend/nginx.conf`) does not listen for `/documentation`. It only handles `/nfx-documentation/`, strips that prefix, then `try_files`. The books volume is mounted at `books/` under the site root, so a browser request for `/documentation/books/...` ends at that volume.
 
 ## Local dev
 
@@ -43,7 +79,7 @@ npm install
 npm run dev
 ```
 
-A Vite plugin maps `/books/*` onto repo `books/`. Edit markdown and refresh; no image rebuild. Docker serves the same files via the read-only mount.
+Local Vite base is `/documentation/`. The plugin maps `/documentation/books/*` onto repo `books/`. Edit markdown and refresh; no image rebuild. Docker serves the same files from `/nfx-documentation/books/` via the read-only mount.
 
 Pin **nfx-ui 0.33.0**. Chrome is local `DocsLayout` + `@radix-ui/themes` + lucide (do not import missing `nfx-ui/layouts`).
 
@@ -52,7 +88,7 @@ Pin **nfx-ui 0.33.0**. Chrome is local `DocsLayout` + `@radix-ui/themes` + lucid
 1. Change `books/zh/<slug>.md` and `books/en/<slug>.md` together (separate files, never mixed bilingual in one file)
 2. New chapter: add `slug` + `title.zh` / `title.en` in `books/manifest.json`
 3. Do not add `pages/ChapterXXPage`
-4. Slug must match the filename without `.md`; the reader fetches `/books/{lang}/{slug}.md`
+4. Slug must match the filename without `.md`; the reader fetches `{VITE_BASE}books/{lang}/{slug}.md` (default `/documentation/books/...`)
 5. Secrets stay placeholders
 6. Operational steps come from `.example.env`, `RegisterRoutes`, `databases/src`, `Taskfile.yml` — do not restore deleted TrendRadar / tenants docs
 

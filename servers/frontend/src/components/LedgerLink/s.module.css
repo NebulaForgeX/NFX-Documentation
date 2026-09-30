@@ -1,0 +1,15 @@
+.rule {
+  border-bottom: 1px solid var(--gray-a6);
+}
+
+.flat {
+  text-decoration: none;
+}
+
+.ink {
+  color: inherit;
+}
+
+.ink:hover {
+  color: var(--accent-11);
+}

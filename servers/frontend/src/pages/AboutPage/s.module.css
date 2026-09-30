@@ -1,0 +1,7 @@
+.rule {
+  border-top: 1px solid var(--gray-a6);
+}
+
+.flush {
+  margin: 0;
+}

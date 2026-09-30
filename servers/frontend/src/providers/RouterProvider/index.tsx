@@ -13,9 +13,15 @@ function RouterEventsHandler({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+function routerBasename(): string | undefined {
+  const base = import.meta.env.BASE_URL || "/";
+  if (base === "/") return undefined;
+  return base.replace(/\/$/, "");
+}
+
 export function RouterProvider({ children }: RouterProviderProps) {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={routerBasename()}>
       <RouterEventsHandler>{children}</RouterEventsHandler>
     </BrowserRouter>
   );

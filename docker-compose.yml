@@ -9,6 +9,7 @@ services:
     build:
       context: ./servers/frontend
       dockerfile: Dockerfile
+      target: secure
       args:
         VITE_BASE: ${VITE_BASE:-/documentation/}
         BACKEND_HOST: ${BACKEND_HOST}

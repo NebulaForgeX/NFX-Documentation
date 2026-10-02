@@ -4,7 +4,7 @@
 
 ## 依赖
 
-必须先有 [NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge)（网络 `nfx-edge`）。本仓 **不** 跑 Traefik。`start.sh` 若发现没有 `nfx-edge` 会直接退出。
+必须先有 [NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) 的 Traefik（80/443）。本仓 **不** 跑 Traefik。`start.sh` 把前端发布到 `NAS_IP:10120`。
 
 Stack / Identity **不是**本站运行时依赖（静态站）。
 
@@ -47,9 +47,9 @@ cd /volume1/Projects/NebulaForgeX/NFX-Documentation
 ./start.sh
 ```
 
-`start.sh` 先检查网络 `nfx-edge`，没有就退出。然后 `docker compose up -d --build`。`VITE_BASE` 在 **镜像构建** 时写进前端；改了 base 必须重建，只重启容器不够。
+`start.sh` 执行 `docker compose up -d --build`。`VITE_BASE` 在 **镜像构建** 时写进前端；改了 base 必须重建，只重启容器不够。
 
-`docker-compose.yml` 只有服务 `frontend`（容器 `NFX-Documentation-Frontend`）。`expose: 80`，不占宿主机端口。网络：`nfx-documentation` + 外部 `nfx-edge`。`traefik.project=nfx-documentation`（Edge 的 LabelRegex 已经包含这个名字）。`traefik.docker.network=nfx-edge`。
+`docker-compose.yml` 只有服务 `frontend`（容器 `NFX-Documentation-Frontend`）。宿主机端口 `10120` 映射容器 `80`。路由在 Edge `dynamic/documentation.project.yml`。
 
 四条路由，中间件都是 `nfx-documentation-slash,nfx-documentation-gw`，服务都是 `docs-frontend`（上游端口 80）：
 

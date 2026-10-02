@@ -9,7 +9,7 @@
 ## 依赖顺序
 
 1. Stack：Postgres / Redis / Kafka / OTEL（第三章）
-2. Edge：已有 `nfx-edge` 网络（第四章）
+2. Edge：Traefik 已在 80/443（第四章）
 3. Identity：console 登录与 JWT（可先把 sites-base API 打通，再开 UI）
 
 ## 端口
@@ -19,8 +19,8 @@
 | 进程 | `GRPC_PORT` | `GRPC_EXT` | HTTP 前缀（StripPrefix 后） |
 |------|-------------|------------|------------------------------|
 | AUTH 客户端 | 50071 | （不映射；连 Identity） | — |
-| SITES | 50072 | **10219** | `/edge`（Fiber 仍是 `/edge/tls` `/edge/dns` `/edge/file` `/edge/analysis`） |
-| Console | — | **10221**（`CONSOLE_EXTERNAL_PORT`） | PathPrefix `/console/nfx-edge` |
+| SITES | 50072 | **10111** | `/edge`（Fiber 仍是 `/edge/tls` `/edge/dns` `/edge/file` `/edge/analysis`） |
+| Console | — | **10112**（`CONSOLE_EXTERNAL_PORT`） | PathPrefix `/console/nfx-edge` |
 | Vite | — | `VITE_PORT=5175` | 开发 |
 
 网关：`API_GATEWAY_PREFIX=/nfx-edge`。浏览器 `VITE_API_URL` 指向 Edge 上的 `/nfx-edge`；`VITE_IDENTITY_API_URL` 指向 `/nfx-identity`。
@@ -39,7 +39,7 @@ task console:i
 task run
 ```
 
-Postgres 库名以 `.env` 为准（常见 `nfxedge_dev` / `nfxedge` / shadow `nfxedge_diff`）。容器连 Stack：`POSTGRES_CONTAINER_NAME=NFX-Stack-PostgreSQL`，宿主机探测用 LAN:`10104`。Kafka：`KAFKA_BROKERS=kafka:9092`。Redis：LAN:`10106`。OTLP：`otel-collector:4317`。
+Postgres 库名以 `.env` 为准（常见 `nfxedge_dev` / `nfxedge` / shadow `nfxedge_diff`）。容器连 Stack：`POSTGRES_CONTAINER_NAME=NFX-Stack-PostgreSQL`，宿主机探测用 LAN:`10004`。Kafka：`KAFKA_BROKERS=NAS_IP:10008`。Redis：LAN:`10006`。OTLP：`NAS_IP:10016`。
 
 `GRPC_HOST_AUTH` 在 dev 常为 `NFX-Identity-Auth-Base-Dev`（Identity compose 容器名），与 Identity 自己的 `GRPC_HOST_AUTH=auth-base` 不同——sites-base 是 **跨栈客户端**。
 
@@ -104,13 +104,13 @@ sites 进程 `inputs/sites/configuration/dev.toml`：
     cert_poison = "nfxedge.cert_poison"
 ```
 
-Broker 在容器内是 `kafka:9092`（Stack）。kafkax 包用法见第六章。
+Broker 是 `NAS_IP:10008`（Stack EXTERNAL）。kafkax 包用法见第六章。
 
 ## 与 Edge 对接
 
 1. sites-base 把证书写到 `websites/<folder>/cert.crt` + `key.key`
 2. 更新 Edge `dynamic/tls.yaml`（文件不存在时不要挂路径）
-3. 两边都在 `nfx-edge` 上；sites-base ACME 标签承接 HTTP-01。Traefik **没有** `certResolver`
+3. ACME HTTP-01 在 `dynamic/edge.project.yml`，打到 sites 的宿主机 HTTP 口。Traefik **没有** `certResolver`
 4. 不要把私钥提交进 Git
 
 下一章：Identity，产品登录中心。

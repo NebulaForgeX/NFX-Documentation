@@ -9,7 +9,7 @@
 3. Storages 验 JWT、gRPC 问 Identity `EnsureOwnedProfile`，签发临时 AK/SK，写入 `storages.access_keys`（`account_id` / `profile_id` / `expires_at`）
 4. 浏览器与 AWS SDK 用 SigV4 打 S3 Host。没有 Storages 本地密码表
 
-`VITE_S3_ENDPOINT` 在 `.example.env` 里曾指向 Stack MinIO `10112`——那是历史占位。对象面应走 Edge 的 `TRAEFIK_S3_HOST`，不要把 Storages 数据写进 Identity MinIO。
+`VITE_S3_ENDPOINT` 在 `.example.env` 里曾指向 Stack MinIO `10012`——那是历史占位。对象面应走 Edge 的 `TRAEFIK_S3_HOST`，不要把 Storages 数据写进 Identity MinIO。
 
 ## 端口
 
@@ -17,12 +17,12 @@
 
 | 模块 | `GRPC_PORT` | `GRPC_EXT` |
 |------|-------------|------------|
-| S3 | 50072 | **10212** |
-| OBJECT | 50073 | **10213** |
-| IAM | 50074 | **10214** |
-| ADMIN | 50075 | **10215** |
-| NOTIFY | 50076 | **10216** |
-| Console | — | **10218** |
+| S3 | 50072 | **10081** |
+| OBJECT | 50073 | **10085** |
+| IAM | 50074 | **10087** |
+| ADMIN | 50075 | **10083** |
+| NOTIFY | 50076 | **10089** |
+| Console | — | **10090** |
 
 Vite `5176`。网关 `API_GATEWAY_PREFIX=/nfx-storages`。前缀：`API_PREFIX_PATH_ADMIN=/admin/v3`、`/object`、`/iam`、`/notify`。S3 用独立 Host `TRAEFIK_S3_HOST`。Console 用 PathPrefix `/console/nfx-storages`。
 
@@ -41,7 +41,7 @@ task console
 sudo docker compose up -d
 ```
 
-四块盘必须存在且可写。Kafka `kafka:9092`。Postgres 10104，Redis 10106。
+四块盘必须存在且可写。Kafka `NAS_IP:10008`。Postgres 10004，Redis 10006。
 
 ## S3 HTTP
 

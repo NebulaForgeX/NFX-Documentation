@@ -9,7 +9,7 @@
 3. Storages verifies the JWT, calls Identity `EnsureOwnedProfile` over gRPC, writes a temporary AK/SK into `storages.access_keys` (`account_id` / `profile_id` / `expires_at`)
 4. Browsers and the AWS SDK speak SigV4 to the S3 Host. There is no local Storages password table
 
-`VITE_S3_ENDPOINT` in `.example.env` still mentions Stack MinIO `10112` as a leftover. The object plane should use Edge `TRAEFIK_S3_HOST`. Do not store Storages objects in Identity MinIO.
+`VITE_S3_ENDPOINT` in `.example.env` still mentions Stack MinIO `10012` as a leftover. The object plane should use Edge `TRAEFIK_S3_HOST`. Do not store Storages objects in Identity MinIO.
 
 ## Ports
 
@@ -17,12 +17,12 @@
 
 | Module | `GRPC_PORT` | `GRPC_EXT` |
 |--------|-------------|------------|
-| S3 | 50072 | **10212** |
-| OBJECT | 50073 | **10213** |
-| IAM | 50074 | **10214** |
-| ADMIN | 50075 | **10215** |
-| NOTIFY | 50076 | **10216** |
-| Console | — | **10218** |
+| S3 | 50072 | **10081** |
+| OBJECT | 50073 | **10085** |
+| IAM | 50074 | **10087** |
+| ADMIN | 50075 | **10083** |
+| NOTIFY | 50076 | **10089** |
+| Console | — | **10090** |
 
 Vite `5176`. Gateway `API_GATEWAY_PREFIX=/nfx-storages`. Prefixes: `API_PREFIX_PATH_ADMIN=/admin/v3`, `/object`, `/iam`, `/notify`. S3 uses Host `TRAEFIK_S3_HOST`. Console uses PathPrefix `/console/nfx-storages`.
 
@@ -41,7 +41,7 @@ task console
 sudo docker compose up -d
 ```
 
-All four volumes must exist and be writable. Kafka `kafka:9092`. Postgres 10104, Redis 10106.
+All four volumes must exist and be writable. Kafka `NAS_IP:10008`. Postgres 10004, Redis 10006.
 
 ## S3 HTTP
 

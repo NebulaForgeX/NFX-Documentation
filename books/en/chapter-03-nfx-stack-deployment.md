@@ -1,6 +1,6 @@
 # Chapter 3: NFX-Stack
 
-[NFX-Stack](https://github.com/NebulaForgeX/NFX-Stack) is the data plane. Product containers join the Docker network `nfx-stack` and connect by **container name**. Do not run a second Postgres / Redis / Kafka / MinIO / OTEL inside Identity, Edge, News, or Storages.
+[NFX-Stack](https://github.com/NebulaForgeX/NFX-Stack) is the data plane. Products reach Stack at `NAS_IP:host port` (Postgres `10004`, Redis `10006`, Kafka EXTERNAL `10008`, MinIO `10012`, OTLP gRPC `10016`). Services inside one Stack compose file still use the service name. Do not run a second Postgres / Redis / Kafka / MinIO / OTEL inside Identity, Edge, News, or Storages.
 
 HTTP/HTTPS does **not** live here. Ingress is Edge (Chapter 4). This repo does **not** run Traefik.
 
@@ -53,26 +53,26 @@ docker compose --project-directory Infrastructure --env-file .env \
 
 After changing ports or passwords in `.env`: `./start.sh down && ./start.sh`.
 
-## Host ports (from 10100, sequential, no gaps)
+## Host ports (from 10000, sequential, no gaps)
 
 Values come from `.env`. NAS convention (bind a LAN IP such as `192.168.1.64`; do not expose `0.0.0.0` to the internet):
 
 | Service | Data/API | UI |
 |---------|----------|-----|
-| MySQL | **10100** | 10101 phpMyAdmin |
-| MongoDB | 10102 | 10103 mongo-express |
-| PostgreSQL | **10104** | 10105 pgAdmin |
-| Redis | **10106** | 10107 RedisInsight |
-| Kafka EXTERNAL | **10108** | 10109 Kafka UI |
-| RabbitMQ AMQP | 10110 | 10111 Management |
-| MinIO S3 | **10112** | 10113 Console (path-style) |
-| Centrifugo | 10114 | admin on the same port |
-| Jaeger | — | 10115 |
-| OTLP gRPC / HTTP | **10116** / 10117 | Collector health 10118 |
-| Collector Prometheus / Prometheus / Loki | 10119 / 10120 / 10121 | Grafana 10122 |
-| OpenSearch | 10123 HTTPS | 10124 Dashboards HTTP |
+| MySQL | **10000** | 10001 phpMyAdmin |
+| MongoDB | 10002 | 10003 mongo-express |
+| PostgreSQL | **10004** | 10005 pgAdmin |
+| Redis | **10006** | 10007 RedisInsight |
+| Kafka EXTERNAL | **10008** | 10009 Kafka UI |
+| RabbitMQ AMQP | 10010 | 10011 Management |
+| MinIO S3 | **10012** | 10013 Console (path-style) |
+| Centrifugo | 10014 | admin on the same port |
+| Jaeger | — | 10015 |
+| OTLP gRPC / HTTP | **10016** / 10017 | Collector health 10018 |
+| Collector Prometheus / Prometheus / Loki | 10019 / 10020 / 10021 | Grafana 10022 |
+| OpenSearch | 10023 HTTPS | 10024 Dashboards HTTP |
 
-Product clients default to **Postgres 10104, Redis 10106, Kafka 10108, MinIO 10112, OTLP gRPC 10116**.
+Product clients default to **Postgres 10004, Redis 10006, Kafka 10008, MinIO 10012, OTLP gRPC 10016**.
 
 Env keys: `MYSQL_DATABASE_PORT` / `MYSQL_UI_PORT`, `MONGO_*`, `POSTGRESQL_DATABASE_PORT` / `POSTGRESQL_UI_PORT`, `REDIS_DATABASE_PORT` / `REDIS_UI_PORT`, `KAFKA_EXTERNAL_PORT` / `KAFKA_UI_PORT`, `RABBITMQ_AMQP_PORT` / `RABBITMQ_UI_PORT`, `MINIO_API_PORT` / `MINIO_UI_PORT`, `CENTRIFUGO_PORT`, `OTEL_JAEGER_UI_PORT`, `OTEL_COLLECTOR_OTLP_GRPC_PORT` / `OTEL_COLLECTOR_OTLP_HTTP_PORT` / `OTEL_COLLECTOR_HEALTH_PORT` / `OTEL_COLLECTOR_PROMETHEUS_PORT`, `OTEL_PROMETHEUS_PORT` / `OTEL_LOKI_PORT` / `OTEL_GRAFANA_PORT`, `OPENSEARCH_EXTERNAL_PORT` / `OPENSEARCH_DASHBOARDS_PORT`.
 
@@ -84,29 +84,22 @@ Env keys: `MYSQL_DATABASE_PORT` / `MYSQL_UI_PORT`, `MONGO_*`, `POSTGRESQL_DATABA
 - `192.168.1.64` — specific LAN (recommended on a NAS)
 - `0.0.0.0` — all interfaces; only if the router already blocks these ports
 
-## In-network hostnames (products must join `nfx-stack` as `external: true`)
+## How products connect (LAN host ports, no shared network)
 
 | Service | Address |
 |---------|---------|
-| MySQL | `mysql:3306` |
-| PostgreSQL | `postgresql:5432` |
-| MongoDB | `mongodb:27017` (`authSource=admin`) |
-| Redis | `redis:6379` |
-| Kafka | `kafka:9092` |
-| RabbitMQ | `rabbitmq:5672` |
-| MinIO | `http://minio:9000` (AWS SDK **must** use path-style) |
-| Centrifugo API | `http://centrifugo:8000/api` |
-| OTLP | `otel-collector:4317` (`OTEL_EXPORTER_OTLP_INSECURE=true`) |
-| OpenSearch | `https://opensearch:9200` (self-signed; dev may skip TLS verify) |
+| MySQL | `NAS_IP:10000` |
+| PostgreSQL | `NAS_IP:10004` |
+| MongoDB | `NAS_IP:10002` (`authSource=admin`) |
+| Redis | `NAS_IP:10006` |
+| Kafka | `NAS_IP:10008` (EXTERNAL listener; Kafka UI in the same file still uses `kafka:9092`) |
+| RabbitMQ | `NAS_IP:10010` |
+| MinIO | `NAS_IP:10012` (AWS SDK **must** use path-style) |
+| Centrifugo | `NAS_IP:10014` |
+| OTLP gRPC | `NAS_IP:10016` |
+| OpenSearch | `NAS_IP:10023` |
 
-```yaml
-networks:
-  nfx-stack:
-    external: true
-    name: nfx-stack
-```
-
-`start.sh` creates the network. Compose files mark it external, so `down` on one stack does **not** delete it.
+Processes in one compose file (Kafka UI → `kafka:9092`) use that file's default network. Product repos do not declare `nfx-stack`.
 
 ## Compose files and images
 
@@ -159,7 +152,7 @@ Collector health: `http://<lan-ip>:${OTEL_COLLECTOR_HEALTH_PORT}`.
 
 ## Troubleshooting
 
-- Missing network: `./start.sh` runs `docker network create nfx-stack`
+- Port in use: check `.env` `10000–10024`
 - Port in use: change the matching `*_PORT`; do not put Stack ports in the product `GRPC_EXT` band
 - Mongo will not start: keep `mongo:4.4`
 - OpenSearch: password must pass zxcvbn; data dir writable by uid 1000; heap via `OPENSEARCH_JAVA_OPTS` (NAS sample `-Xms512m -Xmx512m`). **`OPENSEARCH_PASSWORD` applies only on first data-dir init**; rotate by wiping `OPENSEARCH_DATA_PATH`

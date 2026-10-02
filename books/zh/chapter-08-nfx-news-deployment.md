@@ -24,22 +24,22 @@
 
 | 模块 | `GRPC_PORT` | `GRPC_EXT` |
 |------|-------------|------------|
-| SOURCE | 50072 | **10204** |
-| NEWS | 50073 | **10205** |
-| CRAWL | 50074 | **10206** |
-| REPORT | 50075 | **10207** |
-| NOTIFY | 50076 | **10208** |
-| MCP | 50077 | **10209** |
-| Console | — | **10211** |
+| SOURCE | 50072 | **10051** |
+| NEWS | 50073 | **10053** |
+| CRAWL | 50074 | **10055** |
+| REPORT | 50075 | **10057** |
+| NOTIFY | 50076 | **10059** |
+| MCP | 50077 | **10061** |
+| Console | — | **10062** |
 
-Vite `VITE_PORT=5174`。网关 `API_GATEWAY_PREFIX=/nfx-news`。Fiber 前缀：`/source` `/news` `/crawl` `/report` `/notify` `/mcp`。浏览器 `VITE_API_URL` → Edge `/nfx-news`，`VITE_IDENTITY_API_URL` → `/nfx-identity`。`GRPC_HOST_AUTH` 指向 Identity auth 容器。
+Vite `VITE_PORT=5174`。网关 `API_GATEWAY_PREFIX=/nfx-news`。Fiber 前缀：`/source` `/news` `/crawl` `/report` `/notify` `/mcp`。浏览器 `VITE_API_URL` → Edge `/nfx-news`，`VITE_IDENTITY_API_URL` → `/nfx-identity`。`GRPC_HOST_AUTH` 是 Identity 所在 NAS 的 IP，端口是 `GRPC_EXT_PORT_AUTH`（dev `10031`）。
 
 ## 部署
 
 ```bash
 cd /volume1/Projects/NebulaForgeX/NFX-News
 cp .example.env .env
-# TOKEN_* 与 Identity 相同；Stack Postgres 10104 / Redis 10106 / Kafka kafka:9092 / OTLP 4317
+# TOKEN_* 与 Identity 相同；Stack Postgres 10004 / Redis 10006 / Kafka `NAS_IP:10008` / OTLP `NAS_IP:10016`
 task proto:gen
 task errors:gen-langs
 task atlas:pipeline:run:sh

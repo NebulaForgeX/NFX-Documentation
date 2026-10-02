@@ -23,17 +23,17 @@
 
 | 用途 | 变量 | 值 |
 |------|------|-----|
-| 容器 HTTP | `HTTP_PORT` | 8080（仅 expose，不占主机 80） |
+| 容器 HTTP | `HTTP_PORT` | 8080 |
+| AUTH / ASSET 主机 HTTP（dev） | `HTTP_EXT_PORT_*` | **10030 / 10032** |
 | AUTH / ASSET gRPC 容器 | `GRPC_PORT_*` | 50071 / 50072 |
-| 主机 gRPC | `GRPC_EXT_PORT_*` | **10200 / 10201** |
-| Console 主机映射 | `CONSOLE_EXTERNAL_PORT` | **10203** |
+| 主机 gRPC（dev） | `GRPC_EXT_PORT_*` | **10031 / 10033** |
+| Console 主机映射（dev） | `CONSOLE_EXTERNAL_PORT` | **10034** |
 | Vite | `VITE_PORT` | 5173 |
-| 网关前缀 | `API_GATEWAY_PREFIX` | `/nfx-identity` |
-| Fiber 挂载 | `API_PREFIX_PATH_*` | `/auth` `/asset` |
+| 网关前缀 | Edge `identity.project.yml` | `/nfx-identity`（StripPrefix 后 Fiber 仍是 `/auth` `/asset`） |
 
 Edge：PathPrefix `/nfx-identity/auth|asset` + StripPrefix `/nfx-identity`；console 用 PathPrefix `/console/nfx-identity`（域名或局域网 IP 都行）。`VITE_API_URL=/nfx-identity`（同源，构建进 console）。
 
-compose 服务名：`auth-base` / `asset-base`（容器名 `NFX-Identity-*-Base-Dev`）。同时加入 `nfx-identity`、`nfx-edge`、`nfx-stack`。
+compose 服务名：`auth-base` / `asset-base`（容器名 `NFX-Identity-*-Base-Dev`）。发布在 `NAS_IP` 上。没有 Traefik labels，也不加入共享 Docker 网络。
 
 ## Token（全产品共用）
 
@@ -176,7 +176,7 @@ SMTP：`.env` 的 `EMAIL_SMTP_*`（注册验证码）。
 
 `Images` / `Files` / `Audios` / `Videos`：路径、MIME、`uploader_id`（应用层对应 `Accounts.id`，无 FK）。
 
-库名：`nfxidentity_dev` / `nfxidentity` / shadow `nfxidentity_diff`。Postgres 端口 **10104**，Redis **10106**。
+库名：`nfxidentity_dev` / `nfxidentity` / shadow `nfxidentity_diff`。Postgres 端口 **10004**，Redis **10006**。
 
 ## 其它产品如何验票
 
@@ -188,11 +188,11 @@ Edge/News/Storages 的 `GRPC_HOST_AUTH` 指向 Identity auth 容器，`GRPC_PORT
 
 ## kafkax（各 Go 仓同一套包）
 
-配置在各模块 `inputs/*/configuration/dev.toml` 的 `[kafka]`。容器内 `brokers = ["kafka:9092"]`。Identity auth 现码：
+配置在各模块 `inputs/*/configuration/dev.toml` 的 `[kafka]`。容器内 `brokers = ["${KAFKA_BROKERS}"]`，值为 `NAS_IP:10008`。Identity auth 现码：
 
 ```toml
 [kafka]
-    brokers = ["kafka:9092"]
+    brokers = ["${KAFKA_BROKERS}"]
     client_id = "nfxidentity-auth"
     [kafka.producer]
         acks = "all"

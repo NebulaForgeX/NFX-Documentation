@@ -2,6 +2,7 @@ import type { BookLocale } from "@/books/types";
 
 export const ROUTES = {
   HOME: "/",
+  ARCHITECTURE: "/architecture",
   REPO: "/repo",
   ABOUT: "/about",
   NOT_FOUND: "/404",

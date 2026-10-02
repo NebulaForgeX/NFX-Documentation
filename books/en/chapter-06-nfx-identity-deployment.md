@@ -23,17 +23,17 @@ Birthday on profile edit is a read-only trigger. It opens the calendar `Dialog` 
 
 | Use | Variable | Value |
 |-----|----------|--------|
-| Container HTTP | `HTTP_PORT` | 8080 (expose only; not host 80) |
+| Container HTTP | `HTTP_PORT` | 8080 |
+| AUTH / ASSET host HTTP (dev) | `HTTP_EXT_PORT_*` | **10030 / 10032** |
 | AUTH / ASSET gRPC | `GRPC_PORT_*` | 50071 / 50072 |
-| Host gRPC | `GRPC_EXT_PORT_*` | **10200 / 10201** |
-| Console host map | `CONSOLE_EXTERNAL_PORT` | **10203** |
+| Host gRPC (dev) | `GRPC_EXT_PORT_*` | **10031 / 10033** |
+| Console host map (dev) | `CONSOLE_EXTERNAL_PORT` | **10034** |
 | Vite | `VITE_PORT` | 5173 |
-| Gateway prefix | `API_GATEWAY_PREFIX` | `/nfx-identity` |
-| Fiber mounts | `API_PREFIX_PATH_*` | `/auth` `/asset` |
+| Gateway prefix | Edge `identity.project.yml` | `/nfx-identity` (Fiber still mounts `/auth` `/asset`) |
 
 Edge: PathPrefix `/nfx-identity/auth|asset` + StripPrefix `/nfx-identity`; console PathPrefix `/console/nfx-identity` (public Host or LAN IP). `VITE_API_URL=/nfx-identity` (same origin, baked into the console).
 
-Compose service names: `auth-base` / `asset-base` (containers `NFX-Identity-*-Base-Dev`). Networks: `nfx-identity`, `nfx-edge`, `nfx-stack`.
+Compose service names: `auth-base` / `asset-base` (containers `NFX-Identity-*-Base-Dev`). Published on `NAS_IP`. No Traefik labels and no shared Docker network.
 
 ## Tokens (shared across products)
 
@@ -175,7 +175,7 @@ Roles are **array membership**, not a hierarchy: SQL `@>` / `= ANY`, Go `HasRole
 
 `Images` / `Files` / `Audios` / `Videos`: path, MIME, `uploader_id` (application-level `Accounts.id`, no FK).
 
-Databases: `nfxidentity_dev` / `nfxidentity` / shadow `nfxidentity_diff`. Postgres **10104**, Redis **10106**.
+Databases: `nfxidentity_dev` / `nfxidentity` / shadow `nfxidentity_diff`. Postgres **10004**, Redis **10006**.
 
 ## How other products verify
 
@@ -187,7 +187,7 @@ Edge/News/Storages `GRPC_HOST_AUTH` points at the Identity auth container, `GRPC
 
 ## kafkax (same package in every Go product)
 
-Configured under `[kafka]` in `inputs/*/configuration/dev.toml`. In-compose brokers: `kafka:9092`. Identity auth today:
+Configured under `[kafka]` in `inputs/*/configuration/dev.toml`. Brokers: `${KAFKA_BROKERS}` = `NAS_IP:10008`. Identity auth today:
 
 ```toml
 [kafka.producer_topics]

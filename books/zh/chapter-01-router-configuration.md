@@ -30,10 +30,10 @@ Docker 官方说明：发布容器端口默认不安全。所以：
 | 80 | HTTP → HTTPS 永久重定向；Let's Encrypt HTTP-01（`/.well-known/acme-challenge/`，由 Edge sites-base 承接） |
 | 443 | 全部产品 HTTPS（Identity / Edge / News / Storages / Documentation 的 Host 或 PathPrefix） |
 
-**不要**把下列端口映射到公网（它们只应出现在 `nfx-stack` 内网或受信 LAN）：
+**不要**把下列端口映射到公网（它们只应出现在受信 LAN）：
 
-- Stack 数据面 **10100–10124**（MySQL / Postgres / Redis / Kafka / MinIO / OTEL / OpenSearch …）
-- 产品主机 gRPC **10200–10221**（`GRPC_EXT_*`、各 console 可选映射）
+- Stack 数据面 **10000–10024**（MySQL / Postgres / Redis / Kafka / MinIO / OTEL / OpenSearch …）
+- 产品主机 HTTP/gRPC/Console **10030–10120**（`GRPC_EXT_*`、各 console 可选映射）
 - 容器内部 HTTP 8080+、gRPC 50071+
 - SSH（22 或 NAS 自定义端口）
 

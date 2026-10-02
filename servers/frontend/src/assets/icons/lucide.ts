@@ -1,1 +1,1 @@
-export { ArrowLeft, ArrowRight, FileText, Folders, GraduationCap, Home, Info } from "lucide-react";
+export { ArrowLeft, ArrowRight, FileText, Folders, GraduationCap, Home, Info, Network } from "lucide-react";

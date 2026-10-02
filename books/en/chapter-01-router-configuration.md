@@ -30,10 +30,10 @@ Docker documents published ports as insecure by default. Therefore:
 | 80 | HTTP → HTTPS permanent redirect; Let’s Encrypt HTTP-01 (`/.well-known/acme-challenge/`, served by Edge sites-base) |
 | 443 | All product HTTPS (Identity / Edge / News / Storages / Documentation Host or PathPrefix rules) |
 
-**Do not** publish these to the internet (LAN / `nfx-stack` only):
+**Do not** publish these to the internet (trusted LAN only):
 
-- Stack data plane **10100–10124** (MySQL / Postgres / Redis / Kafka / MinIO / OTEL / OpenSearch …)
-- Product host gRPC **10200–10221** (`GRPC_EXT_*`, optional console maps)
+- Stack data plane **10000–10024** (MySQL / Postgres / Redis / Kafka / MinIO / OTEL / OpenSearch …)
+- Product host HTTP/gRPC/console **10030–10120** (`GRPC_EXT_*`, optional console maps)
 - Container-internal HTTP 8080+ and gRPC 50071+
 - SSH (22 or the NAS custom port)
 

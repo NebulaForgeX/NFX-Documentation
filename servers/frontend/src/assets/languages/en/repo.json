@@ -2,22 +2,22 @@
   "title": "Repositories",
   "description": "NebulaForgeX product repos. HTTP ingress is NFX-Edge only; data plane is NFX-Stack; login is NFX-Identity.",
   "nfxStack": {
-    "description": "Infrastructure: MySQL, PostgreSQL, MongoDB, Redis, Kafka, MinIO, Centrifugo, OTEL, OpenSearch. Network nfx-stack. Host ports start at 10100."
+    "description": "Infrastructure: MySQL, PostgreSQL, MongoDB, Redis, Kafka, MinIO, Centrifugo, OTEL, OpenSearch. LAN ports 10000–10024."
   },
   "nfxEdge": {
-    "description": "The only HTTP/HTTPS reverse proxy (Traefik) plus cert/DNS console (sites-base). Owns host 80/443 and nfx-edge. Database nfxedge. Products attach labels; they do not run Traefik. Host gRPC 10219, console 10221."
+    "description": "The only HTTP/HTTPS reverse proxy (Traefik) plus cert/DNS console (sites-base). Owns host 80/443. Routes are dynamic/*.project.yml. Dev: sites HTTP 10110, gRPC 10111, console 10112."
   },
   "nfxIdentity": {
-    "description": "Central login and profiles. Forger / Authority route trees. Host gRPC 10200–10201, console 10203. nfx-ui@0.33.0."
+    "description": "Central login and profiles. Forger / Authority route trees. Dev: auth HTTP/gRPC 10030/10031, console 10034. nfx-ui@0.33.0."
   },
   "nfxUi": {
     "description": "Shared React library: theme, layout, AuthRepository and hooks. Hosts pin 0.33.0 exactly. Do not mix file: and registry."
   },
   "nfxNews": {
-    "description": "Go news microservices (source / news / crawl / report / notify / mcp). No local auth. Host gRPC 10204–10209, console 10211."
+    "description": "Go news microservices (source / news / crawl / report / notify / mcp). No local auth. Dev gRPC 10051–10061, console 10062."
   },
   "nfxStorages": {
-    "description": "Go S3 object storage on NAS volumes. Identity issues temporary AK/SK. Host gRPC 10212–10216, console 10218."
+    "description": "Go S3 object storage on NAS volumes. Identity issues temporary AK/SK. Dev gRPC 10081–10089, console 10090."
   },
   "nfxDocumentation": {
     "description": "This handbook. Canonical text lives in books/. Browser path /documentation/; inside the container /nfx-documentation/. No separate DOCS_HOST."

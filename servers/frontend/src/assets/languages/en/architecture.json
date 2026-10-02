@@ -1,0 +1,68 @@
+{
+  "title": "Architecture",
+  "lead": "Docker runs the services. Traefik is only the 80/443 ingress. Lines are live traffic: the public internet enters Traefik, then each Compose is reached by LAN IP and host port. Drag a node. Click one to keep only its lines.",
+  "hint": "Dev comes first. Secure follows the slash. The same port on two NAS machines does not collide, because the IP differs.",
+  "empty": "Click a node to read its ports.",
+  "kinds": {
+    "ingress": "Ingress",
+    "http": "HTTP",
+    "grpc": "gRPC",
+    "console": "Console",
+    "data": "Data plane"
+  },
+  "edges": {
+    "forward": "Forward",
+    "tls": "80 / 443",
+    "http": "HTTP",
+    "grpc": "gRPC",
+    "lan": "LAN",
+    "minio": "MinIO 10012",
+    "nas2": "Other NAS"
+  },
+  "nodes": {
+    "internet": {
+      "title": "Internet",
+      "body": "The public network only sees the router."
+    },
+    "router": {
+      "title": "Router",
+      "body": "Forwards only 80 and 443 to the NAS that runs Traefik."
+    },
+    "traefik": {
+      "title": "NFX-Edge Traefik",
+      "body": "File routes in dynamic/*.project.yml. No Docker network."
+    },
+    "identity": {
+      "title": "NFX-Identity",
+      "body": "Block 10030–10049. In-container gRPC stays 50071 / 50072."
+    },
+    "news": {
+      "title": "NFX-News",
+      "body": "Block 10050–10079. Identity is dialed on its host gRPC port."
+    },
+    "storages": {
+      "title": "NFX-Storages",
+      "body": "Block 10080–10109. S3 is a Host route. Other APIs strip /nfx-storages."
+    },
+    "edge": {
+      "title": "NFX-Edge services",
+      "body": "Block 10110–10119. sites-base owns certificates. ACME stays on port 80."
+    },
+    "documentation": {
+      "title": "NFX-Documentation",
+      "body": "Block 10120–10129. Browser /documentation/ is rewritten inside the container."
+    },
+    "sites": {
+      "title": "Static sites",
+      "body": "Outside the NFX blocks, starting at 10400."
+    },
+    "stack": {
+      "title": "NFX-Stack",
+      "body": "Block 10000–10029. Products use the NAS IP plus these ports. No shared network."
+    },
+    "nas2": {
+      "title": "NAS2",
+      "body": "192.168.1.65. Same port numbers as NAS1. Traefik only changes the IP in the URL."
+    }
+  }
+}

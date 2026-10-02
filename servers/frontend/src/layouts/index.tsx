@@ -8,7 +8,7 @@ import { PreferenceStore, usePreferenceStore } from "nfx-ui/stores";
 import { useTranslation } from "react-i18next";
 import { Link, NavLink, useLocation, useNavigate } from "react-router";
 
-import { FileText, Folders, GraduationCap, Home, Info } from "@/assets/icons/lucide";
+import { FileText, Folders, GraduationCap, Home, Info, Network } from "@/assets/icons/lucide";
 import { routerEventEmitter } from "@/events/router";
 import { useBooksManifest } from "@/hooks/books";
 import { ROUTES, chapterPath } from "@/navigations";
@@ -146,6 +146,9 @@ export const DocsLayout = memo(({ children }: DocsLayoutProps) => {
                       <Flex direction="column" gap="1">
                         <NavItem to={ROUTES.HOME} end icon={<Home size={16} />}>
                           {t("nav.home")}
+                        </NavItem>
+                        <NavItem to={ROUTES.ARCHITECTURE} icon={<Network size={16} />}>
+                          {t("nav.architecture")}
                         </NavItem>
                         <Box py="2">
                           <Flex align="center" gap="2">

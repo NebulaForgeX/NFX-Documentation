@@ -1,0 +1,68 @@
+{
+  "title": "架构",
+  "lead": "Docker 跑服务，Traefik 只做 80/443 入口。连线是运行时流量：公网进 Traefik，再按局域网 IP 和宿主机端口转到各 Compose。拖动节点，点一下只保留相关连线。",
+  "hint": "dev 在前，secure 在斜线后。同一端口在两台 NAS 上不冲突，因为 IP 不同。",
+  "empty": "点一个节点查看端口。",
+  "kinds": {
+    "ingress": "入口",
+    "http": "HTTP",
+    "grpc": "gRPC",
+    "console": "Console",
+    "data": "数据面"
+  },
+  "edges": {
+    "forward": "转发",
+    "tls": "80 / 443",
+    "http": "HTTP",
+    "grpc": "gRPC",
+    "lan": "局域网",
+    "minio": "MinIO 10012",
+    "nas2": "另一台 NAS"
+  },
+  "nodes": {
+    "internet": {
+      "title": "Internet",
+      "body": "公网只看到路由器。"
+    },
+    "router": {
+      "title": "路由器",
+      "body": "只转发 80 和 443 到跑 Traefik 的 NAS。"
+    },
+    "traefik": {
+      "title": "NFX-Edge Traefik",
+      "body": "文件路由 dynamic/*.project.yml。不进 Docker 网络。"
+    },
+    "identity": {
+      "title": "NFX-Identity",
+      "body": "块 10030–10049。容器内 gRPC 仍是 50071 / 50072。"
+    },
+    "news": {
+      "title": "NFX-News",
+      "body": "块 10050–10079。调用 Identity 用对方的 gRPC 宿主机端口。"
+    },
+    "storages": {
+      "title": "NFX-Storages",
+      "body": "块 10080–10109。S3 走 Host，其余 API 去掉 /nfx-storages。"
+    },
+    "edge": {
+      "title": "NFX-Edge 服务",
+      "body": "块 10110–10119。sites-base 负责证书，ACME 走 80。"
+    },
+    "documentation": {
+      "title": "NFX-Documentation",
+      "body": "块 10120–10129。浏览器 /documentation/ 改写成容器内路径。"
+    },
+    "sites": {
+      "title": "静态站",
+      "body": "不属于 NFX 分块，从 10400 起。"
+    },
+    "stack": {
+      "title": "NFX-Stack",
+      "body": "块 10000–10029。产品用 NAS IP 加这些端口，不加入共享网络。"
+    },
+    "nas2": {
+      "title": "NAS2",
+      "body": "192.168.1.65。端口号与 NAS1 相同，Traefik 只改 URL 里的 IP。"
+    }
+  }
+}

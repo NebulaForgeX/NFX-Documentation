@@ -1,11 +1,10 @@
 name: nfx-documentation
+# Publish HTTP, gRPC, and console on ${NAS_IP}:host port.
+# NFX-Edge routes to those ports. This file has no Traefik labels and no shared network.
 
-# HTTP 入口只有 NFX-Edge（先启动 Edge：共享网络 nfx-edge + Traefik）。
-# 本栈不跑 reverse-proxy。traefik.project=nfx-documentation。
-# 浏览器路径 /documentation/ ；Strip/改写后容器内是 /nfx-documentation/ 。
-# Must start NFX-Edge first. This stack has no reverse-proxy.
 
 services:
+
   frontend:
     build:
       context: ./servers/frontend
@@ -15,51 +14,10 @@ services:
         BACKEND_HOST: ${BACKEND_HOST}
         BACKEND_PORT: ${BACKEND_PORT}
     container_name: NFX-Documentation-Frontend
+    ports:
+      - "${NAS_IP}:${HTTP_EXT_PORT_FRONTEND}:80"
     restart: always
     expose:
       - "80"
-    labels:
-      traefik.enable: "true"
-      traefik.project: "nfx-documentation"
-      traefik.docker.network: nfx-edge
-      traefik.http.services.docs-frontend.loadbalancer.server.port: "80"
-      traefik.http.middlewares.nfx-documentation-slash.redirectregex.regex: ^(https?)://([^/]+)/documentation$$
-      traefik.http.middlewares.nfx-documentation-slash.redirectregex.replacement: $${1}://$${2}/documentation/
-      traefik.http.middlewares.nfx-documentation-slash.redirectregex.permanent: "true"
-      traefik.http.middlewares.nfx-documentation-gw.replacepathregex.regex: ^/documentation(/.*)$$
-      traefik.http.middlewares.nfx-documentation-gw.replacepathregex.replacement: /nfx-documentation$$1
-      traefik.http.routers.docs-frontend.entrypoints: web
-      traefik.http.routers.docs-frontend.rule: "HostRegexp(`^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$$`) && (Path(`/documentation`) || PathPrefix(`/documentation/`))"
-      traefik.http.routers.docs-frontend.priority: "30"
-      traefik.http.routers.docs-frontend.middlewares: nfx-documentation-slash,nfx-documentation-gw
-      traefik.http.routers.docs-frontend.service: docs-frontend
-      traefik.http.routers.docs-frontend-tls.entrypoints: websecure
-      traefik.http.routers.docs-frontend-tls.rule: "HostRegexp(`^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$$`) && (Path(`/documentation`) || PathPrefix(`/documentation/`))"
-      traefik.http.routers.docs-frontend-tls.priority: "30"
-      traefik.http.routers.docs-frontend-tls.middlewares: nfx-documentation-slash,nfx-documentation-gw
-      traefik.http.routers.docs-frontend-tls.service: docs-frontend
-      traefik.http.routers.docs-frontend-tls.tls: "true"
-      traefik.http.routers.docs-frontend-host.entrypoints: web
-      traefik.http.routers.docs-frontend-host.rule: Host(`${TRAEFIK_CONSOLE_HOST}`) && (Path(`/documentation`) || PathPrefix(`/documentation/`))
-      traefik.http.routers.docs-frontend-host.priority: "200"
-      traefik.http.routers.docs-frontend-host.middlewares: nfx-documentation-slash,nfx-documentation-gw
-      traefik.http.routers.docs-frontend-host.service: docs-frontend
-      traefik.http.routers.docs-frontend-host-tls.entrypoints: websecure
-      traefik.http.routers.docs-frontend-host-tls.rule: Host(`${TRAEFIK_CONSOLE_HOST}`) && (Path(`/documentation`) || PathPrefix(`/documentation/`))
-      traefik.http.routers.docs-frontend-host-tls.priority: "200"
-      traefik.http.routers.docs-frontend-host-tls.middlewares: nfx-documentation-slash,nfx-documentation-gw
-      traefik.http.routers.docs-frontend-host-tls.service: docs-frontend
-      traefik.http.routers.docs-frontend-host-tls.tls: "true"
     volumes:
       - ./books:/usr/share/nginx/html/books:ro
-    networks:
-      - nfx-documentation
-      - nfx-edge
-
-networks:
-  nfx-documentation:
-    name: nfx-documentation
-    driver: bridge
-  nfx-edge:
-    external: true
-    name: nfx-edge

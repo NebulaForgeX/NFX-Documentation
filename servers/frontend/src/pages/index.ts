@@ -1,3 +1,4 @@
+export { default as ArchitecturePage } from "./ArchitecturePage";
 export { default as HomePage } from "./HomePage";
 export { default as ChapterReader } from "./ChapterReader";
 export { default as NotFoundPage } from "./NotFoundPage";

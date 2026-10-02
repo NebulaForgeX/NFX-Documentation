@@ -7,6 +7,7 @@
   "chapterLabel": "Chapter {{n}}",
   "nav": {
     "home": "Index",
+    "architecture": "Architecture",
     "chapters": "Chapters",
     "repo": "Repositories",
     "about": "About"

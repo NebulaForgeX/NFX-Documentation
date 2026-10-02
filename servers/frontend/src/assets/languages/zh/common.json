@@ -7,6 +7,7 @@
   "chapterLabel": "第 {{n}} 章",
   "nav": {
     "home": "目录",
+    "architecture": "架构",
     "chapters": "章节",
     "repo": "仓库",
     "about": "关于"

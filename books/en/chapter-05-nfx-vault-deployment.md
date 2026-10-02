@@ -9,7 +9,7 @@ The old Python / Pqttec article tables **do not exist**.
 ## Order
 
 1. Stack: Postgres / Redis / Kafka / OTEL (Chapter 3)
-2. Edge: `nfx-edge` exists (Chapter 4)
+2. Edge: Traefik is on 80/443 (Chapter 4)
 3. Identity: console login and JWT (API can come up before the UI)
 
 ## Ports
@@ -19,8 +19,8 @@ In-container `GRPC_PORT_*` = 50072. The host only maps `GRPC_EXT_*` (**never** s
 | Process | `GRPC_PORT` | `GRPC_EXT` | HTTP prefix after StripPrefix |
 |---------|-------------|------------|-------------------------------|
 | AUTH client | 50071 | (not mapped; talks to Identity) | — |
-| SITES | 50072 | **10219** | `/edge` (Fiber still serves `/edge/tls` `/edge/dns` `/edge/file` `/edge/analysis`) |
-| Console | — | **10221** (`CONSOLE_EXTERNAL_PORT`) | PathPrefix `/console/nfx-edge` |
+| SITES | 50072 | **10111** | `/edge` (Fiber still serves `/edge/tls` `/edge/dns` `/edge/file` `/edge/analysis`) |
+| Console | — | **10112** (`CONSOLE_EXTERNAL_PORT`) | PathPrefix `/console/nfx-edge` |
 | Vite | — | `VITE_PORT=5175` | local dev |
 
 Gateway: `API_GATEWAY_PREFIX=/nfx-edge`. Browser `VITE_API_URL` is Edge `/nfx-edge`; `VITE_IDENTITY_API_URL` is `/nfx-identity`.
@@ -39,7 +39,7 @@ task console:i
 task run
 ```
 
-Postgres names come from `.env` (often `nfxedge_dev` / `nfxedge` / shadow `nfxedge_diff`). Compose uses `POSTGRES_CONTAINER_NAME=NFX-Stack-PostgreSQL`; host tools use LAN:`10104`. Kafka: `KAFKA_BROKERS=kafka:9092`. Redis: LAN:`10106`. OTLP: `otel-collector:4317`.
+Postgres names come from `.env` (often `nfxedge_dev` / `nfxedge` / shadow `nfxedge_diff`). Compose uses `POSTGRES_CONTAINER_NAME=NFX-Stack-PostgreSQL`; host tools use LAN:`10004`. Kafka: `KAFKA_BROKERS=NAS_IP:10008`. Redis: LAN:`10006`. OTLP: `NAS_IP:10016`.
 
 `GRPC_HOST_AUTH` in Edge sites-base is often `NFX-Identity-Auth-Base-Dev` (Identity container name), not Identity’s own `GRPC_HOST_AUTH=auth-base` — sites-base is a **cross-stack client**.
 
@@ -104,13 +104,13 @@ tls `inputs/sites/configuration/dev.toml`:
     cert_poison = "nfxedge.cert_poison"
 ```
 
-Brokers in-compose: `kafka:9092`. kafkax package usage is in Chapter 6.
+Brokers: `NAS_IP:10008`. kafkax package usage is in Chapter 6.
 
 ## Handshake with Edge
 
 1. sites-base writes `websites/<folder>/cert.crt` + `key.key`
 2. Update Edge `dynamic/tls.yaml` (do not list a path until the files exist)
-3. Both sit on `nfx-edge`; sites-base ACME labels serve HTTP-01. Traefik has **no** `certResolver`
+3. ACME HTTP-01 is `dynamic/edge.project.yml`, aimed at the sites host HTTP port. Traefik has **no** `certResolver`
 4. Never commit private keys
 
 Next: Identity, the login hub.

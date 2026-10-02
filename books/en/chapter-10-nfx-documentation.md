@@ -4,7 +4,7 @@ This repo is the handbook reader. Canonical prose lives only in [`books/`](https
 
 ## Dependencies
 
-[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) must exist (`nfx-edge` network). This stack does **not** run Traefik. `start.sh` exits if `nfx-edge` is missing.
+[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) Traefik must be on 80/443. This stack does **not** run Traefik. `start.sh` publishes the frontend on `NAS_IP:10120`.
 
 Stack / Identity are not runtime dependencies of this static site.
 
@@ -47,9 +47,9 @@ cd /volume1/Projects/NebulaForgeX/NFX-Documentation
 ./start.sh
 ```
 
-`start.sh` exits if the `nfx-edge` network is missing, then runs `docker compose up -d --build`. `VITE_BASE` is applied at **image build**. Changing it requires a rebuild; restarting the container is not enough.
+`start.sh` runs `docker compose up -d --build`. `VITE_BASE` is applied at **image build**. Changing it requires a rebuild; restarting the container is not enough.
 
-`docker-compose.yml` has one service, `frontend` (container `NFX-Documentation-Frontend`). It `expose`s 80 and does not bind a host port. Networks: `nfx-documentation` plus external `nfx-edge`. `traefik.project=nfx-documentation` (already in Edge's LabelRegex). `traefik.docker.network=nfx-edge`.
+`docker-compose.yml` has one service, `frontend` (container `NFX-Documentation-Frontend`). Host port `10120` maps to container `80`. The route is Edge `dynamic/documentation.project.yml`.
 
 Four routers. Every one uses middlewares `nfx-documentation-slash,nfx-documentation-gw` and service `docs-frontend` (upstream port 80):
 

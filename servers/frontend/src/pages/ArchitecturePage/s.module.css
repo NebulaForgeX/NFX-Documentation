@@ -1,0 +1,56 @@
+.stage {
+  height: 720px;
+  background: var(--color-background);
+  border: 1px solid var(--gray-a6);
+  border-radius: var(--radius-3);
+}
+
+.stage :global(.react-flow__edge-path) {
+  stroke: var(--accent-9);
+}
+
+.stage :global(.react-flow__edge-text) {
+  fill: var(--gray-12);
+}
+
+.stage :global(.react-flow__attribution) {
+  background: transparent;
+}
+
+.node {
+  width: 280px;
+  background: var(--color-panel-solid);
+  border: 1px solid var(--gray-a6);
+  border-radius: var(--radius-3);
+}
+
+.nodeSelected {
+  border-color: var(--accent-9);
+}
+
+.kind {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-1);
+  background: var(--gray-8);
+}
+
+.kindIngress {
+  background: var(--accent-9);
+}
+
+.kindHttp {
+  background: var(--blue-9);
+}
+
+.kindGrpc {
+  background: var(--orange-9);
+}
+
+.kindConsole {
+  background: var(--green-9);
+}
+
+.kindData {
+  background: var(--purple-9);
+}

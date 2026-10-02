@@ -5,6 +5,7 @@ const NAME_SPACES_MAP = {
   common: "common",
   repo: "repo",
   about: "about",
+  architecture: "architecture",
   notFound: "notFound",
 } as const;
 

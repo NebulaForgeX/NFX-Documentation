@@ -50,7 +50,7 @@
     },
     "documentation": {
       "title": "NFX-Documentation",
-      "body": "Block 10120–10129. Browser /documentation/ is rewritten inside the container."
+      "body": "Block 10120–10129. Browser path /console/nfx-documentation/."
     },
     "sites": {
       "title": "Static sites",

@@ -11,7 +11,7 @@ services:
       dockerfile: Dockerfile
       target: secure
       args:
-        VITE_BASE: ${VITE_BASE:-/documentation/}
+        VITE_BASE: ${VITE_BASE:-/console/nfx-documentation/}
         BACKEND_HOST: ${BACKEND_HOST}
         BACKEND_PORT: ${BACKEND_PORT}
     container_name: NFX-Documentation-Frontend
@@ -21,4 +21,4 @@ services:
     expose:
       - "80"
     volumes:
-      - ./books:/usr/share/nginx/html/books:ro
+      - ./books:/usr/share/nginx/html/console/nfx-documentation/books:ro

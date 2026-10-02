@@ -50,7 +50,7 @@
     },
     "documentation": {
       "title": "NFX-Documentation",
-      "body": "块 10120–10129。浏览器 /documentation/ 改写成容器内路径。"
+      "body": "块 10120–10129。浏览器路径 /console/nfx-documentation/。"
     },
     "sites": {
       "title": "静态站",

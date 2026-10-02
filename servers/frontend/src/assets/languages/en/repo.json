@@ -20,6 +20,6 @@
     "description": "Go S3 object storage on NAS volumes. Identity issues temporary AK/SK. Dev gRPC 10081–10089, console 10090."
   },
   "nfxDocumentation": {
-    "description": "This handbook. Canonical text lives in books/. Browser path /documentation/; inside the container /nfx-documentation/. No separate DOCS_HOST."
+    "description": "This handbook. Canonical text lives in books/. Browser path /console/nfx-documentation/. No separate DOCS_HOST."
   }
 }

@@ -20,7 +20,7 @@ function contentTypeFor(file: string): string {
 }
 
 function normalizeBase(value: string | undefined): string {
-  const raw = (value || "/documentation/").trim() || "/documentation/";
+  const raw = (value || "/console/nfx-documentation/").trim() || "/console/nfx-documentation/";
   const withLead = raw.startsWith("/") ? raw : `/${raw}`;
   return withLead.endsWith("/") ? withLead : `${withLead}/`;
 }

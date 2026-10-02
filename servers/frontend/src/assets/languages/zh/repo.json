@@ -20,6 +20,6 @@
     "description": "Go S3 对象存储，对象在 NAS 卷。Identity 换临时 AK/SK。dev gRPC 10081–10089，console 10090。"
   },
   "nfxDocumentation": {
-    "description": "本手册站点。正文在 books/。浏览器路径 /documentation/，容器内 /nfx-documentation/。不单独占 DOCS_HOST。"
+    "description": "本手册站点。正文在 books/。浏览器路径 /console/nfx-documentation/。不单独占 DOCS_HOST。"
   }
 }

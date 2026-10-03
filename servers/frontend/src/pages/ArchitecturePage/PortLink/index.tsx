@@ -1,16 +1,20 @@
 import type { EdgeProps, InternalNode } from "@xyflow/react";
+import type { RefObject } from "react";
 import type { Dial, OverviewLink, TopologyLink } from "@/constants";
 import type { LinkEdge } from "../layout";
 
-import { memo, useContext } from "react";
+import { memo, useContext, useRef } from "react";
+import { useGSAP } from "@gsap/react";
 import { Flex, HoverCard, Separator, Text } from "@radix-ui/themes";
 import { EdgeLabelRenderer, getSmoothStepPath, Position, useInternalNode } from "@xyflow/react";
+import gsap from "gsap";
 import { useTranslation } from "react-i18next";
 
 import { TOPOLOGY_LINKS } from "@/constants";
 
 import { FocusContext, useLinkFocus } from "../focus";
 import { isFrame, isOverview } from "../layout";
+import { REDUCED, TRACE_SECONDS } from "../timeline";
 import styles from "./s.module.css";
 
 const LINK_BY_ID = new Map(TOPOLOGY_LINKS.map((link) => [link.id, link]));
@@ -93,6 +97,39 @@ function floatingAnchors(a: Rect, b: Rect): [Anchor, Anchor] {
   return [anchorOn(a, down ? Position.Bottom : Position.Top), anchorOn(b, down ? Position.Top : Position.Bottom)];
 }
 
+type Origin = "source" | "target" | null;
+
+function useTrace(scope: RefObject<SVGGElement | null>, origin: Origin) {
+  useGSAP(
+    () => {
+      const group = scope.current;
+      const line = group?.querySelector<SVGPathElement>("[data-draw]");
+      const glow = group?.querySelector<SVGPathElement>("[data-glow]");
+      if (!origin || !line || !glow) return;
+      const media = gsap.matchMedia();
+      media.add(REDUCED, () => {
+        const length = line.getTotalLength();
+        gsap
+          .timeline()
+          .set(glow, { opacity: 1 })
+          .fromTo(
+            [line, glow],
+            { strokeDasharray: length, strokeDashoffset: origin === "source" ? length : -length },
+            {
+              strokeDashoffset: 0,
+              duration: TRACE_SECONDS,
+              ease: "power2.out",
+              clearProps: "strokeDasharray,strokeDashoffset",
+            },
+          )
+          .to(glow, { opacity: 0.3, duration: 0.6, ease: "power1.out", clearProps: "opacity" });
+      });
+      return () => media.revert();
+    },
+    { scope, dependencies: [origin] },
+  );
+}
+
 const PortLink = memo(
   ({
     id,
@@ -107,8 +144,12 @@ const PortLink = memo(
     targetPosition,
   }: EdgeProps<LinkEdge>) => {
     const { t } = useTranslation("architecture");
-    const { hoverLink } = useContext(FocusContext);
+    const { hoverLink, selected } = useContext(FocusContext);
     const level = useLinkFocus(id);
+    const scope = useRef<SVGGElement>(null);
+    const traced = Boolean(data && !isOverview(data));
+    const origin: Origin = !traced ? null : selected.has(source) ? "source" : selected.has(target) ? "target" : null;
+    useTrace(scope, origin);
     const sourceRect = rectOf(useInternalNode(source));
     const targetRect = rectOf(useInternalNode(target));
     if (!data) return null;
@@ -135,13 +176,16 @@ const PortLink = memo(
     return (
       <>
         <g
+          ref={scope}
           className={styles.link}
           data-link={id}
           data-protocol={data.protocol}
           data-level={level}
           data-overview={overview ? "true" : "false"}
+          data-traced={origin ? "true" : "false"}
         >
           <path d={path} className={styles.track} />
+          <path d={path} className={styles.glow} data-glow />
           <path d={path} className={styles.line} data-draw />
           <circle r={overview ? 4.5 : 3} className={styles.packet} data-packet />
           <path

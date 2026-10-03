@@ -20,13 +20,6 @@ export const LayerKey = {
 
 export type LayerKeyEnum = (typeof LayerKey)[keyof typeof LayerKey];
 
-export const LineLevel = {
-  COMPOSE: "compose",
-  DETAIL: "detail",
-} as const;
-
-export type LineLevelEnum = (typeof LineLevel)[keyof typeof LineLevel];
-
 const LAYER_PROTOCOLS: Record<Exclude<LayerKeyEnum, "all">, LinkProtocolEnum[]> = {
   [LayerKey.DATA]: [LinkProtocol.DATA],
   [LayerKey.GRPC]: [LinkProtocol.GRPC],

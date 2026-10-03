@@ -8,7 +8,8 @@ import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 gsap.registerPlugin(useGSAP, MotionPathPlugin);
 
 const PACKET_SPEED = 170;
-const REDUCED = "(prefers-reduced-motion: no-preference)";
+export const REDUCED = "(prefers-reduced-motion: no-preference)";
+export const TRACE_SECONDS = 0.9;
 
 export function useFlowTimeline(scope: RefObject<HTMLElement | null>, armed: boolean, version: number) {
   const introEnd = useRef(0);
@@ -87,7 +88,7 @@ export function useFlowTimeline(scope: RefObject<HTMLElement | null>, armed: boo
     () => {
       const root = scope.current;
       if (!armed || !root) return;
-      const start = version === 0 ? introEnd.current : 0;
+      const start = version === 0 ? introEnd.current : TRACE_SECONDS;
       const media = gsap.matchMedia();
       media.add(REDUCED, () => {
         root.querySelectorAll<SVGCircleElement>("[data-packet]").forEach((packet, index) => {

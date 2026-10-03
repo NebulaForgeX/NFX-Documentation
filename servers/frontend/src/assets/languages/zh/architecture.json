@@ -1,7 +1,7 @@
 {
   "eyebrow": "TOPOLOGY · LAN",
   "title": "架构",
-  "lead": "一个外框是一个 Docker Compose，框线只贴着里面的容器走。粗线连 Compose 与 Compose，细线连容器与容器；每条线都来自 compose、toml、nginx 或 Traefik 路由里写着的拨号。",
+  "lead": "一个外框是一个 Docker Compose。粗线连 Compose 与 Compose；勾选容器后，才会从它身上画出容器到容器的细线。每条线都来自 compose、toml、nginx 或 Traefik 路由里写着的拨号。",
   "hint": "dev 在前，secure 在斜线后。同一端口在两台 NAS 上不冲突，因为 IP 不同。",
   "gridTitle": "主机端口分块",
   "gridLead": "每个仓一块，块尾补齐到以 9 结尾的端口。实心是已用，斜线是预留。",
@@ -11,7 +11,7 @@
   "containersTitle": "容器",
   "dialsOut": "拨出",
   "dialsIn": "被谁拨入",
-  "clickHint": "悬停容器看它的连线。勾选容器，或勾选外框右下角选中整个 Compose，会一直显示所选的全部连线。拖标题移动，拖边缘改大小，双击聚焦 Compose。",
+  "clickHint": "点击容器就勾选它，它的细线会从它开始一路画出去。勾选外框右下角选中整个 Compose。拖标题移动，拖边缘改大小，双击聚焦 Compose。",
   "servicesTitle": "服务",
   "servicesLead": "悬停容器，画布上它会亮起。可以逐个勾选容器，也可以勾选 Compose 右下角一次全选。",
   "selectFrame": "选中 {{name}} 的全部容器",
@@ -29,11 +29,7 @@
     "http": "HTTP",
     "ingress": "入口"
   },
-  "lineLabel": "显示 Compose 大线或容器小线",
-  "lines": {
-    "compose": "Compose 关系",
-    "detail": "容器细节"
-  },
+  "showCompose": "显示 Compose 关系",
   "focusAction": "聚焦这个 Compose，展开它的容器连线",
   "focusExit": "退出聚焦",
   "focusing": "正在看 {{name}} 内部",

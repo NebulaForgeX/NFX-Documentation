@@ -1,7 +1,7 @@
 {
   "eyebrow": "TOPOLOGY · LAN",
   "title": "Architecture",
-  "lead": "Un cadre est un Docker Compose, et son contour épouse exactement ses conteneurs. Les traits épais relient un Compose à un autre, les traits fins relient deux conteneurs, et chaque trait est un appel écrit dans un compose, un toml, nginx ou une route Traefik.",
+  "lead": "Un cadre est un Docker Compose. Les traits épais relient un Compose à un autre ; les traits entre conteneurs n'apparaissent que pour les conteneurs cochés, tracés depuis eux. Chaque trait est un appel écrit dans un compose, un toml, nginx ou une route Traefik.",
   "hint": "Dev est devant. Secure suit la barre. Le même port sur deux NAS ne se chevauche pas, car l'IP change.",
   "gridTitle": "Blocs de ports hôte",
   "gridLead": "Un bloc par dépôt, complété jusqu'à un port finissant par 9. Plein : utilisé, hachuré : réservé.",
@@ -11,7 +11,7 @@
   "containersTitle": "Conteneurs",
   "dialsOut": "Appelle",
   "dialsIn": "Appelé par",
-  "clickHint": "Survolez un conteneur pour éclairer ses liens. Cochez des conteneurs, ou la case en bas à droite d'un cadre, pour garder tous les liens de la sélection. Glissez l'en-tête pour déplacer, tirez un bord pour redimensionner, double-cliquez pour cibler un Compose.",
+  "clickHint": "Cliquez sur un conteneur pour le cocher : ses liens se tracent depuis lui. Cochez la case en bas à droite d'un cadre pour sélectionner tout le Compose. Glissez l'en-tête pour déplacer, tirez un bord pour redimensionner, double-cliquez pour cibler un Compose.",
   "servicesTitle": "Services",
   "servicesLead": "Survolez un conteneur pour l'éclairer sur le canevas. Cochez les conteneurs un par un, ou la case d'angle d'un Compose pour tout sélectionner.",
   "selectFrame": "Sélectionner tous les conteneurs de {{name}}",
@@ -30,11 +30,7 @@
     "http": "HTTP",
     "ingress": "Entrée"
   },
-  "lineLabel": "Afficher les liens Compose ou les liens conteneur",
-  "lines": {
-    "compose": "Compose",
-    "detail": "Conteneurs"
-  },
+  "showCompose": "Afficher les liens Compose",
   "focusAction": "Cibler ce Compose et afficher ses liens conteneur",
   "focusExit": "Quitter le focus",
   "focusing": "Dans {{name}}",

@@ -31,6 +31,13 @@
   letter-spacing: 0.04em;
 }
 
+.toggle {
+  color: var(--gray-12);
+  font-family: var(--docs-font-mono);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
 .dot {
   width: 4px;
   height: 4px;

@@ -1,7 +1,7 @@
 {
   "eyebrow": "TOPOLOGY · LAN",
   "title": "Architecture",
-  "lead": "One frame is one Docker Compose, and its outline hugs exactly the containers inside it. Thick lines join Compose to Compose, thin lines join container to container, and every line is a dial written in a compose file, a toml, nginx, or a Traefik route.",
+  "lead": "One frame is one Docker Compose. Thick lines join Compose to Compose; container-to-container lines appear only for the containers you tick, drawn out from them. Every line is a dial written in a compose file, a toml, nginx, or a Traefik route.",
   "hint": "Dev comes first. Secure follows the slash. The same port on two NAS machines does not collide, because the IP differs.",
   "gridTitle": "Host port blocks",
   "gridLead": "One block per repo, padded to a port ending in 9. Solid is used, hatched is reserved.",
@@ -11,7 +11,7 @@
   "containersTitle": "Containers",
   "dialsOut": "Dials",
   "dialsIn": "Dialed by",
-  "clickHint": "Hover a container to light its links. Tick containers, or the box at a frame's bottom-right, to keep every link of the selection. Drag a header to move, drag an edge to resize, double-click to focus a Compose.",
+  "clickHint": "Click a container to tick it, and its lines draw out from it. Tick the box at a frame's bottom-right to select the whole Compose. Drag a header to move, drag an edge to resize, double-click to focus a Compose.",
   "servicesTitle": "Services",
   "servicesLead": "Hover a container to light it on the canvas. Tick containers one by one, or tick a Compose's corner box to select all of it.",
   "selectFrame": "Select every container in {{name}}",
@@ -30,11 +30,7 @@
     "http": "HTTP",
     "ingress": "Ingress"
   },
-  "lineLabel": "Show Compose lines or container lines",
-  "lines": {
-    "compose": "Compose",
-    "detail": "Containers"
-  },
+  "showCompose": "Show Compose links",
   "focusAction": "Focus this Compose and show its container lines",
   "focusExit": "Exit focus",
   "focusing": "Inside {{name}}",

@@ -76,6 +76,20 @@
   stroke-width: 6;
 }
 
+.glow {
+  fill: none;
+  stroke: var(--accent-9);
+  stroke-width: 9;
+  stroke-linecap: round;
+  stroke-opacity: 0.55;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.link[data-traced="true"] .glow {
+  opacity: 0.3;
+}
+
 .packet {
   fill: var(--accent-11);
   opacity: 0;

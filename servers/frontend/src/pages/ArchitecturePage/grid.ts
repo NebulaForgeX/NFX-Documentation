@@ -1,20 +1,12 @@
 import type { Node } from "@xyflow/react";
 import type { OverviewLink, TopologyLink } from "@/constants";
-import type { BlockNode, FlowNode, FrameNode, LineLevelEnum, LinkEdge, TierNode } from "./layout";
+import type { BlockNode, FlowNode, FrameNode, LinkEdge, TierNode } from "./layout";
 
 import { Graph, layout } from "@dagrejs/dagre";
 
 import { OVERVIEW_LINKS, TOPOLOGY_LINKS } from "@/constants";
 
-import {
-  CONTAINER_BY_ID,
-  containersIn,
-  directContainersOf,
-  GROUP_BY_ID,
-  isFrame,
-  LineLevel,
-  subFramesOf,
-} from "./layout";
+import { CONTAINER_BY_ID, containersIn, directContainersOf, GROUP_BY_ID, isFrame, subFramesOf } from "./layout";
 
 export const BLOCK_WIDTH = 216;
 export const BLOCK_HEIGHT = 88;
@@ -236,13 +228,15 @@ const toEdge = (link: TopologyLink | OverviewLink): LinkEdge => ({
 const TOP_UNITS = new Set(UNIT_ORDER);
 
 export const FLOW_NODES = buildNodes();
-export const LINE_EDGES: Record<LineLevelEnum, LinkEdge[]> = {
-  [LineLevel.COMPOSE]: [
-    ...TOPOLOGY_LINKS.filter((link) => TOP_UNITS.has(link.source) && TOP_UNITS.has(link.target)),
-    ...OVERVIEW_LINKS,
-  ].map(toEdge),
-  [LineLevel.DETAIL]: TOPOLOGY_LINKS.map(toEdge),
-};
+export const COMPOSE_EDGES: LinkEdge[] = [
+  ...TOPOLOGY_LINKS.filter((link) => TOP_UNITS.has(link.source) && TOP_UNITS.has(link.target)),
+  ...OVERVIEW_LINKS,
+].map(toEdge);
+
+const DETAIL_EDGES = TOPOLOGY_LINKS.map(toEdge);
+
+export const traceEdges = (selected: Set<string>): LinkEdge[] =>
+  DETAIL_EDGES.filter((edge) => selected.has(edge.source) || selected.has(edge.target));
 
 const FOCUS_EDGES = new Map<string, LinkEdge[]>();
 

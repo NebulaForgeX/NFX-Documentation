@@ -1,9 +1,20 @@
 import type { Node } from "@xyflow/react";
 import type { Focus, FocusState } from "./focus";
-import type { LayerKeyEnum, LineLevelEnum } from "./layout";
+import type { CheckState, LayerKeyEnum } from "./layout";
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Box, Button, Container, Flex, Heading, Section, SegmentedControl, Tabs, Text } from "@radix-ui/themes";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  Flex,
+  Heading,
+  Section,
+  SegmentedControl,
+  Tabs,
+  Text,
+} from "@radix-ui/themes";
 import {
   Background,
   BackgroundVariant,
@@ -25,13 +36,12 @@ import { PageFrame } from "@/layouts";
 import ArchBlock from "./ArchBlock";
 import ComposeFrame from "./ComposeFrame";
 import { FocusContext, RelayoutContext } from "./focus";
-import { FLOW_NODES, focusEdges, LINE_EDGES } from "./grid";
+import { COMPOSE_EDGES, FLOW_NODES, focusEdges, traceEdges } from "./grid";
 import {
   CONTAINER_BY_ID,
   frameFocus,
   layerFocus,
   LayerKey,
-  LineLevel,
   linkFocus,
   neighbours,
   selectionFocus,
@@ -50,7 +60,6 @@ import styles from "./s.module.css";
 const nodeTypes = { block: ArchBlock, frame: ComposeFrame, tier: TierLabel };
 const edgeTypes = { link: PortLink };
 const LAYERS = Object.values(LayerKey);
-const LINE_LEVELS = Object.values(LineLevel);
 const FIT_PADDING = 0.04;
 
 const SideTab = {
@@ -75,7 +84,8 @@ const miniStroke = (node: Node) => (node.type === "frame" ? "var(--accent-a6)" :
 
 function Topology({
   appearance,
-  lines,
+  showCompose,
+  selected,
   focused,
   onArm,
   onToggle,
@@ -83,7 +93,8 @@ function Topology({
   onFocus,
 }: {
   appearance: string;
-  lines: LineLevelEnum;
+  showCompose: boolean;
+  selected: Set<string>;
   focused: string | null;
   onArm: () => void;
   onToggle: (ids: string[]) => void;
@@ -106,6 +117,11 @@ function Topology({
     },
     [fitBounds, getInternalNode, getNodes, getNodesBounds],
   );
+  const edges = useMemo(() => {
+    const base = focused ? focusEdges(focused) : showCompose ? COMPOSE_EDGES : [];
+    const shown = new Set(base.map((edge) => edge.id));
+    return [...base, ...traceEdges(selected).filter((edge) => !shown.has(edge.id))];
+  }, [focused, showCompose, selected]);
   const edgesShown = useRef(false);
   const focusShown = useRef(focused);
 
@@ -116,7 +132,7 @@ function Topology({
     }
     const frame = requestAnimationFrame(onRelayout);
     return () => cancelAnimationFrame(frame);
-  }, [lines, focused, onRelayout]);
+  }, [edges, onRelayout]);
 
   useEffect(() => {
     if (focusShown.current === focused) return;
@@ -127,7 +143,7 @@ function Topology({
   return (
     <ReactFlow
       defaultNodes={FLOW_NODES}
-      edges={focused ? focusEdges(focused) : LINE_EDGES[lines]}
+      edges={edges}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       className={styles.flow}
@@ -174,7 +190,7 @@ const ArchitecturePage = memo(() => {
   const [hover, setHover] = useState<Hover>(null);
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
   const [layer, setLayer] = useState<LayerKeyEnum>(LayerKey.ALL);
-  const [lines, setLines] = useState<LineLevelEnum>(LineLevel.COMPOSE);
+  const [showCompose, setShowCompose] = useState(true);
   const [focused, setFocused] = useState<string | null>(null);
 
   useFlowTimeline(stage, armed, version);
@@ -248,18 +264,16 @@ const ArchitecturePage = memo(() => {
                       </Button>
                     </Flex>
                   ) : (
-                    <SegmentedControl.Root
-                      size="1"
-                      value={lines}
-                      onValueChange={(value: string) => setLines(value as LineLevelEnum)}
-                      aria-label={t("lineLabel")}
-                    >
-                      {LINE_LEVELS.map((key) => (
-                        <SegmentedControl.Item key={key} value={key}>
-                          {t(`lines.${key}`)}
-                        </SegmentedControl.Item>
-                      ))}
-                    </SegmentedControl.Root>
+                    <Text as="label" size="1" className={styles.toggle}>
+                      <Flex align="center" gap="2">
+                        <Checkbox
+                          size="1"
+                          checked={showCompose}
+                          onCheckedChange={(checked: CheckState) => setShowCompose(checked === true)}
+                        />
+                        {t("showCompose")}
+                      </Flex>
+                    </Text>
                   )}
                   <SegmentedControl.Root
                     size="1"
@@ -300,7 +314,8 @@ const ArchitecturePage = memo(() => {
               <ReactFlowProvider>
                 <Topology
                   appearance={appearance}
-                  lines={lines}
+                  showCompose={showCompose}
+                  selected={selected}
                   focused={focused}
                   onArm={arm}
                   onToggle={toggle}

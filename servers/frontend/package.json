@@ -17,6 +17,7 @@
     "@tanstack/react-query": "^5.102.8",
     "@xyflow/react": "12.10.2",
     "axios": "^1.20.0",
+    "axios-case-converter": "^2.0.1",
     "clsx": "^2.1.1",
     "eventemitter3": "^5.0.4",
     "i18next": "^26.4.2",

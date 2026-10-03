@@ -1,4 +1,10 @@
-.rule {
+.page {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.block {
   border-top: 1px solid var(--gray-a6);
 }
 

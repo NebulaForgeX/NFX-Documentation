@@ -1,11 +1,13 @@
 import { memo } from "react";
-import { Box, Container, Flex, Heading, Text } from "@radix-ui/themes";
+import { Container, Flex, Grid, Heading, Section, Text } from "@radix-ui/themes";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 
-import { LedgerLink, PageIntro } from "@/components";
 import { useBooksManifest } from "@/hooks/books";
 import { chapterPath } from "@/navigations";
 import { chapterLocale } from "@/utils/i18nContent";
+
+import styles from "./s.module.css";
 
 const HomePage = memo(() => {
   const { t, i18n } = useTranslation("common");
@@ -14,32 +16,53 @@ const HomePage = memo(() => {
   const chapters = data?.chapters ?? [];
 
   return (
-    <Container size="3">
-      <Box py="6">
-        <Flex direction="column" gap="6">
-          <PageIntro title={t("title")}>
-            <Text as="p" size="4" color="gray">
+    <Grid columns={{ initial: "1", md: "minmax(16rem, 24rem) minmax(0, 1fr)" }} className={styles.page}>
+      <Section size="2" py="6" className={styles.mast}>
+        <Container px="5">
+          <Flex direction="column" gap="4">
+            <Text size="1" className={styles.kicker}>
+              {t("chapters.title")}
+            </Text>
+            <Heading className={styles.display}>{t("title")}</Heading>
+            <Text as="p" size="3" color="gray" className={styles.lead}>
               {t("subtitle")}
             </Text>
-          </PageIntro>
-          <Flex direction="column" gap="3">
-            <Heading size="5">{t("chapters.title")}</Heading>
-            {isLoading ? <Text color="gray">{t("loading")}</Text> : null}
-            {isError ? <Text color="red">{t("chapterLoadError")}</Text> : null}
-            <Flex direction="column">
-              {chapters.map((chapter, index) => (
-                <LedgerLink key={chapter.slug} to={chapterPath(locale, chapter.slug)}>
-                  <Text size="2" color="gray">
-                    {String(index + 1).padStart(2, "0")}
-                  </Text>
-                  <Text size="3">{chapter.title[locale]}</Text>
-                </LedgerLink>
-              ))}
-            </Flex>
           </Flex>
+        </Container>
+      </Section>
+      <Section size="1" className={styles.index}>
+        <Flex direction="column" className={styles.list}>
+          {isLoading ? (
+            <Container px="4">
+              <Section size="1" py="4">
+                <Text color="gray">{t("loading")}</Text>
+              </Section>
+            </Container>
+          ) : null}
+          {isError ? (
+            <Container px="4">
+              <Section size="1" py="4">
+                <Text color="red">{t("chapterLoadError")}</Text>
+              </Section>
+            </Container>
+          ) : null}
+          {chapters.map((chapter, index) => (
+            <Link key={chapter.slug} to={chapterPath(locale, chapter.slug)} className={styles.row}>
+              <Section size="1" py="4" className={styles.rowFace}>
+                <Container px="5">
+                  <Flex align="center" gap="4">
+                    <Text className={styles.num}>{String(index + 1).padStart(2, "0")}</Text>
+                    <Text size="3" weight="medium">
+                      {chapter.title[locale]}
+                    </Text>
+                  </Flex>
+                </Container>
+              </Section>
+            </Link>
+          ))}
         </Flex>
-      </Box>
-    </Container>
+      </Section>
+    </Grid>
   );
 });
 

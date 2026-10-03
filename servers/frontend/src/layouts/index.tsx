@@ -1,14 +1,15 @@
 import type { ReactNode } from "react";
 
 import { memo, useCallback, useEffect, useMemo } from "react";
-import { Button, Box, Flex, Grid, Text } from "@radix-ui/themes";
+import { Button, Container, Flex, Section, Text } from "@radix-ui/themes";
 import { Appearance, AppearanceEnum, Language, LanguageEnum } from "nfx-ui/enums";
-import { useSyncPreference } from "nfx-ui/hooks";
+import { useResolvedAppearance, useSyncPreference } from "nfx-ui/hooks";
 import { PreferenceStore, usePreferenceStore } from "nfx-ui/stores";
 import { useTranslation } from "react-i18next";
 import { Link, NavLink, useLocation, useNavigate } from "react-router";
 
-import { FileText, Folders, GraduationCap, Home, Info, Network } from "@/assets/icons/lucide";
+import { FileText, Folders, Home, Info, Network } from "@/assets/icons/lucide";
+import { getLogoSrc } from "@/constants";
 import { routerEventEmitter } from "@/events/router";
 import { useBooksManifest } from "@/hooks/books";
 import { ROUTES, chapterPath } from "@/navigations";
@@ -72,29 +73,26 @@ function ChromeControls() {
 }
 
 function NavItem({ to, end, icon, children, inset = false }: { to: string; end?: boolean; icon: ReactNode; children: ReactNode; inset?: boolean }) {
-  const link = (
-    <NavLink to={to} end={end} className={`${styles.flat} ${styles.ink}`}>
+  return (
+    <NavLink to={to} end={end} className={styles.link}>
       {({ isActive }) => (
-        <Box className={isActive ? styles.activeRule : undefined}>
-          <Box py="2">
+        <Section size="1" py="2" className={isActive ? styles.active : undefined}>
+          <Container px={inset ? "5" : "3"}>
             <Flex align="center" gap="2">
               {icon}
               <Text size="2">{children}</Text>
             </Flex>
-          </Box>
-        </Box>
+          </Container>
+        </Section>
       )}
     </NavLink>
   );
-
-  if (!inset) return link;
-  return <Box pl="4">{link}</Box>;
 }
 
 export const DocsLayout = memo(({ children }: DocsLayoutProps) => {
   const { t, i18n } = useTranslation("common");
+  const appearance = useResolvedAppearance();
   const locale = chapterLocale(i18n.language);
-  const location = useLocation();
   const { data } = useBooksManifest();
   const chapters = data?.chapters ?? [];
   const year = new Date().getFullYear();
@@ -115,91 +113,85 @@ export const DocsLayout = memo(({ children }: DocsLayoutProps) => {
   return (
     <>
       <LanguagePathSync />
-      <Box className={styles.frame}>
-        <Flex direction="column">
-          <Box className={styles.ruleBottom}>
-            <Box py="3">
-              <Box px="4">
-                <Flex align="center" justify="between" gap="3">
-                  <Button variant="ghost" onClick={onHome}>
-                    <Flex align="center" gap="3">
-                      <img src="/logo.ico" alt="NFX" width={28} height={28} />
-                      <Flex direction="column" align="start" gap="0">
-                        <Text weight="bold">NFX</Text>
-                        <Text size="1" color="gray">
-                          Documentation
-                        </Text>
-                      </Flex>
-                    </Flex>
-                  </Button>
-                  <ChromeControls />
+      <Flex direction="column" className={styles.frame}>
+        <a className={styles.skip} href="#docs-main">
+          {t("skip")}
+        </a>
+        <Section size="1" py="3" className={styles.bar}>
+          <Container size="4" px="4">
+            <Flex align="center" justify="between" gap="3">
+              <Button variant="ghost" onClick={onHome}>
+                <Flex align="center" gap="3">
+                  <Flex align="center" justify="center" className={styles.mark}>
+                    <img src={getLogoSrc(appearance)} alt="NFX" />
+                  </Flex>
+                  <Flex direction="column" align="start" gap="0">
+                    <Text weight="bold">NFX</Text>
+                    <Text size="1" color="gray">
+                      Documentation
+                    </Text>
+                  </Flex>
                 </Flex>
-              </Box>
-            </Box>
-          </Box>
-          <Box className={styles.grow}>
-            <Grid columns={{ initial: "1", md: "16rem minmax(0, 1fr)" }}>
-              <Box className={styles.navRule}>
-                <Box className={styles.scroll}>
-                  <Box py="3">
-                    <Box px="3">
-                      <Flex direction="column" gap="1">
-                        <NavItem to={ROUTES.HOME} end icon={<Home size={16} />}>
-                          {t("nav.home")}
-                        </NavItem>
-                        <NavItem to={ROUTES.ARCHITECTURE} icon={<Network size={16} />}>
-                          {t("nav.architecture")}
-                        </NavItem>
-                        <Box py="2">
-                          <Flex align="center" gap="2">
-                            <GraduationCap size={16} />
-                            <Text size="2" color="gray">
-                              {t("nav.chapters")}
-                            </Text>
-                          </Flex>
-                        </Box>
-                        {chapterLinks.map((item) => (
-                          <NavItem key={item.to} to={item.to} inset icon={<FileText size={14} />}>
-                            {item.label}
-                          </NavItem>
-                        ))}
-                        <NavItem to={ROUTES.REPO} icon={<Folders size={16} />}>
-                          {t("nav.repo")}
-                        </NavItem>
-                        <NavItem to={ROUTES.ABOUT} icon={<Info size={16} />}>
-                          {t("nav.about")}
-                        </NavItem>
-                      </Flex>
-                    </Box>
-                  </Box>
-                </Box>
-              </Box>
-              <Box className={styles.scroll} data-path={location.pathname}>
-                {children}
-              </Box>
-            </Grid>
-          </Box>
-          <Box className={styles.ruleTop}>
-            <Box py="3">
-              <Box px="4">
-                <Flex align="center" justify="between" gap="3" wrap="wrap">
-                  <Text size="2" color="gray">
+              </Button>
+              <ChromeControls />
+            </Flex>
+          </Container>
+        </Section>
+        <Flex direction={{ initial: "column", md: "row" }} className={styles.body}>
+          <Flex direction="column" className={styles.nav}>
+            <Flex direction="column" className={styles.navScroll}>
+              <Section size="1" py="3">
+                <Flex direction="column" gap="1">
+                  <NavItem to={ROUTES.HOME} end icon={<Home size={16} />}>
+                    {t("nav.home")}
+                  </NavItem>
+                  <NavItem to={ROUTES.ARCHITECTURE} icon={<Network size={16} />}>
+                    {t("nav.architecture")}
+                  </NavItem>
+                  <Section size="1" py="2">
+                    <Container px="3">
+                      <Text size="1" weight="bold" color="gray">
+                        {t("nav.chapters")}
+                      </Text>
+                    </Container>
+                  </Section>
+                  {chapterLinks.map((item) => (
+                    <NavItem key={item.to} to={item.to} inset icon={<FileText size={14} />}>
+                      {item.label}
+                    </NavItem>
+                  ))}
+                  <NavItem to={ROUTES.REPO} icon={<Folders size={16} />}>
+                    {t("nav.repo")}
+                  </NavItem>
+                  <NavItem to={ROUTES.ABOUT} icon={<Info size={16} />}>
+                    {t("nav.about")}
+                  </NavItem>
+                </Flex>
+              </Section>
+            </Flex>
+            <Section size="1" py="3" className={styles.foot}>
+              <Container px="3">
+                <Flex direction="column" gap="2">
+                  <Text size="1" color="gray">
                     © {year} {t("footer.copyright")}
                   </Text>
-                  <Flex gap="4">
-                    <Link to={ROUTES.ABOUT} className={`${styles.flat} ${styles.ink}`}>
+                  <Flex gap="3">
+                    <Link to={ROUTES.ABOUT} className={styles.flat}>
                       {t("footer.about")}
                     </Link>
-                    <a href="https://github.com/NebulaForgeX/NFX-Documentation" target="_blank" rel="noopener noreferrer" className={`${styles.flat} ${styles.ink}`}>
+                    <a href="https://github.com/NebulaForgeX/NFX-Documentation" target="_blank" rel="noopener noreferrer" className={styles.flat}>
                       {t("footer.github")}
                     </a>
                   </Flex>
                 </Flex>
-              </Box>
-            </Box>
-          </Box>
+              </Container>
+            </Section>
+          </Flex>
+          <Flex id="docs-main" direction="column" className={styles.main}>
+            {children}
+          </Flex>
         </Flex>
-      </Box>
+      </Flex>
     </>
   );
 });

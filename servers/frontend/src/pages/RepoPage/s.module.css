@@ -1,0 +1,58 @@
+.page {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.lead {
+  max-width: 40rem;
+  line-height: 1.6;
+}
+
+.card {
+  display: block;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.face {
+  height: 100%;
+  background: var(--color-panel-solid);
+  border: 1px solid var(--gray-a6);
+  border-radius: var(--radius-4);
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+
+.card:hover .face {
+  border-color: var(--accent-8);
+  transform: translateY(-2px);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--accent-8);
+  outline-offset: 3px;
+}
+
+.card:active .face {
+  transform: translateY(0);
+}
+
+.stack {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.name {
+  letter-spacing: -0.03em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .face {
+    transition: border-color 180ms ease;
+  }
+
+  .card:hover .face {
+    transform: none;
+  }
+}

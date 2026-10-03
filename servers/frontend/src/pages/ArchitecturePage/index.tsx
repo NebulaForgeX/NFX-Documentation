@@ -3,12 +3,10 @@ import type { NodeProps } from "@xyflow/react";
 
 import { memo, useCallback, useMemo, useState } from "react";
 import { Background, Controls, Handle, MarkerType, MiniMap, Position, ReactFlow, useNodesState } from "@xyflow/react";
-import { Box, Container, Flex, Section, Text } from "@radix-ui/themes";
+import { Box, Container, Flex, Heading, Section, Text } from "@radix-ui/themes";
 import { AppearanceEnum } from "nfx-ui/enums";
 import { usePreferenceStore } from "nfx-ui/stores";
 import { useTranslation } from "react-i18next";
-
-import { PageIntro } from "@/components";
 
 import { ARCH_NODES, toFlowEdges } from "./graph";
 
@@ -82,55 +80,63 @@ const ArchitecturePage = memo(() => {
   }, []);
 
   return (
-    <Section size="2" py="6">
-      <Container size="4" px="4">
-        <Flex direction="column" gap="4">
-          <PageIntro title={t("title")}>
-            <Text as="p" size="3" color="gray">
+    <Flex direction="column" className={styles.page}>
+      <Section size="1" py="3" className={styles.hud}>
+        <Container px="4">
+          <Flex align="baseline" justify="between" gap="4" wrap="wrap">
+            <Heading size="6" className={styles.title}>
+              {t("title")}
+            </Heading>
+            <Text size="1" color="gray" className={styles.lead}>
               {t("lead")}
             </Text>
-          </PageIntro>
-          <Text size="2" color="gray">
-            {t("hint")}
-          </Text>
-          <Box className={styles.stage}>
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onNodeClick={onNodeClick}
-              nodeTypes={nodeTypes}
-              colorMode={colorMode}
-              fitView
-              minZoom={0.35}
-              proOptions={{ hideAttribution: false }}
-            >
-              <Background />
-              <Controls showInteractive={false} />
-              <MiniMap pannable zoomable />
-            </ReactFlow>
-          </Box>
+          </Flex>
+        </Container>
+      </Section>
+      <Box className={styles.stage}>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onNodeClick={onNodeClick}
+          nodeTypes={nodeTypes}
+          colorMode={colorMode}
+          fitView
+          fitViewOptions={{ padding: 0.18 }}
+          minZoom={0.2}
+          proOptions={{ hideAttribution: false }}
+        >
+          <Background />
+          <Controls showInteractive={false} />
+          <MiniMap pannable zoomable />
+        </ReactFlow>
+        <Box className={styles.inspector}>
           <Section size="1" py="3">
-            <Flex direction="column" gap="2">
-              <Text size="3" weight="medium">
-                {active ? t(`nodes.${active.id}.title`) : t("empty")}
-              </Text>
-              {active ? (
-                <Text size="2" color="gray">
-                  {t(`nodes.${active.id}.body`)}
+            <Container px="3">
+              <Flex direction="column" gap="2">
+                <Text size="1" color="gray">
+                  {t("hint")}
                 </Text>
-              ) : null}
-              {active?.data.ports.map((port) => (
-                <Text key={`${active.id}-${port.name}`} size="2">
-                  {t(`kinds.${port.kind}`)} · {port.name} · dev {port.dev}
-                  {port.secure ? ` · secure ${port.secure}` : ""}
+                <Text size="3" weight="medium">
+                  {active ? t(`nodes.${active.id}.title`) : t("empty")}
                 </Text>
-              ))}
-            </Flex>
+                {active ? (
+                  <Text size="2" color="gray">
+                    {t(`nodes.${active.id}.body`)}
+                  </Text>
+                ) : null}
+                {active?.data.ports.map((port) => (
+                  <Text key={`${active.id}-${port.name}`} size="2" className={styles.port}>
+                    {t(`kinds.${port.kind}`)} · {port.name} · dev {port.dev}
+                    {port.secure ? ` · secure ${port.secure}` : ""}
+                  </Text>
+                ))}
+              </Flex>
+            </Container>
           </Section>
-        </Flex>
-      </Container>
-    </Section>
+        </Box>
+      </Box>
+    </Flex>
   );
 });
 

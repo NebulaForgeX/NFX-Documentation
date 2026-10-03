@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { Box, Flex, Heading } from "@radix-ui/themes";
+import { Flex, Heading } from "@radix-ui/themes";
 
 import styles from "./s.module.css";
 
@@ -11,13 +11,11 @@ type PageIntroProps = {
 
 export default function PageIntro({ title, children }: PageIntroProps) {
   return (
-    <Box className={styles.rule}>
-      <Box pb="4">
-        <Flex direction="column" gap="2">
-          <Heading size="8">{title}</Heading>
-          {children}
-        </Flex>
-      </Box>
-    </Box>
+    <Flex direction="column" gap="2">
+      <Heading size="8" className={styles.display}>
+        {title}
+      </Heading>
+      {children}
+    </Flex>
   );
 }

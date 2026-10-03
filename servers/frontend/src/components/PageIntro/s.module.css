@@ -1,3 +1,10 @@
-.rule {
-  border-bottom: 1px solid var(--gray-a6);
+.display {
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+.display + * {
+  max-width: 40rem;
+  line-height: 1.6;
 }

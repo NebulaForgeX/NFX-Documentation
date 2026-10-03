@@ -1,8 +1,10 @@
 import { memo } from "react";
-import { Box, Container, Flex, Text } from "@radix-ui/themes";
+import { Container, Flex, Grid, Heading, Section, Text } from "@radix-ui/themes";
 import { useTranslation } from "react-i18next";
 
-import { LedgerLink, PageIntro } from "@/components";
+import { PageIntro } from "@/components";
+
+import styles from "./s.module.css";
 
 const REPOS = [
   { key: "nfxStack", name: "NFX-Stack", url: "https://github.com/NebulaForgeX/NFX-Stack", stack: "Docker Compose" },
@@ -23,32 +25,38 @@ const RepoPage = memo(() => {
   const { t } = useTranslation("repo");
 
   return (
-    <Container size="3">
-      <Box py="6">
-        <Flex direction="column" gap="5">
+    <Section size="2" py="6" className={styles.page}>
+      <Container px="5">
+        <Flex direction="column" gap="6">
           <PageIntro title={t("title")}>
-            <Text as="p" size="4" color="gray">
+            <Text as="p" size="3" color="gray" className={styles.lead}>
               {t("description")}
             </Text>
           </PageIntro>
-          <Flex direction="column">
+          <Grid columns={{ initial: "1", sm: "2" }} gap="3">
             {REPOS.map((repo) => (
-              <LedgerLink key={repo.name} href={repo.url}>
-                <Text size="3" weight="medium">
-                  {repo.name}
-                </Text>
-                <Text size="2" color="gray">
-                  {repo.stack}
-                </Text>
-                <Text as="p" size="2" color="gray">
-                  {t(`${repo.key}.description`)}
-                </Text>
-              </LedgerLink>
+              <a key={repo.name} href={repo.url} target="_blank" rel="noopener noreferrer" className={styles.card}>
+                <Section size="1" py="4" className={styles.face}>
+                  <Container px="4">
+                    <Flex direction="column" align="start" gap="2">
+                      <Text size="1" color="gray" className={styles.stack}>
+                        {repo.stack}
+                      </Text>
+                      <Heading size="5" className={styles.name}>
+                        {repo.name}
+                      </Heading>
+                      <Text as="p" size="2" color="gray">
+                        {t(`${repo.key}.description`)}
+                      </Text>
+                    </Flex>
+                  </Container>
+                </Section>
+              </a>
             ))}
-          </Flex>
+          </Grid>
         </Flex>
-      </Box>
-    </Container>
+      </Container>
+    </Section>
   );
 });
 

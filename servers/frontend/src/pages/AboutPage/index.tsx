@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { memo } from "react";
-import { Box, Container, Flex, Heading, Section, Text } from "@radix-ui/themes";
+import { Container, Flex, Heading, Section, Text } from "@radix-ui/themes";
 import { useTranslation } from "react-i18next";
 
 import { Html, PageIntro } from "@/components";
@@ -14,8 +14,8 @@ const AboutPage = memo(() => {
   const ecosystemItems = Array.isArray(items) ? items.map(String) : [];
 
   return (
-    <Container size="3">
-      <Box py="6">
+    <Section size="2" py="6" className={styles.page}>
+      <Container px="5">
         <Flex direction="column" gap="6">
           <PageIntro title={t("title")}>
             <Text as="p" size="4" color="gray">
@@ -33,13 +33,13 @@ const AboutPage = memo(() => {
             <Text as="p" color="gray">
               <Html html={t("ecosystem.description")} />
             </Text>
-            <Box pl="5">
+            <Container pl="5">
               <ul className={styles.flush}>
                 {ecosystemItems.map((item) => (
                   <Html as="li" key={item} html={item} />
                 ))}
               </ul>
-            </Box>
+            </Container>
           </AboutBlock>
 
           <AboutBlock title={t("contribute.title")}>
@@ -48,23 +48,19 @@ const AboutPage = memo(() => {
             </Text>
           </AboutBlock>
         </Flex>
-      </Box>
-    </Container>
+      </Container>
+    </Section>
   );
 });
 
 function AboutBlock({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <Box className={styles.rule}>
-      <Box pt="4">
-        <Section size="1">
-          <Flex direction="column" gap="2">
-            <Heading size="5">{title}</Heading>
-            {children}
-          </Flex>
-        </Section>
-      </Box>
-    </Box>
+    <Section size="1" py="4" className={styles.block}>
+      <Flex direction="column" gap="2">
+        <Heading size="5">{title}</Heading>
+        {children}
+      </Flex>
+    </Section>
   );
 }
 

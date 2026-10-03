@@ -1,8 +1,35 @@
+.page {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.hud {
+  border-bottom: 1px solid var(--gray-a6);
+  background: color-mix(in srgb, var(--color-panel-solid) 86%, transparent);
+}
+
+.title {
+  letter-spacing: -0.04em;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.lead {
+  max-width: 46rem;
+  line-height: 1.45;
+}
+
 .stage {
-  height: 720px;
+  position: relative;
+  flex: 1;
+  min-height: 0;
   background: var(--color-background);
-  border: 1px solid var(--gray-a6);
-  border-radius: var(--radius-3);
+}
+
+.stage :global(.react-flow) {
+  width: 100%;
+  height: 100%;
 }
 
 .stage :global(.react-flow__edge-path) {
@@ -17,6 +44,24 @@
   background: transparent;
 }
 
+.inspector {
+  position: absolute;
+  left: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 4;
+  width: min(22rem, calc(100% - var(--space-8)));
+  max-height: 42%;
+  overflow: auto;
+  background: color-mix(in srgb, var(--color-panel-solid) 92%, transparent);
+  border: 1px solid var(--gray-a6);
+  border-radius: var(--radius-4);
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--gray-a8) 55%, transparent);
+}
+
+.port {
+  font-variant-numeric: tabular-nums;
+}
+
 .node {
   width: 280px;
   background: var(--color-panel-solid);
@@ -26,6 +71,7 @@
 
 .nodeSelected {
   border-color: var(--accent-9);
+  box-shadow: 0 0 0 1px var(--accent-a6);
 }
 
 .kind {

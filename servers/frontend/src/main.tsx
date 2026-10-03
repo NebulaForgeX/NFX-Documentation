@@ -11,6 +11,7 @@ import { LanguageProvider, ThemeProvider } from "nfx-ui/providers";
 import "./index.css";
 
 import { getBuiltinI18nBundles } from "@/assets/languages/i18nResources";
+import { syncDocumentLogo } from "@/constants";
 import { DataProvider, QueryProvider, RouterProvider } from "@/providers";
 
 import App from "./App.tsx";
@@ -18,8 +19,13 @@ import App from "./App.tsx";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryProvider>
-      <LanguageProvider getBuiltinBundles={getBuiltinI18nBundles} fallbackLng={LanguageEnum.ZH}>
-        <ThemeProvider>
+        <LanguageProvider
+          getBuiltinBundles={getBuiltinI18nBundles}
+          fallbackLng={LanguageEnum.ZH}
+          identityMockErrors={{}}
+          identityMockMessages={{}}
+        >
+        <ThemeProvider onAppearanceChange={syncDocumentLogo}>
           <DataProvider>
             <RouterProvider>
               <App />

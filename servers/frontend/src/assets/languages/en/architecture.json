@@ -11,9 +11,17 @@
   "containersTitle": "Containers",
   "dialsOut": "Dials",
   "dialsIn": "Dialed by",
-  "clickHint": "Hover for detail, click to pin. Drag a frame by its header, drag its edge to resize, and double-click to zoom in.",
+  "clickHint": "Hover a container to light its links. Tick containers, or the box at a frame's bottom-right, to keep every link of the selection. Drag a header to move, drag an edge to resize, double-click to focus a Compose.",
   "servicesTitle": "Services",
-  "servicesLead": "Hover a Compose or a container to light its area on the canvas. Click to pin it.",
+  "servicesLead": "Hover a container to light it on the canvas. Tick containers one by one, or tick a Compose's corner box to select all of it.",
+  "selectFrame": "Select every container in {{name}}",
+  "selectAll": "All",
+  "clearSelection_one": "Clear {{count}}",
+  "clearSelection_other": "Clear {{count}}",
+  "tabs": {
+    "services": "Services",
+    "ports": "Port blocks"
+  },
   "layerLabel": "Highlight one kind of link",
   "layers": {
     "all": "All",

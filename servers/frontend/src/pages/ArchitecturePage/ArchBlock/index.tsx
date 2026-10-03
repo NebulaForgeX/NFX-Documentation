@@ -5,7 +5,7 @@ import type { BlockNode } from "../layout";
 
 import { memo, useContext, useRef } from "react";
 import { useGSAP } from "@gsap/react";
-import { Box, Container, Flex, HoverCard, Section, Separator, Text } from "@radix-ui/themes";
+import { Box, Checkbox, Container, Flex, HoverCard, Section, Separator, Text } from "@radix-ui/themes";
 import { Handle, Position } from "@xyflow/react";
 import clsx from "clsx";
 import gsap from "gsap";
@@ -103,7 +103,7 @@ function BlockDetail({ data }: { data: BlockNode["data"] }) {
 
 const ArchBlock = memo(({ id, data }: NodeProps<BlockNode>) => {
   const { t } = useTranslation("architecture");
-  const { hoverNode, pinned } = useContext(FocusContext);
+  const { hoverNode, selected } = useContext(FocusContext);
   const level = useNodeFocus(id);
   const ref = useRef<HTMLDivElement>(null);
   const { contextSafe } = useGSAP({ scope: ref });
@@ -123,7 +123,7 @@ const ArchBlock = memo(({ id, data }: NodeProps<BlockNode>) => {
             ref={ref}
             data-block
             data-level={level}
-            className={clsx(styles.block, !data.docker && styles.plain, pinned === id && styles.pinned)}
+            className={clsx(styles.block, !data.docker && styles.plain, selected.has(id) && styles.selected)}
             onPointerEnter={(event: PointerEvent<HTMLDivElement>) => {
               hoverNode(id);
               lift(event.currentTarget, true);
@@ -143,7 +143,7 @@ const ArchBlock = memo(({ id, data }: NodeProps<BlockNode>) => {
                         {data.docker ? data.service : t("notDocker")}
                       </Text>
                     </Flex>
-                    <Box className={styles.led} aria-hidden />
+                    <Checkbox size="1" checked={selected.has(id)} tabIndex={-1} className={styles.check} aria-hidden />
                   </Flex>
                   <Text as="span" size="2" weight="bold" truncate>
                     {t(`containers.${id}.title`)}

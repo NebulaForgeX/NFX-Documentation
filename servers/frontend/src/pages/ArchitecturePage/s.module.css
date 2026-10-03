@@ -63,6 +63,14 @@
   scrollbar-color: var(--gray-a5) transparent;
 }
 
+.tabs {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-panel-solid);
+  box-shadow: inset 0 -1px 0 var(--docs-bezel);
+}
+
 .flow {
   --xy-background-color: transparent;
   --xy-background-pattern-color: var(--gray-a5);

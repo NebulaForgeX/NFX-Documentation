@@ -37,8 +37,8 @@
 
 .frame[data-level="hot"] {
   box-shadow:
-    inset 0 0 0 1px var(--accent-8),
-    inset 0 1px 0 var(--accent-a7);
+    inset 0 0 0 1px var(--gray-10),
+    inset 0 1px 0 var(--gray-a8);
 }
 
 .frame[data-level="area"] {
@@ -72,6 +72,14 @@
 .focus {
   flex-shrink: 0;
   cursor: pointer;
+}
+
+.check {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  pointer-events: all;
 }
 
 .resizeLine:global(.react-flow__resize-control.line) {

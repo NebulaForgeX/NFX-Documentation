@@ -3,7 +3,7 @@ import type { Focus, FocusState } from "./focus";
 import type { LayerKeyEnum, LineLevelEnum } from "./layout";
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Box, Button, Container, Flex, Heading, Section, SegmentedControl, Text } from "@radix-ui/themes";
+import { Box, Button, Container, Flex, Heading, Section, SegmentedControl, Tabs, Text } from "@radix-ui/themes";
 import {
   Background,
   BackgroundVariant,
@@ -26,7 +26,17 @@ import ArchBlock from "./ArchBlock";
 import ComposeFrame from "./ComposeFrame";
 import { FocusContext, RelayoutContext } from "./focus";
 import { FLOW_NODES, focusEdges, LINE_EDGES } from "./grid";
-import { CONTAINER_BY_ID, frameFocus, layerFocus, LayerKey, LineLevel, linkFocus, neighbours } from "./layout";
+import {
+  CONTAINER_BY_ID,
+  frameFocus,
+  layerFocus,
+  LayerKey,
+  LineLevel,
+  linkFocus,
+  neighbours,
+  selectionFocus,
+  unitsOf,
+} from "./layout";
 import PortLink from "./PortLink";
 import RangeGrid from "./RangeGrid";
 import ServiceList from "./ServiceList";
@@ -42,6 +52,11 @@ const edgeTypes = { link: PortLink };
 const LAYERS = Object.values(LayerKey);
 const LINE_LEVELS = Object.values(LineLevel);
 const FIT_PADDING = 0.04;
+
+const SideTab = {
+  SERVICES: "services",
+  PORTS: "ports",
+} as const;
 
 type Hover = { kind: "nodes"; ids: string[] } | { kind: "link"; id: string } | null;
 
@@ -63,15 +78,17 @@ function Topology({
   lines,
   focused,
   onArm,
-  onPin,
+  onToggle,
   onRelayout,
+  onFocus,
 }: {
   appearance: string;
   lines: LineLevelEnum;
   focused: string | null;
   onArm: () => void;
-  onPin: (id: string | null) => void;
+  onToggle: (ids: string[]) => void;
   onRelayout: () => void;
+  onFocus: (id: string | null) => void;
 }) {
   const { fitBounds, getInternalNode, getNodes, getNodesBounds } = useReactFlow();
 
@@ -116,15 +133,15 @@ function Topology({
       className={styles.flow}
       colorMode={appearance === "light" ? "light" : "dark"}
       onNodeClick={(_, node) => {
-        if (node.type === "block" || node.type === "frame") onPin(node.id);
+        if (node.type === "block") onToggle([node.id]);
       }}
       onNodeDoubleClick={(_, node) => {
         if (node.type === "tier") return;
-        const target = node.type === "block" ? (CONTAINER_BY_ID.get(node.id)?.group ?? node.id) : node.id;
-        zoomTo(target);
+        const frame = node.type === "frame" ? node.id : CONTAINER_BY_ID.get(node.id)?.group;
+        if (frame) onFocus(focused === frame ? null : frame);
+        else zoomTo(node.id);
       }}
       onNodeDragStop={onRelayout}
-      onPaneClick={() => onPin(null)}
       nodesConnectable={false}
       elementsSelectable={false}
       zoomOnDoubleClick={false}
@@ -155,7 +172,7 @@ const ArchitecturePage = memo(() => {
   const [armed, setArmed] = useState(false);
   const [version, setVersion] = useState(0);
   const [hover, setHover] = useState<Hover>(null);
-  const [pinned, setPinned] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(() => new Set());
   const [layer, setLayer] = useState<LayerKeyEnum>(LayerKey.ALL);
   const [lines, setLines] = useState<LineLevelEnum>(LineLevel.COMPOSE);
   const [focused, setFocused] = useState<string | null>(null);
@@ -172,27 +189,35 @@ const ArchitecturePage = memo(() => {
   }, [focused]);
 
   const focus = useMemo<Focus | null>(() => {
+    if (selected.size) return selectionFocus(selected);
     if (hover?.kind === "link") return linkFocus(hover.id);
     if (hover?.kind === "nodes") return neighbours(hover.ids);
-    if (pinned) return neighbours([pinned]);
     if (focused) return frameFocus(focused);
     if (layer !== LayerKey.ALL) return layerFocus(layer);
     return null;
-  }, [hover, pinned, focused, layer]);
+  }, [hover, selected, focused, layer]);
 
   const hoverNode = useCallback((id: string | null) => setHover(id ? { kind: "nodes", ids: [id] } : null), []);
   const hoverNodes = useCallback((ids: string[] | null) => setHover(ids ? { kind: "nodes", ids } : null), []);
   const hoverLink = useCallback((id: string | null) => setHover(id ? { kind: "link", id } : null), []);
   const arm = useCallback(() => setArmed(true), []);
   const relayout = useCallback(() => setVersion((current) => current + 1), []);
-  const pin = useCallback(
-    (id: string | null) => setPinned((current) => (id === null || current === id ? null : id)),
+  const toggle = useCallback(
+    (ids: string[]) =>
+      setSelected((current) => {
+        const units = ids.flatMap(unitsOf);
+        const on = !units.every((unit) => current.has(unit));
+        const next = new Set(current);
+        units.forEach((unit) => (on ? next.add(unit) : next.delete(unit)));
+        return next;
+      }),
     [],
   );
+  const clear = useCallback(() => setSelected(new Set()), []);
 
   const context = useMemo<FocusState>(
-    () => ({ focus, pinned, hoverNode, hoverLink, focused, focusFrame: setFocused }),
-    [focus, pinned, hoverNode, hoverLink, focused],
+    () => ({ focus, selected, toggle, hoverNode, hoverLink, focused, focusFrame: setFocused }),
+    [focus, selected, toggle, hoverNode, hoverLink, focused],
   );
 
   return (
@@ -278,14 +303,35 @@ const ArchitecturePage = memo(() => {
                   lines={lines}
                   focused={focused}
                   onArm={arm}
-                  onPin={pin}
+                  onToggle={toggle}
                   onRelayout={relayout}
+                  onFocus={setFocused}
                 />
               </ReactFlowProvider>
             </Box>
             <Box className={styles.side}>
-              <ServiceList focus={focus} pinned={pinned} onHover={hoverNodes} onPin={pin} />
-              <RangeGrid focus={focus} onHover={hoverNodes} onPin={pin} />
+              <Tabs.Root defaultValue={SideTab.SERVICES}>
+                <Box className={styles.tabs}>
+                  <Container size="4" width="100%" maxWidth="100%" px="2">
+                    <Tabs.List size="1">
+                      <Tabs.Trigger value={SideTab.SERVICES}>{t("tabs.services")}</Tabs.Trigger>
+                      <Tabs.Trigger value={SideTab.PORTS}>{t("tabs.ports")}</Tabs.Trigger>
+                    </Tabs.List>
+                  </Container>
+                </Box>
+                <Tabs.Content value={SideTab.SERVICES}>
+                  <ServiceList
+                    focus={focus}
+                    selected={selected}
+                    onHover={hoverNodes}
+                    onToggle={toggle}
+                    onClear={clear}
+                  />
+                </Tabs.Content>
+                <Tabs.Content value={SideTab.PORTS}>
+                  <RangeGrid focus={focus} onHover={hoverNodes} onToggle={toggle} />
+                </Tabs.Content>
+              </Tabs.Root>
             </Box>
           </Flex>
         </RelayoutContext.Provider>

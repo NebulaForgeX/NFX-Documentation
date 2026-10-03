@@ -4,11 +4,13 @@ export type Focus = {
   nodes: Set<string>;
   links: Set<string>;
   areas: Set<string>;
+  seeds: Set<string>;
 };
 
 export type FocusState = {
   focus: Focus | null;
-  pinned: string | null;
+  selected: Set<string>;
+  toggle: (ids: string[]) => void;
   hoverNode: (id: string | null) => void;
   hoverLink: (id: string | null) => void;
   focused: string | null;
@@ -17,7 +19,8 @@ export type FocusState = {
 
 export const FocusContext = createContext<FocusState>({
   focus: null,
-  pinned: null,
+  selected: new Set(),
+  toggle: () => undefined,
   hoverNode: () => undefined,
   hoverLink: () => undefined,
   focused: null,
@@ -27,18 +30,20 @@ export const FocusContext = createContext<FocusState>({
 export const RelayoutContext = createContext<() => void>(() => undefined);
 
 export type FocusLevel = "idle" | "hot" | "dim";
+export type NodeLevel = FocusLevel | "seed";
 export type AreaLevel = FocusLevel | "area";
 
-export function useNodeFocus(id: string): FocusLevel {
+export function useNodeFocus(id: string): NodeLevel {
   const { focus } = useContext(FocusContext);
   if (!focus) return "idle";
+  if (focus.seeds.has(id)) return "seed";
   return focus.nodes.has(id) ? "hot" : "dim";
 }
 
 export function useAreaFocus(id: string): AreaLevel {
-  const { focus, pinned } = useContext(FocusContext);
-  if (pinned === id || focus?.areas.has(id)) return "area";
+  const { focus } = useContext(FocusContext);
   if (!focus) return "idle";
+  if (focus.areas.has(id)) return "area";
   return focus.nodes.has(id) ? "hot" : "dim";
 }
 

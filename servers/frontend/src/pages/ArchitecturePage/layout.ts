@@ -85,18 +85,36 @@ function focusOf(links: TopologyLink[], seeds: string[] = [], areas: string[] = 
   OVERVIEW_LINKS.forEach((overview) => {
     if (overview.members.some((member) => ids.has(member))) ids.add(overview.id);
   });
-  return { nodes: withAncestors([...seeds, ...ends]), links: ids, areas: new Set(areas) };
+  return { nodes: withAncestors([...seeds, ...ends]), links: ids, areas: new Set(areas), seeds: new Set() };
 }
 
 export function neighbours(ids: string[]): Focus {
   const seeds = ids.flatMap((id) => (isFrame(id) ? containersIn(id) : [id]));
   const touched = new Set(seeds);
   const areas = ids.flatMap((id) => (isFrame(id) ? [id] : ancestors(id).slice(0, 1)));
-  return focusOf(
+  const focus = focusOf(
     TOPOLOGY_LINKS.filter((link) => touched.has(link.source) || touched.has(link.target)),
     [...ids, ...seeds],
     areas,
   );
+  return { ...focus, seeds: touched };
+}
+
+export const unitsOf = (id: string) => (isFrame(id) ? containersIn(id) : [id]);
+
+export type CheckState = boolean | "indeterminate";
+
+export function checkState(id: string, selected: Set<string>): CheckState {
+  const units = unitsOf(id);
+  const count = units.filter((unit) => selected.has(unit)).length;
+  if (count === 0) return false;
+  return count === units.length ? true : "indeterminate";
+}
+
+export function selectionFocus(selected: Set<string>): Focus {
+  const focus = neighbours([...selected]);
+  const areas = TOPOLOGY_GROUPS.filter((group) => checkState(group.id, selected) === true).map((group) => group.id);
+  return { ...focus, areas: new Set(areas) };
 }
 
 export function frameFocus(frameId: string): Focus {

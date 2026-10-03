@@ -3,7 +3,7 @@ import type { MouseEvent } from "react";
 import type { FrameNode } from "../layout";
 
 import { memo, useContext } from "react";
-import { Box, Container, Flex, HoverCard, IconButton, Section, Separator, Text } from "@radix-ui/themes";
+import { Box, Checkbox, Container, Flex, HoverCard, IconButton, Section, Separator, Text } from "@radix-ui/themes";
 import { Handle, NodeResizer, Position, useReactFlow } from "@xyflow/react";
 import clsx from "clsx";
 import { AnimatedIcon, DockerIcon, FocusIcon } from "nfx-ui/icons";
@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 
 import { FocusContext, RelayoutContext, useAreaFocus } from "../focus";
 import { FRAME_DRAG_HANDLE, minSizeOf, reflow } from "../grid";
-import { containersIn } from "../layout";
+import { checkState, containersIn } from "../layout";
 import styles from "./s.module.css";
 
 function FrameDetail({ data }: { data: FrameNode["data"] }) {
@@ -48,7 +48,7 @@ function FrameDetail({ data }: { data: FrameNode["data"] }) {
 
 const ComposeFrame = memo(({ id, data }: NodeProps<FrameNode>) => {
   const { t } = useTranslation("architecture");
-  const { hoverNode, focused, focusFrame } = useContext(FocusContext);
+  const { selected, toggle, focused, focusFrame } = useContext(FocusContext);
   const relayout = useContext(RelayoutContext);
   const { setNodes } = useReactFlow();
   const level = useAreaFocus(id);
@@ -74,11 +74,7 @@ const ComposeFrame = memo(({ id, data }: NodeProps<FrameNode>) => {
       <Handle type="target" position={Position.Left} className={styles.handle} />
       <HoverCard.Root openDelay={200} closeDelay={80}>
         <HoverCard.Trigger>
-          <Box
-            className={clsx(styles.header, FRAME_DRAG_HANDLE)}
-            onPointerEnter={() => hoverNode(id)}
-            onPointerLeave={() => hoverNode(null)}
-          >
+          <Box className={clsx(styles.header, FRAME_DRAG_HANDLE)}>
             <Section size="1" py="3">
               <Container size="4" width="100%" maxWidth="100%" px="4">
                 <Flex direction="column" gap="1">
@@ -127,6 +123,14 @@ const ComposeFrame = memo(({ id, data }: NodeProps<FrameNode>) => {
         </HoverCard.Content>
       </HoverCard.Root>
       <Box flexGrow="1" className={styles.body} />
+      <Box className={clsx(styles.check, "nodrag")} onClick={(event: MouseEvent) => event.stopPropagation()}>
+        <Checkbox
+          size="2"
+          checked={checkState(id, selected)}
+          onCheckedChange={() => toggle([id])}
+          aria-label={t("selectFrame", { name: t(`groups.${id}.title`) })}
+        />
+      </Box>
       <Handle type="source" position={Position.Right} className={styles.handle} />
     </Flex>
   );

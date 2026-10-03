@@ -11,9 +11,17 @@
   "containersTitle": "Conteneurs",
   "dialsOut": "Appelle",
   "dialsIn": "Appelé par",
-  "clickHint": "Survolez pour le détail, cliquez pour épingler. Faites glisser un cadre par son en-tête, tirez son bord pour le redimensionner, double-cliquez pour zoomer.",
+  "clickHint": "Survolez un conteneur pour éclairer ses liens. Cochez des conteneurs, ou la case en bas à droite d'un cadre, pour garder tous les liens de la sélection. Glissez l'en-tête pour déplacer, tirez un bord pour redimensionner, double-cliquez pour cibler un Compose.",
   "servicesTitle": "Services",
-  "servicesLead": "Survolez un Compose ou un conteneur pour éclairer sa zone sur le canevas. Cliquez pour l'épingler.",
+  "servicesLead": "Survolez un conteneur pour l'éclairer sur le canevas. Cochez les conteneurs un par un, ou la case d'angle d'un Compose pour tout sélectionner.",
+  "selectFrame": "Sélectionner tous les conteneurs de {{name}}",
+  "selectAll": "Tout",
+  "clearSelection_one": "Effacer {{count}}",
+  "clearSelection_other": "Effacer {{count}}",
+  "tabs": {
+    "services": "Services",
+    "ports": "Blocs de ports"
+  },
   "layerLabel": "Mettre en avant un type de lien",
   "layers": {
     "all": "Tout",

@@ -12,16 +12,16 @@ import styles from "./s.module.css";
 type RangeGridProps = {
   focus: Focus | null;
   onHover: (groupIds: string[] | null) => void;
-  onPin: (groupId: string | null) => void;
+  onToggle: (groupIds: string[]) => void;
 };
 
 const LEGEND = [LinkProtocol.HTTP, LinkProtocol.GRPC, LinkProtocol.DATA, LinkProtocol.TLS] as const;
 
-export default function RangeGrid({ focus, onHover, onPin }: RangeGridProps) {
+export default function RangeGrid({ focus, onHover, onToggle }: RangeGridProps) {
   const { t } = useTranslation("architecture");
 
   return (
-    <Section size="1" py="5" className={styles.pane}>
+    <Section size="1" py="4">
       <Container size="4" width="100%" maxWidth="100%" px="4">
         <Flex direction="column" gap="5">
           <Flex direction="column" gap="2">
@@ -46,7 +46,7 @@ export default function RangeGrid({ focus, onHover, onPin }: RangeGridProps) {
                   data-cell
                   onPointerEnter={() => interactive && onHover(block.groupIds)}
                   onPointerLeave={() => onHover(null)}
-                  onClick={() => interactive && onPin(block.groupIds[0])}
+                  onClick={() => interactive && onToggle(block.groupIds)}
                 >
                   <Section size="1" py="3">
                     <Container size="4" width="100%" maxWidth="100%" px="3">

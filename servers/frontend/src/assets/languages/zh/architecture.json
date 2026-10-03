@@ -11,9 +11,16 @@
   "containersTitle": "容器",
   "dialsOut": "拨出",
   "dialsIn": "被谁拨入",
-  "clickHint": "悬停看明细，点击固定高亮。拖标题移动外框，拖边缘改大小，双击放大到该框。",
+  "clickHint": "悬停容器看它的连线。勾选容器，或勾选外框右下角选中整个 Compose，会一直显示所选的全部连线。拖标题移动，拖边缘改大小，双击聚焦 Compose。",
   "servicesTitle": "服务",
-  "servicesLead": "悬停一个 Compose 或容器，画布上它的框范围会亮起。点击固定。",
+  "servicesLead": "悬停容器，画布上它会亮起。可以逐个勾选容器，也可以勾选 Compose 右下角一次全选。",
+  "selectFrame": "选中 {{name}} 的全部容器",
+  "selectAll": "全选",
+  "clearSelection": "清除 {{count}} 个",
+  "tabs": {
+    "services": "服务",
+    "ports": "端口分块"
+  },
   "layerLabel": "只高亮一类连线",
   "layers": {
     "all": "全部",

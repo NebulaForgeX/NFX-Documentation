@@ -16,8 +16,8 @@
 
 .frame.hot {
   box-shadow:
-    inset 0 0 0 1px var(--accent-a7),
-    inset 0 1px 0 var(--accent-a8);
+    inset 0 0 0 1px var(--gray-9),
+    inset 0 1px 0 var(--gray-a8);
 }
 
 .frame.area {
@@ -32,8 +32,16 @@
   opacity: 0.5;
 }
 
-.head {
+.all {
+  color: var(--gray-10);
+  font-family: var(--docs-font-mono);
   cursor: pointer;
+}
+
+.all:global(.rt-Text) {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .range {
@@ -63,9 +71,30 @@
   white-space: nowrap;
 }
 
-.chip:hover,
-.chip.hot {
+.chip:hover {
+  color: var(--gray-12);
+  box-shadow: inset 0 0 0 1px var(--gray-a8);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--accent-8);
+  outline-offset: 1px;
+}
+
+.related {
+  color: var(--gray-12);
+  background: var(--gray-a3);
+  box-shadow: inset 0 0 0 1px var(--gray-10);
+}
+
+.seed,
+.seed:hover {
   color: var(--accent-12);
   background: var(--accent-a3);
   box-shadow: inset 0 0 0 1px var(--accent-8);
+}
+
+.check {
+  flex-shrink: 0;
+  pointer-events: none;
 }

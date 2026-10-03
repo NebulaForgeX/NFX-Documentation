@@ -4,6 +4,9 @@ import zh from "./zh";
 
 const NAME_SPACES_MAP = {
   language: "language",
+  layout: "layout",
+  preference: "preference",
+  theme: "theme",
   home: "home",
   chapter: "chapter",
   architecture: "architecture",

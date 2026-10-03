@@ -15,7 +15,7 @@ Do not use `/user/*`. Kind is `FORGER` or `AUTHORITY` (not HL COMMUNITY). Source
 | Forger | `/forger/desk`, `/forger/profile/overview\|edit\|identity\|security`, `/forger/assets`, `/forger/settings` |
 | Authority | same under `/authority/*`, plus `/authority/directory` |
 
-The wrong tree is bounced by `ScopeRoute` to `profileHome(kind)` (Forger → `/forger/desk`, Authority → `/authority/desk`). Pages use **nfx-ui hooks** only. Pin **nfx-ui 0.33.0**.
+The wrong tree is bounced by `ScopeRoute` to `profileHome(kind)` (Forger → `/forger/desk`, Authority → `/authority/desk`). Pages use **nfx-ui hooks** only. Pin **nfx-ui 0.36.0**.
 
 Birthday on profile edit is a read-only trigger. It opens the calendar `Dialog` mounted by `ModalProvider` (`showDateTimePickerModal`) and writes `YYYY-MM-DD` on confirm. Do not use the browser date input.
 

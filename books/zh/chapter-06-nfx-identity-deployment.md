@@ -15,7 +15,7 @@
 | Forger | `/forger/desk`、`/forger/profile/overview\|edit\|identity\|security`、`/forger/assets`、`/forger/settings` |
 | Authority | 同上前缀 `/authority/*`，另加 `/authority/directory` |
 
-错树会被 `ScopeRoute` 打回 `profileHome(kind)`（Forger → `/forger/desk`，Authority → `/authority/desk`）。页面只走 **nfx-ui hooks**，禁止直调 repository。`nfx-ui` 钉 **0.33.0**。
+错树会被 `ScopeRoute` 打回 `profileHome(kind)`（Forger → `/forger/desk`，Authority → `/authority/desk`）。页面只走 **nfx-ui hooks**，禁止直调 repository。`nfx-ui` 钉 **0.36.0**。
 
 资料编辑里的生日是只读触发器。点击后由 `ModalProvider` 里的日历 `Dialog` 打开（`showDateTimePickerModal`），确认后写入 `YYYY-MM-DD`。不要用浏览器原生日期框。
 

@@ -67,7 +67,7 @@ npm run dev
 
 本地 Vite 的 base 是 `/console/nfx-documentation/`，插件把 `/console/nfx-documentation/books/*` 映射到仓库 `books/`。改 markdown 刷新即可，不必重建镜像。Docker 从只读卷 `/console/nfx-documentation/books/` 读同一批文件。
 
-`nfx-ui` 钉 **0.33.0**。站点壳是本地 `DocsLayout` + `@radix-ui/themes` + lucide（不要再 import 不存在的 `nfx-ui/layouts`）。
+`nfx-ui` 钉 **0.36.0**。站点壳是本地 `DocsLayout` + `@radix-ui/themes` + lucide（不要再 import 不存在的 `nfx-ui/layouts`）。
 
 ## 改文档
 

@@ -67,7 +67,7 @@ npm run dev
 
 Local Vite base is `/console/nfx-documentation/`. The plugin maps `/console/nfx-documentation/books/*` onto repo `books/`. Edit markdown and refresh; no image rebuild. Docker serves the same files from `/console/nfx-documentation/books/` via the read-only mount.
 
-Pin **nfx-ui 0.33.0**. Chrome is local `DocsLayout` + `@radix-ui/themes` + lucide (do not import missing `nfx-ui/layouts`).
+Pin **nfx-ui 0.36.0**. Chrome is local `DocsLayout` + `@radix-ui/themes` + lucide (do not import missing `nfx-ui/layouts`).
 
 ## Editing the handbook
 

@@ -11,10 +11,10 @@
     "description": "The only HTTP/HTTPS reverse proxy (Traefik) plus cert/DNS console (sites-base). Owns host 80/443. Routes are dynamic/*.project.yml. Dev: sites HTTP 10110, gRPC 10111, console 10112."
   },
   "nfxIdentity": {
-    "description": "Central login and profiles. Forger / Authority route trees. Dev: auth HTTP/gRPC 10030/10031, console 10034. nfx-ui@0.33.0."
+    "description": "Central login and profiles. Forger / Authority route trees. Dev: auth HTTP/gRPC 10030/10031, console 10034. nfx-ui@0.36.0."
   },
   "nfxUi": {
-    "description": "Shared React library: theme, layout, AuthRepository and hooks. Hosts pin 0.33.0 exactly. Do not mix file: and registry."
+    "description": "Shared React library: theme, layout, AuthRepository and hooks. Hosts pin 0.36.0 exactly. Do not mix file: and registry."
   },
   "nfxNews": {
     "description": "Go news microservices (source / news / crawl / report / notify / mcp). No local auth. Dev gRPC 10051–10061, console 10062."

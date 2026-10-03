@@ -88,7 +88,7 @@ IAM 导入导出：`GET /export-iam`、`PUT /import-iam`。
 - **Lifecycle**（桶设置与 `/lifecycle` 同一块）除过期天数外，可写非当前版本过期天数、未完成分片中止天数。配置经 S3 lifecycle 存取；引擎没有执行过期的 worker。
 - **Policy** 详情里的 JSON 可改。保存走已有的 `POST /add-canned-policy`（同名覆盖）。
 
-页面走 hooks（buckets / objects / iam），不要在 page 里 `useQuery` + repository。`nfx-ui` **0.33.0**。
+页面走 hooks（buckets / objects / iam），不要在 page 里 `useQuery` + repository。`nfx-ui` **0.36.0**。
 
 ## 数据库 `storages`
 

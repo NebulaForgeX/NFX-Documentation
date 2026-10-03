@@ -87,7 +87,7 @@ Guest: `/auth/login`, `/auth/signup`. After login the profile tree is still `/us
 - `/filefolder`
 - `/dns`, `/dns/:domain`
 
-Login uses nfx-ui hooks against Identity; cert APIs use this repo’s axios client. Pin **nfx-ui 0.33.0**.
+Login uses nfx-ui hooks against Identity; cert APIs use this repo’s axios client. Pin **nfx-ui 0.36.0**.
 
 ## Database (current schemas)
 

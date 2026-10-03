@@ -14,7 +14,7 @@
     "description": "Connexion et profils. Arbres Forger / Authority. Dev : auth HTTP/gRPC 10030/10031, console 10034."
   },
   "nfxUi": {
-    "description": "Bibliothèque React partagée : thème, disposition, AuthRepository et hooks. Les hôtes épinglent 0.33.0."
+    "description": "Bibliothèque React partagée : thème, disposition, AuthRepository et hooks. Les hôtes épinglent 0.36.0."
   },
   "nfxNews": {
     "description": "Microservices Go (source / news / crawl / report / notify / mcp). Pas d'auth locale."

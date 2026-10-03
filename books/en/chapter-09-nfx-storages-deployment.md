@@ -88,7 +88,7 @@ Form depth (same APIs, no new routes):
 - **Lifecycle** (bucket settings and `/lifecycle` share one panel) adds noncurrent-version expiration days and abort-incomplete-multipart days. The blob is stored through the S3 lifecycle API. There is no worker that applies the rules.
 - **Policies:** the detail JSON is editable. Save uses the existing `POST /add-canned-policy` (same name overwrites).
 
-Pages use hooks (buckets / objects / iam), not `useQuery` + repository in the page file. Pin **nfx-ui 0.33.0**.
+Pages use hooks (buckets / objects / iam), not `useQuery` + repository in the page file. Pin **nfx-ui 0.36.0**.
 
 ## Database `storages`
 

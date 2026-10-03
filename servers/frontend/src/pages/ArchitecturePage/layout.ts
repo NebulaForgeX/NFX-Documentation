@@ -99,6 +99,12 @@ export function neighbours(ids: string[]): Focus {
   );
 }
 
+export function frameFocus(frameId: string): Focus {
+  const members = new Set(containersIn(frameId));
+  const inside = TOPOLOGY_LINKS.filter((link) => members.has(link.source) && members.has(link.target));
+  return focusOf(inside, [frameId, ...members], [frameId]);
+}
+
 export function linkFocus(linkId: string): Focus {
   const overview = OVERVIEW_BY_ID.get(linkId);
   const members = new Set(overview ? overview.members : [linkId]);

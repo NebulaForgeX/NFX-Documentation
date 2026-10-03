@@ -1,43 +1,18 @@
-import type { NodeProps, ReactFlowState } from "@xyflow/react";
-import type { Geom } from "polyclip-ts";
+import type { NodeProps } from "@xyflow/react";
 import type { MouseEvent } from "react";
 import type { FrameNode } from "../layout";
 
-import { memo, useCallback, useContext, useMemo } from "react";
+import { memo, useContext } from "react";
 import { Box, Container, Flex, HoverCard, IconButton, Section, Separator, Text } from "@radix-ui/themes";
-import { Handle, NodeResizer, Position, useReactFlow, useStore } from "@xyflow/react";
+import { Handle, NodeResizer, Position, useReactFlow } from "@xyflow/react";
 import clsx from "clsx";
 import { AnimatedIcon, DockerIcon, FocusIcon } from "nfx-ui/icons";
-import { union } from "polyclip-ts";
 import { useTranslation } from "react-i18next";
 
 import { FocusContext, RelayoutContext, useAreaFocus } from "../focus";
-import { BLOCK_WIDTH, FRAME_DRAG_HANDLE, FRAME_HEADER, FRAME_PAD, reflow } from "../grid";
+import { FRAME_DRAG_HANDLE, minSizeOf, reflow } from "../grid";
 import { containersIn } from "../layout";
 import styles from "./s.module.css";
-
-const rect = (x: number, y: number, width: number, height: number): Geom => [
-  [
-    [x, y],
-    [x + width, y],
-    [x + width, y + height],
-    [x, y + height],
-    [x, y],
-  ],
-];
-
-function hullPath(width: number, children: string): string {
-  const header = rect(0, 0, width, FRAME_HEADER);
-  const cells: Geom[] = children
-    ? children.split(";").map((entry) => {
-        const [x, y, w, h] = entry.split(",").map(Number);
-        return rect(x - FRAME_PAD, y - FRAME_PAD, w + FRAME_PAD * 2, h + FRAME_PAD * 2);
-      })
-    : [];
-  return union(header, ...cells)
-    .map((polygon) => polygon.map((ring) => `M ${ring.map(([x, y]) => `${x} ${y}`).join(" L ")} Z`).join(" "))
-    .join(" ");
-}
 
 function FrameDetail({ data }: { data: FrameNode["data"] }) {
   const { t } = useTranslation("architecture");
@@ -71,50 +46,32 @@ function FrameDetail({ data }: { data: FrameNode["data"] }) {
   );
 }
 
-const ComposeFrame = memo(({ id, data, width = 0, height = 0 }: NodeProps<FrameNode>) => {
+const ComposeFrame = memo(({ id, data }: NodeProps<FrameNode>) => {
   const { t } = useTranslation("architecture");
   const { hoverNode, focused, focusFrame } = useContext(FocusContext);
   const relayout = useContext(RelayoutContext);
   const { setNodes } = useReactFlow();
   const level = useAreaFocus(id);
-
-  const children = useStore(
-    useCallback(
-      (state: ReactFlowState) => {
-        const rows: string[] = [];
-        state.nodeLookup.forEach((node) => {
-          if (node.parentId !== id) return;
-          const w = node.measured.width ?? node.width ?? 0;
-          const h = node.measured.height ?? node.height ?? 0;
-          rows.push(`${node.position.x},${node.position.y},${w},${h}`);
-        });
-        return rows.join(";");
-      },
-      [id],
-    ),
-  );
-  const path = useMemo(() => hullPath(width, children), [width, children]);
+  const min = minSizeOf(id);
 
   return (
-    <Box
+    <Flex
+      direction="column"
       data-group
       data-level={level}
       className={clsx(styles.frame, data.parent && styles.nested, !data.compose && styles.loose)}
     >
       <NodeResizer
-        minWidth={BLOCK_WIDTH + FRAME_PAD * 2}
-        minHeight={FRAME_HEADER}
+        minWidth={min.width}
+        minHeight={min.height}
         lineClassName={styles.resizeLine}
         handleClassName={styles.resizeHandle}
         onResizeEnd={(_, params) => {
-          setNodes((nodes) => reflow(nodes, id, params.width));
+          setNodes((nodes) => reflow(nodes, id, { width: params.width, height: params.height }));
           relayout();
         }}
       />
       <Handle type="target" position={Position.Left} className={styles.handle} />
-      <svg className={styles.hull} width={width} height={height} aria-hidden>
-        <path d={path} className={styles.area} />
-      </svg>
       <HoverCard.Root openDelay={200} closeDelay={80}>
         <HoverCard.Trigger>
           <Box
@@ -169,8 +126,9 @@ const ComposeFrame = memo(({ id, data, width = 0, height = 0 }: NodeProps<FrameN
           <FrameDetail data={data} />
         </HoverCard.Content>
       </HoverCard.Root>
+      <Box flexGrow="1" className={styles.body} />
       <Handle type="source" position={Position.Right} className={styles.handle} />
-    </Box>
+    </Flex>
   );
 });
 

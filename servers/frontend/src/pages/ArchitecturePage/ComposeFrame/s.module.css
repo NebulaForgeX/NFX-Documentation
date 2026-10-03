@@ -2,47 +2,54 @@
   position: relative;
   width: 100%;
   height: 100%;
-  transition: opacity 200ms ease;
-}
-
-.hull {
-  position: absolute;
-  inset: 0;
-  overflow: visible;
-  pointer-events: none;
-}
-
-.area {
-  fill: var(--gray-a2);
-  stroke: var(--docs-bezel);
-  stroke-width: 1;
-  stroke-linejoin: miter;
+  background: var(--gray-a2);
+  box-shadow:
+    inset 0 0 0 1px var(--docs-bezel),
+    inset 0 1px 0 var(--docs-rim);
   transition:
-    fill 200ms ease,
-    stroke 200ms ease;
+    box-shadow 200ms ease,
+    opacity 200ms ease;
 }
 
-.nested .area {
-  fill: var(--color-background);
-  stroke: var(--gray-a6);
+.nested {
+  background: var(--color-background);
+  box-shadow: inset 0 0 0 1px var(--gray-a6);
 }
 
-.loose .area {
-  fill: var(--gray-a1);
-  stroke: var(--gray-a7);
-  stroke-dasharray: 6 5;
+.loose {
+  background: transparent;
+  box-shadow: none;
+  outline: 1px dashed var(--gray-a7);
+  outline-offset: -1px;
 }
 
-.frame[data-level="hot"] .area {
-  fill: var(--accent-a2);
-  stroke: var(--accent-8);
+.body {
+  min-height: 0;
+  background: var(--gray-a2);
+  box-shadow: inset 0 1px 0 var(--gray-a4);
+  pointer-events: none;
+  transition: background-color 200ms ease;
 }
 
-.frame[data-level="area"] .area {
-  fill: var(--accent-a3);
-  stroke: var(--accent-8);
-  stroke-width: 2;
-  stroke-dasharray: none;
+.nested .body {
+  background: var(--gray-a1);
+}
+
+.frame[data-level="hot"] {
+  box-shadow:
+    inset 0 0 0 1px var(--accent-8),
+    inset 0 1px 0 var(--accent-a7);
+}
+
+.frame[data-level="area"] {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 2px var(--accent-8),
+    0 0 0 4px var(--accent-a3);
+}
+
+.frame[data-level="area"] .body {
+  background: var(--accent-a3);
 }
 
 .frame[data-level="dim"] {
@@ -51,18 +58,15 @@
 
 .header {
   position: relative;
+  flex-shrink: 0;
   height: 72px;
-  border-bottom: 1px solid var(--gray-a4);
+  background: linear-gradient(180deg, var(--accent-a2), transparent);
   pointer-events: all;
   cursor: grab;
 }
 
 .header:active {
   cursor: grabbing;
-}
-
-.frame[data-level="area"] .header {
-  border-bottom-color: var(--accent-a6);
 }
 
 .focus {

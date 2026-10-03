@@ -26,7 +26,7 @@ import ArchBlock from "./ArchBlock";
 import ComposeFrame from "./ComposeFrame";
 import { FocusContext, RelayoutContext } from "./focus";
 import { FLOW_NODES, focusEdges, LINE_EDGES } from "./grid";
-import { CONTAINER_BY_ID, layerFocus, LayerKey, LineLevel, linkFocus, neighbours } from "./layout";
+import { CONTAINER_BY_ID, frameFocus, layerFocus, LayerKey, LineLevel, linkFocus, neighbours } from "./layout";
 import PortLink from "./PortLink";
 import RangeGrid from "./RangeGrid";
 import ServiceList from "./ServiceList";
@@ -73,24 +73,39 @@ function Topology({
   onPin: (id: string | null) => void;
   onRelayout: () => void;
 }) {
-  const { fitView } = useReactFlow();
-  const shownLines = useRef(lines);
-  const shownFocus = useRef(focused);
+  const { fitBounds, getInternalNode, getNodes, getNodesBounds } = useReactFlow();
+
+  const zoomTo = useCallback(
+    (id: string | null) => {
+      const node = id ? getInternalNode(id) : undefined;
+      const bounds = node
+        ? {
+            ...node.internals.positionAbsolute,
+            width: node.measured.width ?? node.width ?? 0,
+            height: node.measured.height ?? node.height ?? 0,
+          }
+        : getNodesBounds(getNodes());
+      void fitBounds(bounds, { duration: 600, padding: node ? 0.12 : FIT_PADDING });
+    },
+    [fitBounds, getInternalNode, getNodes, getNodesBounds],
+  );
+  const edgesShown = useRef(false);
+  const focusShown = useRef(focused);
 
   useEffect(() => {
-    if (shownLines.current === lines && shownFocus.current === focused) return;
-    const refocus = shownFocus.current !== focused;
-    shownLines.current = lines;
-    shownFocus.current = focused;
-    const frame = requestAnimationFrame(() => {
-      onRelayout();
-      if (!refocus) return;
-      void fitView(
-        focused ? { nodes: [{ id: focused }], duration: 600, padding: 0.15 } : { duration: 600, padding: FIT_PADDING },
-      );
-    });
+    if (!edgesShown.current) {
+      edgesShown.current = true;
+      return;
+    }
+    const frame = requestAnimationFrame(onRelayout);
     return () => cancelAnimationFrame(frame);
-  }, [lines, focused, fitView, onRelayout]);
+  }, [lines, focused, onRelayout]);
+
+  useEffect(() => {
+    if (focusShown.current === focused) return;
+    focusShown.current = focused;
+    zoomTo(focused);
+  }, [focused, zoomTo]);
 
   return (
     <ReactFlow
@@ -106,7 +121,7 @@ function Topology({
       onNodeDoubleClick={(_, node) => {
         if (node.type === "tier") return;
         const target = node.type === "block" ? (CONTAINER_BY_ID.get(node.id)?.group ?? node.id) : node.id;
-        void fitView({ nodes: [{ id: target }], duration: 500, padding: 0.12 });
+        zoomTo(target);
       }}
       onNodeDragStop={onRelayout}
       onPaneClick={() => onPin(null)}
@@ -160,7 +175,7 @@ const ArchitecturePage = memo(() => {
     if (hover?.kind === "link") return linkFocus(hover.id);
     if (hover?.kind === "nodes") return neighbours(hover.ids);
     if (pinned) return neighbours([pinned]);
-    if (focused) return neighbours([focused]);
+    if (focused) return frameFocus(focused);
     if (layer !== LayerKey.ALL) return layerFocus(layer);
     return null;
   }, [hover, pinned, focused, layer]);

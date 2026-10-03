@@ -2,6 +2,8 @@ import type { Node } from "@xyflow/react";
 import type { OverviewLink, TopologyLink } from "@/constants";
 import type { BlockNode, FlowNode, FrameNode, LineLevelEnum, LinkEdge, TierNode } from "./layout";
 
+import { Graph, layout } from "@dagrejs/dagre";
+
 import { OVERVIEW_LINKS, TOPOLOGY_LINKS } from "@/constants";
 
 import {
@@ -17,13 +19,14 @@ import {
 export const BLOCK_WIDTH = 216;
 export const BLOCK_HEIGHT = 88;
 export const FRAME_HEADER = 72;
-export const FRAME_PAD = 20;
-const CELL_GAP = 20;
-const SUB_FRAME_GAP = 24;
-const FRAME_GAP = 48;
-const COLUMN_GAP = 160;
+export const FRAME_PAD = 32;
+const RANK_GAP = 120;
+const NODE_GAP = 56;
+const SUB_FRAME_GAP = 64;
+const FRAME_GAP = 72;
+const COLUMN_GAP = 200;
 const TIER_GAP = 96;
-const STACK_ROW = 1600;
+const STACK_ROW = 2200;
 export const FRAME_DRAG_HANDLE = "nfx-frame-drag";
 
 const COLUMNS = [
@@ -45,38 +48,89 @@ type Packed = Size & { children: Placement[] };
 
 const BLOCK_SIZE: Size = { width: BLOCK_WIDTH, height: BLOCK_HEIGHT };
 
-export const childIdsOf = (frameId: string) => [
-  ...subFramesOf(frameId).map((group) => group.id),
-  ...directContainersOf(frameId).map((container) => container.id),
-];
-
-function defaultLimit(frameId: string): number {
-  if (subFramesOf(frameId).length) return STACK_ROW;
-  const count = directContainersOf(frameId).length;
-  const columns = Math.min(count, Math.ceil(Math.sqrt(count * 1.5)));
-  return columns * (BLOCK_WIDTH + CELL_GAP) - CELL_GAP;
-}
+const frameSize = (inner: Size): Size => ({
+  width: inner.width + FRAME_PAD * 2,
+  height: FRAME_HEADER + inner.height + FRAME_PAD * 2,
+});
 
 function shelf(frameId: string, limit: number, sizeOf: (id: string) => Size): Packed {
-  const gap = subFramesOf(frameId).length ? SUB_FRAME_GAP : CELL_GAP;
   const children: Placement[] = [];
   let x = 0;
   let y = 0;
   let row = 0;
   let width = 0;
-  childIdsOf(frameId).forEach((id) => {
+  subFramesOf(frameId).forEach(({ id }) => {
     const size = sizeOf(id);
     if (x > 0 && x + size.width > limit) {
-      y += row + gap;
+      y += row + SUB_FRAME_GAP;
       x = 0;
       row = 0;
     }
-    children.push({ id, ...size, x: FRAME_PAD + x, y: FRAME_HEADER + y });
+    children.push({ id, ...size, x: FRAME_PAD + x, y: FRAME_HEADER + FRAME_PAD + y });
     width = Math.max(width, x + size.width);
     row = Math.max(row, size.height);
-    x += size.width + gap;
+    x += size.width + SUB_FRAME_GAP;
   });
-  return { width: width + FRAME_PAD * 2, height: FRAME_HEADER + y + row + FRAME_PAD, children };
+  return { ...frameSize({ width, height: y + row }), children };
+}
+
+type Layered = Size & { lefts: Map<string, { x: number; y: number }> };
+
+const LAYERED = new Map<string, Layered>();
+
+function layeredOf(frameId: string): Layered {
+  const cached = LAYERED.get(frameId);
+  if (cached) return cached;
+  const ids = directContainersOf(frameId).map((container) => container.id);
+  const members = new Set(ids);
+  const graph = new Graph();
+  graph.setGraph({ rankdir: "LR", nodesep: NODE_GAP, ranksep: RANK_GAP, marginx: 0, marginy: 0 });
+  graph.setDefaultEdgeLabel(() => ({}));
+  ids.forEach((id) => graph.setNode(id, { width: BLOCK_WIDTH, height: BLOCK_HEIGHT }));
+  TOPOLOGY_LINKS.forEach((link) => {
+    if (members.has(link.source) && members.has(link.target)) graph.setEdge(link.source, link.target);
+  });
+  layout(graph);
+  const corners = ids.map((id) => {
+    const { x, y } = graph.node(id);
+    return { id, x: x - BLOCK_WIDTH / 2, y: y - BLOCK_HEIGHT / 2 };
+  });
+  const minX = Math.min(...corners.map((corner) => corner.x));
+  const minY = Math.min(...corners.map((corner) => corner.y));
+  const lefts = new Map(corners.map((corner) => [corner.id, { x: corner.x - minX, y: corner.y - minY }]));
+  const result = {
+    lefts,
+    width: Math.max(...corners.map((corner) => corner.x - minX)) + BLOCK_WIDTH,
+    height: Math.max(...corners.map((corner) => corner.y - minY)) + BLOCK_HEIGHT,
+  };
+  LAYERED.set(frameId, result);
+  return result;
+}
+
+const spread = (offset: number, content: number, room: number, block: number) =>
+  content > block ? (offset * (room - block)) / (content - block) : (room - block) / 2;
+
+function placeContainers(frameId: string, target: Size | null): Packed {
+  const base = layeredOf(frameId);
+  const width = Math.max(base.width, (target?.width ?? 0) - FRAME_PAD * 2);
+  const height = Math.max(base.height, (target?.height ?? 0) - FRAME_HEADER - FRAME_PAD * 2);
+  const children = [...base.lefts.entries()].map<Placement>(([id, left]) => ({
+    id,
+    ...BLOCK_SIZE,
+    x: FRAME_PAD + spread(left.x, base.width, width, BLOCK_WIDTH),
+    y: FRAME_HEADER + FRAME_PAD + spread(left.y, base.height, height, BLOCK_HEIGHT),
+  }));
+  return { ...frameSize({ width, height }), children };
+}
+
+function packFrame(frameId: string, target: Size | null, sizeOf: (id: string) => Size): Packed {
+  if (!subFramesOf(frameId).length) return placeContainers(frameId, target);
+  const packed = shelf(frameId, target ? target.width - FRAME_PAD * 2 : STACK_ROW, sizeOf);
+  return {
+    ...packed,
+    width: Math.max(packed.width, target?.width ?? 0),
+    height: Math.max(packed.height, target?.height ?? 0),
+  };
 }
 
 const initial = new Map<string, Packed>();
@@ -84,9 +138,15 @@ const initial = new Map<string, Packed>();
 function packed(frameId: string): Packed {
   const cached = initial.get(frameId);
   if (cached) return cached;
-  const result = shelf(frameId, defaultLimit(frameId), (id) => (isFrame(id) ? packed(id) : BLOCK_SIZE));
+  const result = packFrame(frameId, null, (id) => (isFrame(id) ? packed(id) : BLOCK_SIZE));
   initial.set(frameId, result);
   return result;
+}
+
+export function minSizeOf(frameId: string): Size {
+  const subFrames = subFramesOf(frameId);
+  if (!subFrames.length) return packed(frameId);
+  return frameSize({ width: Math.max(...subFrames.map(({ id }) => packed(id).width)), height: 0 });
 }
 
 const unitSize = (id: string): Size => (isFrame(id) ? packed(id) : BLOCK_SIZE);
@@ -190,7 +250,7 @@ export function focusEdges(frameId: string): LinkEdge[] {
   const cached = FOCUS_EDGES.get(frameId);
   if (cached) return cached;
   const members = new Set(containersIn(frameId));
-  const edges = TOPOLOGY_LINKS.filter((link) => members.has(link.source) || members.has(link.target)).map(toEdge);
+  const edges = TOPOLOGY_LINKS.filter((link) => members.has(link.source) && members.has(link.target)).map(toEdge);
   FOCUS_EDGES.set(frameId, edges);
   return edges;
 }
@@ -200,17 +260,17 @@ const sizeOfNode = (node: Node): Size => ({
   height: node.height ?? node.measured?.height ?? 0,
 });
 
-export function reflow(nodes: Node[], frameId: string, width: number): Node[] {
+export function reflow(nodes: Node[], frameId: string, target: Size): Node[] {
   const sizes = new Map(nodes.map((node) => [node.id, sizeOfNode(node)]));
   const positions = new Map<string, { x: number; y: number }>();
   let current: string | undefined = frameId;
-  let frameWidth = width;
+  let room = target;
   while (current) {
-    const layout = shelf(current, frameWidth - FRAME_PAD * 2, (id) => sizes.get(id) ?? BLOCK_SIZE);
-    layout.children.forEach((child) => positions.set(child.id, { x: child.x, y: child.y }));
-    sizes.set(current, { width: layout.width, height: layout.height });
+    const packed = packFrame(current, room, (id) => sizes.get(id) ?? BLOCK_SIZE);
+    packed.children.forEach((child) => positions.set(child.id, { x: child.x, y: child.y }));
+    sizes.set(current, { width: packed.width, height: packed.height });
     const parent: string | undefined = GROUP_BY_ID.get(current)?.parent;
-    if (parent) frameWidth = sizes.get(parent)?.width ?? frameWidth;
+    if (parent) room = { width: sizes.get(parent)?.width ?? 0, height: 0 };
     current = parent;
   }
   const touched = new Set([...positions.keys(), frameId, ...ancestorsOf(frameId)]);

@@ -1,0 +1,50 @@
+.block {
+  overflow: hidden;
+  border-radius: var(--radius-3);
+  background: var(--gray-a2);
+  box-shadow:
+    inset 0 0 0 1px var(--docs-bezel),
+    inset 0 1px 0 var(--docs-rim);
+}
+
+.bar {
+  border-bottom: 1px solid var(--gray-a4);
+  background: var(--gray-a2);
+}
+
+.led {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--accent-9);
+  box-shadow: 0 0 8px var(--accent-9);
+}
+
+.lang {
+  color: var(--gray-11);
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.copy:global(.rt-BaseButton) {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+}
+
+.pre {
+  margin: 0;
+  overflow-x: auto;
+  padding: var(--space-4);
+  color: var(--gray-12);
+  font-family: var(--docs-font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  tab-size: 2;
+  scrollbar-width: thin;
+}
+
+.pre code {
+  font: inherit;
+}

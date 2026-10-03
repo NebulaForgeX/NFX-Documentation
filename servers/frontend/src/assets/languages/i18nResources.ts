@@ -1,11 +1,14 @@
 import en from "./en";
+import fr from "./fr";
 import zh from "./zh";
 
 const NAME_SPACES_MAP = {
-  common: "common",
+  language: "language",
+  home: "home",
+  chapter: "chapter",
+  architecture: "architecture",
   repo: "repo",
   about: "about",
-  architecture: "architecture",
   notFound: "notFound",
 } as const;
 
@@ -14,6 +17,7 @@ export function getBuiltinI18nBundles() {
     RESOURCES: {
       en: { ...en },
       zh: { ...zh },
+      fr: { ...fr },
     },
     NAME_SPACES_MAP: { ...NAME_SPACES_MAP },
     NAME_SPACES: Object.values(NAME_SPACES_MAP),

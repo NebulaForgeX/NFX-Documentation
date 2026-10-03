@@ -1,13 +1,44 @@
-.page {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-}
-
 .block {
-  border-top: 1px solid var(--gray-a6);
+  height: 100%;
 }
 
-.flush {
+.prose {
+  line-height: 1.7;
+}
+
+.prose a {
+  color: var(--accent-11);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-a6);
+  text-underline-offset: 3px;
+}
+
+.prose code {
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-1);
+  color: var(--accent-11);
+  background: var(--accent-a3);
+  font-family: var(--docs-font-mono);
+  font-size: 0.88em;
+}
+
+.prose strong {
+  color: var(--gray-12);
+}
+
+.order {
   margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  min-width: 0;
+}
+
+.no {
+  color: var(--accent-11);
+  font-family: var(--docs-font-mono);
+  font-weight: 500;
+  line-height: 1.9;
 }

@@ -1,0 +1,117 @@
+.list {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rail {
+  position: absolute;
+  left: 15px;
+  top: 22px;
+  bottom: 22px;
+  width: 2px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--gray-a4);
+}
+
+.railFill {
+  position: absolute;
+  inset: 0;
+  transform-origin: top center;
+  background: linear-gradient(180deg, var(--accent-9), var(--accent-a6));
+}
+
+.railScan {
+  position: absolute;
+  left: -1px;
+  top: -24px;
+  width: 4px;
+  height: 48px;
+  opacity: 0;
+  border-radius: 4px;
+  background: linear-gradient(180deg, transparent, var(--accent-11), transparent);
+  box-shadow: 0 0 12px var(--accent-9);
+}
+
+.step {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius-3);
+}
+
+.step:focus-visible {
+  outline: 2px solid var(--accent-8);
+  outline-offset: 2px;
+}
+
+.stepFace {
+  border-radius: var(--radius-3);
+  transition: background-color 160ms ease;
+}
+
+.step:hover .stepFace {
+  background: var(--accent-a2);
+}
+
+.dot {
+  position: relative;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--color-panel-solid);
+  box-shadow:
+    0 0 0 1px var(--accent-a7),
+    0 0 0 4px var(--color-panel-solid);
+}
+
+.core {
+  position: absolute;
+  inset: 5px;
+  border-radius: 999px;
+  background: var(--accent-9);
+  box-shadow: 0 0 10px var(--accent-9);
+}
+
+.step:hover .dot {
+  box-shadow:
+    0 0 0 1px var(--accent-9),
+    0 0 0 4px var(--color-panel-solid),
+    0 0 16px 4px var(--accent-a6);
+}
+
+.no {
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: var(--accent-11);
+  font-family: var(--docs-font-mono);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  color: var(--gray-12);
+}
+
+.arrow {
+  flex-shrink: 0;
+  color: var(--gray-9);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.step:hover .arrow,
+.step:focus-visible .arrow {
+  color: var(--accent-11);
+  opacity: 1;
+  transform: none;
+}

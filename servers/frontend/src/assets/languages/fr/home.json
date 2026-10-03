@@ -1,0 +1,29 @@
+{
+  "eyebrow": "NEBULAFORGEX · MANUEL DE DÉPLOIEMENT",
+  "title": "Du routeur à chaque stack Compose, dans l'ordre.",
+  "lead": "Le manuel de déploiement et de configuration NebulaForgeX. Réseau et NAS d'abord, puis Stack, Edge, Identity, puis chaque produit. Chaque chapitre liste les ports, les routes et les fichiers à modifier.",
+  "start": "Commencer au chapitre 01",
+  "architecture": "Ouvrir la carte d'architecture",
+  "pipeline": {
+    "title": "Pipeline de déploiement",
+    "hint": "Dix chapitres dans l'ordre des dépendances. Choisissez un nœud pour ouvrir le chapitre."
+  },
+  "stats": {
+    "chapters": "Chapitres",
+    "chaptersHint": "中文 / English",
+    "blocks": "Blocs de ports",
+    "blocksHint": "10000–10129",
+    "compose": "Compose",
+    "composeHint": "Un docker-compose par bloc"
+  },
+  "readout": {
+    "title": "Blocs de ports hôte",
+    "lan": "LAN NAS1",
+    "cells": {
+      "gap": "Plage libre",
+      "static": "Sites statiques"
+    }
+  },
+  "loading": "Chargement...",
+  "loadError": "Impossible de charger l'index. Vérifiez que books/ est servi."
+}

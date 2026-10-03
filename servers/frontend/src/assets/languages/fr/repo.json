@@ -1,0 +1,28 @@
+{
+  "eyebrow": "DÉPÔTS · {{count}}",
+  "open": "Ouvrir sur GitHub",
+  "noPorts": "Paquet npm, aucun port hôte",
+  "title": "Dépôts",
+  "description": "Dépôts produit NebulaForgeX. L'entrée HTTP est NFX-Edge ; le plan de données est NFX-Stack ; la connexion est NFX-Identity.",
+  "nfxStack": {
+    "description": "Infrastructure : MySQL, PostgreSQL, MongoDB, Redis, Kafka, MinIO, Centrifugo, OTEL, OpenSearch. Ports LAN 10000–10024."
+  },
+  "nfxEdge": {
+    "description": "Seul reverse proxy HTTP/HTTPS (Traefik) et console certificats/DNS. Ports hôte 80/443. Routes dans dynamic/*.project.yml."
+  },
+  "nfxIdentity": {
+    "description": "Connexion et profils. Arbres Forger / Authority. Dev : auth HTTP/gRPC 10030/10031, console 10034."
+  },
+  "nfxUi": {
+    "description": "Bibliothèque React partagée : thème, disposition, AuthRepository et hooks. Les hôtes épinglent 0.33.0."
+  },
+  "nfxNews": {
+    "description": "Microservices Go (source / news / crawl / report / notify / mcp). Pas d'auth locale."
+  },
+  "nfxStorages": {
+    "description": "Stockage objet S3 en Go sur les volumes NAS. Identity émet des clés temporaires."
+  },
+  "nfxDocumentation": {
+    "description": "Ce manuel. Le texte canonique est dans books/. Chemin navigateur /console/nfx-documentation/."
+  }
+}

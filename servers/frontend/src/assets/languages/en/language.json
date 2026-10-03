@@ -1,0 +1,44 @@
+{
+  "languageSwitcher": {
+    "english": "English",
+    "chinese": "中文",
+    "french": "Français"
+  },
+  "header": {
+    "preferences": "Preferences",
+    "theme": "Theme",
+    "accentColor": "Accent color",
+    "grayColor": "Gray color",
+    "appearance": "Appearance",
+    "appearanceMode": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "panelBackground": "Panel background",
+    "panelBackgroundMode": {
+      "solid": "Solid",
+      "translucent": "Translucent"
+    },
+    "radius": "Platform",
+    "scaling": "Scaling",
+    "language": "Language"
+  },
+  "sidebar": {
+    "navigate": "Navigate",
+    "reference": "Reference",
+    "home": "Overview",
+    "architecture": "Architecture",
+    "chapters": "Chapters",
+    "repo": "Repositories",
+    "about": "About",
+    "chapterCrumb": "Chapter {{n}}",
+    "online": "Online",
+    "hostPort": "Host port",
+    "basePath": "Path",
+    "expand": "Expand sidebar",
+    "collapse": "Collapse sidebar",
+    "openMenu": "Open menu",
+    "handbook": "Deploy handbook"
+  }
+}

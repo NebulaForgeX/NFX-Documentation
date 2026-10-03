@@ -1,0 +1,10 @@
+.mono {
+  color: var(--accent-11);
+  font-family: var(--docs-font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.muted {
+  color: var(--gray-10);
+}

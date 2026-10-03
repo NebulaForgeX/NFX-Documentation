@@ -1,102 +1,108 @@
-.page {
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-}
-
 .hud {
-  border-bottom: 1px solid var(--gray-a6);
-  background: color-mix(in srgb, var(--color-panel-solid) 86%, transparent);
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--docs-bezel);
+  background: linear-gradient(180deg, var(--accent-a2), transparent);
 }
 
 .title {
-  letter-spacing: -0.04em;
-  line-height: 1;
-  text-wrap: balance;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
 }
 
 .lead {
-  max-width: 46rem;
-  line-height: 1.45;
+  max-width: 70ch;
+  line-height: 1.5;
+}
+
+.readout {
+  color: var(--gray-10);
+  font-family: var(--docs-font-mono);
+  letter-spacing: 0.04em;
+}
+
+.readout :global(.rt-Text) {
+  font: inherit;
+  font-size: 11px;
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--accent-9);
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
 }
 
 .stage {
   position: relative;
   flex: 1;
-  min-height: 0;
-  background: var(--color-background);
+  min-width: 0;
+  min-height: 320px;
 }
 
-.stage :global(.react-flow) {
+.side {
+  width: 320px;
+  flex-shrink: 0;
+  min-height: 0;
+}
+
+.flow {
+  --xy-background-color: transparent;
+  --xy-background-pattern-color: var(--gray-a5);
+  --xy-minimap-background-color: var(--color-panel-solid);
+  --xy-minimap-mask-background-color: var(--gray-a4);
+  --xy-minimap-mask-stroke-color: var(--accent-a7);
+  --xy-minimap-node-background-color: var(--accent-a6);
+  --xy-controls-button-background-color: var(--color-panel-solid);
+  --xy-controls-button-background-color-hover: var(--accent-a3);
+  --xy-controls-button-color: var(--gray-11);
+  --xy-controls-button-color-hover: var(--accent-11);
+  --xy-controls-button-border-color: var(--gray-a4);
+  --xy-attribution-background-color: transparent;
   width: 100%;
   height: 100%;
 }
 
-.stage :global(.react-flow__edge-path) {
-  stroke: var(--accent-9);
+/* nfx-ui's reset gives svg max-width: 100%, which collapses React Flow's zero-width edge layer. */
+.flow :global(.react-flow__edges svg),
+.flow :global(.react-flow__background),
+.flow :global(.react-flow__minimap svg) {
+  max-width: none;
 }
 
-.stage :global(.react-flow__edge-text) {
-  fill: var(--gray-12);
+.flow :global(.react-flow__node) {
+  cursor: default;
 }
 
-.stage :global(.react-flow__attribution) {
-  background: transparent;
-}
-
-.inspector {
-  position: absolute;
-  left: var(--space-4);
-  bottom: var(--space-4);
-  z-index: 4;
-  width: min(22rem, calc(100% - var(--space-8)));
-  max-height: 42%;
-  overflow: auto;
-  background: color-mix(in srgb, var(--color-panel-solid) 92%, transparent);
-  border: 1px solid var(--gray-a6);
-  border-radius: var(--radius-4);
-  box-shadow: 0 16px 40px color-mix(in srgb, var(--gray-a8) 55%, transparent);
-}
-
-.port {
-  font-variant-numeric: tabular-nums;
-}
-
-.node {
-  width: 280px;
-  background: var(--color-panel-solid);
-  border: 1px solid var(--gray-a6);
+.flow :global(.react-flow__controls),
+.flow :global(.react-flow__minimap) {
+  overflow: hidden;
   border-radius: var(--radius-3);
+  box-shadow:
+    0 0 0 1px var(--docs-bezel),
+    var(--shadow-3);
 }
 
-.nodeSelected {
-  border-color: var(--accent-9);
-  box-shadow: 0 0 0 1px var(--accent-a6);
+.flow :global(.react-flow__attribution a) {
+  color: var(--gray-9);
 }
 
-.kind {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-1);
-  background: var(--gray-8);
+@media (prefers-reduced-motion: no-preference) {
+  .stage[data-armed="false"] :global(.react-flow__node),
+  .stage[data-armed="false"] :global(.react-flow__edges),
+  .stage[data-armed="false"] :global(.react-flow__edgelabel-renderer) {
+    visibility: hidden;
+  }
 }
 
-.kindIngress {
-  background: var(--accent-9);
-}
-
-.kindHttp {
-  background: var(--blue-9);
-}
-
-.kindGrpc {
-  background: var(--orange-9);
-}
-
-.kindConsole {
-  background: var(--green-9);
-}
-
-.kindData {
-  background: var(--purple-9);
+@media (max-width: 1023px) {
+  .side {
+    width: 100%;
+    max-height: 40%;
+  }
 }

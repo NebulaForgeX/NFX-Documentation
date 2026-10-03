@@ -1,0 +1,54 @@
+.toc {
+  position: sticky;
+  top: 0;
+  max-height: calc(100dvh - 160px);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.track {
+  position: relative;
+  width: 2px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--gray-a4);
+}
+
+.progress {
+  position: absolute;
+  inset: 0;
+  transform: scaleY(0);
+  transform-origin: top center;
+  background: linear-gradient(180deg, var(--accent-9), var(--accent-11));
+  box-shadow: 0 0 8px var(--accent-9);
+}
+
+.link {
+  display: block;
+  color: var(--gray-10);
+  line-height: 1.45;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.link:hover {
+  color: var(--gray-12);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--accent-8);
+  outline-offset: 2px;
+  border-radius: var(--radius-1);
+}
+
+.nested {
+  font-size: 0.95em;
+  opacity: 0.85;
+  text-indent: 1em;
+}
+
+.active {
+  color: var(--accent-11);
+  font-weight: 500;
+}

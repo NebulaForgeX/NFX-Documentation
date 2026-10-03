@@ -1,0 +1,44 @@
+{
+  "languageSwitcher": {
+    "english": "English",
+    "chinese": "中文",
+    "french": "Français"
+  },
+  "header": {
+    "preferences": "偏好设置",
+    "theme": "主题",
+    "accentColor": "强调色",
+    "grayColor": "灰色调",
+    "appearance": "外观",
+    "appearanceMode": {
+      "light": "浅色",
+      "dark": "深色",
+      "system": "跟随系统"
+    },
+    "panelBackground": "面板背景",
+    "panelBackgroundMode": {
+      "solid": "实心",
+      "translucent": "半透明"
+    },
+    "radius": "平台",
+    "scaling": "缩放",
+    "language": "语言"
+  },
+  "sidebar": {
+    "navigate": "导航",
+    "reference": "参考",
+    "home": "总览",
+    "architecture": "架构",
+    "chapters": "章节",
+    "repo": "仓库",
+    "about": "关于",
+    "chapterCrumb": "第 {{n}} 章",
+    "online": "在线",
+    "hostPort": "主机端口",
+    "basePath": "路径",
+    "expand": "展开侧栏",
+    "collapse": "收起侧栏",
+    "openMenu": "打开菜单",
+    "handbook": "部署手册"
+  }
+}

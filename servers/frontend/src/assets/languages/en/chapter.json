@@ -1,0 +1,15 @@
+{
+  "eyebrow": "CHAPTER {{n}}",
+  "back": "Back to overview",
+  "loading": "Loading...",
+  "loadError": "Could not load the chapter. Confirm books/ is being served.",
+  "toc": "On this page",
+  "previous": "Previous",
+  "next": "Next",
+  "readTime": "~{{minutes}} min read",
+  "sections": "{{count}} sections",
+  "code": "code",
+  "copy": "Copy",
+  "copied": "Copied",
+  "sourceNote": "Source: books/{{locale}}/{{slug}}.md"
+}

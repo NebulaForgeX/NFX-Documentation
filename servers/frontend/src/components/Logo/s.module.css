@@ -1,0 +1,37 @@
+.logo:global(.rt-BaseButton) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.mark {
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border-radius: var(--radius-3);
+  border: 1px solid var(--accent-a6);
+  background: var(--color-panel-solid);
+  box-shadow:
+    0 0 0 3px var(--accent-a2),
+    0 0 18px var(--accent-a4);
+}
+
+.subtitle {
+  color: var(--accent-11);
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

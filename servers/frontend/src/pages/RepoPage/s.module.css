@@ -1,45 +1,63 @@
-.page {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-}
-
-.lead {
-  max-width: 40rem;
-  line-height: 1.6;
-}
-
 .card {
-  display: block;
-  height: 100%;
   color: inherit;
   text-decoration: none;
-}
-
-.face {
-  height: 100%;
-  background: var(--color-panel-solid);
-  border: 1px solid var(--gray-a6);
   border-radius: var(--radius-4);
-  transition: border-color 180ms ease, transform 180ms ease;
-}
-
-.card:hover .face {
-  border-color: var(--accent-8);
-  transform: translateY(-2px);
 }
 
 .card:focus-visible {
   outline: 2px solid var(--accent-8);
-  outline-offset: 3px;
+  outline-offset: 8px;
 }
 
-.card:active .face {
-  transform: translateY(0);
+.panel {
+  flex: 1;
+}
+
+.panel > :global(.rt-Container),
+.panel > :global(.rt-Container) > :global(.rt-ContainerInner) {
+  height: 100%;
+}
+
+@media (min-width: 1024px) {
+  .wide {
+    grid-column: span 4;
+  }
+
+  .narrow {
+    grid-column: span 2;
+  }
+
+  .third {
+    grid-column: span 2;
+  }
+
+  .half {
+    grid-column: span 3;
+  }
+}
+
+@media (min-width: 520px) and (max-width: 1023px) {
+  .wide {
+    grid-column: span 2;
+  }
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-3);
+  color: var(--accent-11);
+  background: var(--accent-a3);
+  box-shadow:
+    inset 0 0 0 1px var(--accent-a6),
+    0 0 18px -4px var(--accent-a6);
 }
 
 .stack {
-  letter-spacing: 0.08em;
+  color: var(--gray-10);
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -47,12 +65,29 @@
   letter-spacing: -0.03em;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .face {
-    transition: border-color 180ms ease;
-  }
+.card:hover .name {
+  color: var(--accent-11);
+}
 
-  .card:hover .face {
-    transform: none;
-  }
+.description {
+  line-height: 1.6;
+}
+
+.mono {
+  color: var(--accent-11);
+  font-family: var(--docs-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.open {
+  color: var(--gray-10);
+  font-family: var(--docs-font-mono);
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.card:hover .open,
+.card:focus-visible .open {
+  color: var(--accent-11);
+  opacity: 1;
 }

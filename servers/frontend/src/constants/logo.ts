@@ -11,7 +11,8 @@ export const LOGO_DARK_ICO = publicUrl("logo.ico");
 
 export const getLogoSrc = (appearance: RadixAppearance): string => (appearance === "dark" ? LOGO_DARK : LOGO_LIGHT);
 
-export const getLogoIcoSrc = (appearance: RadixAppearance): string => (appearance === "dark" ? LOGO_DARK_ICO : LOGO_LIGHT_ICO);
+export const getLogoIcoSrc = (appearance: RadixAppearance): string =>
+  appearance === "dark" ? LOGO_DARK_ICO : LOGO_LIGHT_ICO;
 
 export const syncDocumentLogo = (appearance: RadixAppearance): void => {
   if (typeof document === "undefined") return;

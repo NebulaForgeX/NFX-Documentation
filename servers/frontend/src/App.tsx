@@ -1,12 +1,12 @@
 import { Route, Routes } from "react-router";
 
-import { DocsLayout } from "@/layouts";
+import { Sidebar } from "@/layouts";
 import { ROUTES } from "@/navigations";
 import { AboutPage, ArchitecturePage, ChapterReader, HomePage, NotFoundPage, RepoPage } from "@/pages";
 
 export default function App() {
   return (
-    <DocsLayout>
+    <Sidebar>
       <Routes>
         <Route path={ROUTES.HOME} element={<HomePage />} />
         <Route path={ROUTES.ARCHITECTURE} element={<ArchitecturePage />} />
@@ -16,6 +16,6 @@ export default function App() {
         <Route path="/:locale/:slug" element={<ChapterReader />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </DocsLayout>
+    </Sidebar>
   );
 }

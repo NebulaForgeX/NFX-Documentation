@@ -1,68 +1,55 @@
 import { memo } from "react";
-import { Container, Flex, Grid, Heading, Section, Text } from "@radix-ui/themes";
+import { Button, Flex, Grid, Text } from "@radix-ui/themes";
+import { AnimatedIcon, ArrowNarrowRightIcon, LayersIcon } from "nfx-ui/icons";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
+import { PageIntro } from "@/components";
+import { COMPOSE_COUNT, NFX_BLOCK_COUNT } from "@/constants";
 import { useBooksManifest } from "@/hooks/books";
-import { chapterPath } from "@/navigations";
-import { chapterLocale } from "@/utils/i18nContent";
+import { PageFrame } from "@/layouts";
+import { chapterPath, ROUTES } from "@/navigations";
+import { chapterLocale } from "@/utils";
 
-import styles from "./s.module.css";
+import Pipeline from "./Pipeline";
+import Readout from "./Readout";
+import Stats from "./Stats";
 
 const HomePage = memo(() => {
-  const { t, i18n } = useTranslation("common");
+  const { t, i18n } = useTranslation("home");
   const locale = chapterLocale(i18n.language);
   const { data, isLoading, isError } = useBooksManifest();
   const chapters = data?.chapters ?? [];
+  const first = chapters[0];
 
   return (
-    <Grid columns={{ initial: "1", md: "minmax(16rem, 24rem) minmax(0, 1fr)" }} className={styles.page}>
-      <Section size="2" py="6" className={styles.mast}>
-        <Container px="5">
-          <Flex direction="column" gap="4">
-            <Text size="1" className={styles.kicker}>
-              {t("chapters.title")}
-            </Text>
-            <Heading className={styles.display}>{t("title")}</Heading>
-            <Text as="p" size="3" color="gray" className={styles.lead}>
-              {t("subtitle")}
-            </Text>
-          </Flex>
-        </Container>
-      </Section>
-      <Section size="1" className={styles.index}>
-        <Flex direction="column" className={styles.list}>
-          {isLoading ? (
-            <Container px="4">
-              <Section size="1" py="4">
-                <Text color="gray">{t("loading")}</Text>
-              </Section>
-            </Container>
-          ) : null}
-          {isError ? (
-            <Container px="4">
-              <Section size="1" py="4">
-                <Text color="red">{t("chapterLoadError")}</Text>
-              </Section>
-            </Container>
-          ) : null}
-          {chapters.map((chapter, index) => (
-            <Link key={chapter.slug} to={chapterPath(locale, chapter.slug)} className={styles.row}>
-              <Section size="1" py="4" className={styles.rowFace}>
-                <Container px="5">
-                  <Flex align="center" gap="4">
-                    <Text className={styles.num}>{String(index + 1).padStart(2, "0")}</Text>
-                    <Text size="3" weight="medium">
-                      {chapter.title[locale]}
-                    </Text>
-                  </Flex>
-                </Container>
-              </Section>
-            </Link>
-          ))}
+    <PageFrame maxWidth="1320px" revealKey={chapters.length}>
+      <Grid columns={{ initial: "1", lg: "minmax(0, 1.1fr) minmax(0, 0.9fr)" }} gap="7" align="start">
+        <Flex direction="column" gap="6" minWidth="0">
+          <PageIntro eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")}>
+            <Flex gap="3" wrap="wrap">
+              <Button size="3" asChild disabled={!first}>
+                <Link to={first ? chapterPath(locale, first.slug) : ROUTES.HOME}>
+                  {t("start")}
+                  <AnimatedIcon icon={ArrowNarrowRightIcon} size={16} />
+                </Link>
+              </Button>
+              <Button size="3" variant="outline" asChild>
+                <Link to={ROUTES.ARCHITECTURE}>
+                  <AnimatedIcon icon={LayersIcon} size={16} />
+                  {t("architecture")}
+                </Link>
+              </Button>
+            </Flex>
+          </PageIntro>
+          {isLoading ? <Text color="gray">{t("loading")}</Text> : null}
+          {isError ? <Text color="red">{t("loadError")}</Text> : null}
+          <Stats chapters={chapters.length} blocks={NFX_BLOCK_COUNT} compose={COMPOSE_COUNT} />
+          <Readout />
         </Flex>
-      </Section>
-    </Grid>
+        <Pipeline chapters={chapters} locale={locale} />
+      </Grid>
+    </PageFrame>
   );
 });
 

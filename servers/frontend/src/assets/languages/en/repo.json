@@ -1,4 +1,7 @@
 {
+  "eyebrow": "REPOSITORIES · {{count}}",
+  "open": "Open on GitHub",
+  "noPorts": "npm package, no host ports",
   "title": "Repositories",
   "description": "NebulaForgeX product repos. HTTP ingress is NFX-Edge only; data plane is NFX-Stack; login is NFX-Identity.",
   "nfxStack": {

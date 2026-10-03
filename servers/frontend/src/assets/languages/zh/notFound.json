@@ -1,4 +1,6 @@
 {
+  "eyebrow": "ERROR · ROUTE NOT FOUND",
+  "path": "请求路径",
   "title": "页面未找到",
   "description": "抱歉，您访问的页面不存在。",
   "backToHome": "返回首页"

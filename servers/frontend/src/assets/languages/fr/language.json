@@ -1,0 +1,44 @@
+{
+  "languageSwitcher": {
+    "english": "English",
+    "chinese": "中文",
+    "french": "Français"
+  },
+  "header": {
+    "preferences": "Préférences",
+    "theme": "Thème",
+    "accentColor": "Couleur d'accent",
+    "grayColor": "Gris",
+    "appearance": "Apparence",
+    "appearanceMode": {
+      "light": "Clair",
+      "dark": "Sombre",
+      "system": "Système"
+    },
+    "panelBackground": "Fond du panneau",
+    "panelBackgroundMode": {
+      "solid": "Plein",
+      "translucent": "Translucide"
+    },
+    "radius": "Plateforme",
+    "scaling": "Échelle",
+    "language": "Langue"
+  },
+  "sidebar": {
+    "navigate": "Navigation",
+    "reference": "Référence",
+    "home": "Vue d'ensemble",
+    "architecture": "Architecture",
+    "chapters": "Chapitres",
+    "repo": "Dépôts",
+    "about": "À propos",
+    "chapterCrumb": "Chapitre {{n}}",
+    "online": "En ligne",
+    "hostPort": "Port hôte",
+    "basePath": "Chemin",
+    "expand": "Déplier la barre",
+    "collapse": "Replier la barre",
+    "openMenu": "Ouvrir le menu",
+    "handbook": "Manuel de déploiement"
+  }
+}

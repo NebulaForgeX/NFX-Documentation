@@ -1,0 +1,25 @@
+{
+  "eyebrow": "À PROPOS · NFX-DOCUMENTATION",
+  "title": "À propos",
+  "subtitle": "Manuel NebulaForgeX et index des dépôts",
+  "what": {
+    "title": "Ce dépôt",
+    "description": "NFX-Documentation est le manuel de déploiement de <a href='https://github.com/NebulaForgeX' target='_blank' rel='noopener noreferrer'>NebulaForgeX</a>. Le texte des chapitres vit dans <code>books/</code>."
+  },
+  "ecosystem": {
+    "title": "Ordre de déploiement",
+    "description": "Démarrer dans l'ordre des dépendances. Ne pas sauter Edge ni Identity :",
+    "items": [
+      "<strong>NFX-Stack</strong> : bases, cache, Kafka, MinIO, OTEL",
+      "<strong>NFX-Edge</strong> : seule entrée 80/443, plus la console TLS/DNS",
+      "<strong>NFX-Identity</strong> : connexion et profils Forger/Authority",
+      "<strong>NFX-UI</strong> : bibliothèque commune des consoles",
+      "<strong>NFX-News / NFX-Storages</strong> : services produit, connexion via Identity",
+      "<strong>NFX-Documentation</strong> : ce manuel"
+    ]
+  },
+  "contribute": {
+    "title": "Contribuer",
+    "description": "Modifier <code>books/zh</code> et <code>books/en</code>. Issues / PR : <a href='https://github.com/NebulaForgeX/NFX-Documentation' target='_blank' rel='noopener noreferrer'>GitHub</a>."
+  }
+}

@@ -1,0 +1,18 @@
+.label {
+  color: var(--gray-10);
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.value {
+  color: var(--gray-12);
+  font-family: var(--docs-font-mono);
+  font-size: 40px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-shadow: 0 0 24px var(--accent-a6);
+}

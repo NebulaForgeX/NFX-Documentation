@@ -1,0 +1,13 @@
+.fullHeight {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-a5) transparent;
+}

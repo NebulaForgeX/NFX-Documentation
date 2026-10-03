@@ -1,13 +1,17 @@
-import common from "./common.json";
-import repo from "./repo.json";
 import about from "./about.json";
 import architecture from "./architecture.json";
+import chapter from "./chapter.json";
+import home from "./home.json";
+import language from "./language.json";
 import notFound from "./notFound.json";
+import repo from "./repo.json";
 
 export default {
-  common,
-  repo,
   about,
   architecture,
+  chapter,
+  home,
+  language,
   notFound,
+  repo,
 };

@@ -1,0 +1,29 @@
+{
+  "eyebrow": "NEBULAFORGEX · 部署手册",
+  "title": "从路由器到每一个 Compose，按顺序上线。",
+  "lead": "NebulaForgeX 的部署与配置手册。先网络和 NAS，再 Stack、Edge、Identity，最后是各个产品。每章都给出端口、路由和要改的文件。",
+  "start": "从第 01 章开始",
+  "architecture": "打开架构图",
+  "pipeline": {
+    "title": "部署管线",
+    "hint": "十章按依赖顺序接成一条线。点任一节点进入那一章。"
+  },
+  "stats": {
+    "chapters": "章节",
+    "chaptersHint": "中文 / English",
+    "blocks": "端口块",
+    "blocksHint": "10000–10129",
+    "compose": "Compose",
+    "composeHint": "每块一个 docker-compose"
+  },
+  "readout": {
+    "title": "主机端口分块",
+    "lan": "NAS1 局域网",
+    "cells": {
+      "gap": "空段",
+      "static": "静态站"
+    }
+  },
+  "loading": "载入中...",
+  "loadError": "无法载入目录。确认 books/ 已被服务。"
+}

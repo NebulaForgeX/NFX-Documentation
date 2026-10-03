@@ -1,4 +1,7 @@
 {
+  "eyebrow": "REPOSITORIES · {{count}}",
+  "open": "在 GitHub 打开",
+  "noPorts": "npm 包，不占主机端口",
   "title": "仓库",
   "description": "NebulaForgeX 产品仓。HTTP 入口只有 NFX-Edge；数据面接 NFX-Stack；登录走 NFX-Identity。",
   "nfxStack": {

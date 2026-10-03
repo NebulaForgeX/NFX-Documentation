@@ -1,0 +1,138 @@
+.link {
+  transition: opacity 200ms ease;
+}
+
+.link[data-level="dim"] {
+  opacity: 0.14;
+}
+
+.track {
+  fill: none;
+  stroke: var(--gray-a5);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.line {
+  fill: none;
+  stroke: var(--accent-9);
+  stroke-width: 2;
+  stroke-linecap: round;
+  transition:
+    stroke 200ms ease,
+    stroke-width 200ms ease;
+}
+
+.link[data-protocol="grpc"] .line {
+  stroke-dasharray: 8 5;
+}
+
+.link[data-protocol="data"] .line {
+  stroke: var(--accent-10);
+  stroke-dasharray: 2 5;
+}
+
+.link[data-protocol="forward"] .line,
+.link[data-protocol="tls"] .line {
+  stroke: var(--gray-10);
+}
+
+.link[data-level="hot"] .line {
+  stroke: var(--accent-11);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 4px var(--accent-9));
+}
+
+.packet {
+  fill: var(--accent-11);
+  opacity: 0;
+  filter: drop-shadow(0 0 4px var(--accent-9));
+}
+
+.hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 18;
+  pointer-events: stroke;
+  cursor: help;
+}
+
+.label {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--gray-12);
+  background: var(--color-panel-solid);
+  box-shadow:
+    0 0 0 1px var(--accent-a6),
+    0 4px 12px -6px var(--black-a8);
+  font-family: var(--docs-font-mono);
+  font-size: 10.5px;
+  line-height: 1.3;
+  white-space: nowrap;
+  pointer-events: all;
+  cursor: help;
+  transition:
+    opacity 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.label[data-protocol="forward"],
+.label[data-protocol="tls"] {
+  box-shadow:
+    0 0 0 1px var(--gray-a6),
+    0 4px 12px -6px var(--black-a8);
+}
+
+.label[data-level="hot"] {
+  z-index: 10;
+  box-shadow:
+    0 0 0 1px var(--accent-9),
+    0 0 18px -2px var(--accent-a8);
+}
+
+.label[data-level="dim"] {
+  opacity: 0.2;
+}
+
+.label:focus-visible {
+  outline: 2px solid var(--accent-8);
+  outline-offset: 2px;
+}
+
+.kind {
+  color: var(--accent-11);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ports {
+  color: var(--gray-12);
+  font-variant-numeric: tabular-nums;
+}
+
+.card:global(.rt-HoverCardContent) {
+  box-shadow:
+    0 0 0 1px var(--accent-a6),
+    inset 0 1px 0 var(--accent-a7),
+    var(--shadow-5);
+}
+
+.caption {
+  color: var(--accent-11);
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.mono {
+  color: var(--gray-12);
+  font-family: var(--docs-font-mono);
+  font-variant-numeric: tabular-nums;
+}

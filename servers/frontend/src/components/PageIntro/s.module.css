@@ -1,10 +1,17 @@
 .display {
+  max-width: 18ch;
   letter-spacing: -0.045em;
-  line-height: 0.95;
+  line-height: 0.98;
   text-wrap: balance;
+  background: linear-gradient(100deg, var(--gray-12) 30%, var(--accent-11) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-.display + * {
-  max-width: 40rem;
-  line-height: 1.6;
+.lead {
+  max-width: 62ch;
+  color: var(--gray-11);
+  line-height: 1.65;
+  text-wrap: pretty;
 }

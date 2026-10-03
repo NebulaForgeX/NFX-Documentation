@@ -1,0 +1,102 @@
+.menuDot {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: var(--radius-thumb);
+  background: var(--accent-9);
+}
+
+.activePill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: var(--radius-chip);
+  background: var(--accent-a3);
+  box-shadow: inset 0 0 0 1px var(--accent-a4);
+  pointer-events: none;
+}
+
+.triggerHit:global(.rt-IconButton) {
+  width: var(--space-7);
+  height: var(--space-7);
+  margin: var(--space-1) auto;
+  border-radius: var(--radius-chip);
+  color: var(--gray-11);
+}
+
+.triggerHit:global(.rt-IconButton):hover,
+.triggerHit:global(.rt-IconButton)[data-state="active"] {
+  background: var(--gray-a3);
+  color: var(--gray-12);
+}
+
+.triggerHit:global(.rt-IconButton)[data-state="current"],
+.triggerHit:global(.rt-IconButton)[data-state="current"]:hover {
+  background: var(--accent-a3);
+  color: var(--accent-11);
+}
+
+.triggerHit:global(.rt-IconButton):focus-visible {
+  outline: 2px solid var(--accent-8);
+  outline-offset: 2px;
+}
+
+.flyout {
+  width: max-content;
+  min-width: calc(var(--space-9) * 2.5);
+  max-height: var(--radix-popover-content-available-height);
+  overflow-y: auto;
+  border-radius: var(--radius-4);
+  background: var(--color-panel);
+  backdrop-filter: var(--backdrop-filter-panel);
+  box-shadow:
+    inset 0 0 0 1px var(--gray-a5),
+    var(--shadow-5);
+}
+
+.flyoutReset:global(.rt-PopoverContent) {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.flyout :global(.ps-menu-button) {
+  height: calc(var(--space-6) + var(--space-1));
+  margin: var(--space-1) var(--space-2);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-chip);
+  font-size: var(--font-size-2);
+  color: var(--gray-11);
+  background-color: transparent;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.flyout :global(.ps-menu-label .rt-Text) {
+  font: inherit;
+}
+
+.flyout :global(.ps-menu-button.ps-active) {
+  color: var(--accent-11);
+  background-color: var(--accent-a3);
+  font-weight: var(--font-weight-medium);
+}
+
+.flyout :global(.ps-menu-button:hover) {
+  background-color: var(--gray-a3) !important;
+  color: var(--gray-12) !important;
+}
+
+.flyout :global(.ps-menu-button.ps-active:hover) {
+  background-color: var(--accent-a3) !important;
+  color: var(--accent-11) !important;
+}
+
+.flyout :global(.ps-menu-button:focus-visible) {
+  outline: 2px solid var(--accent-8);
+  outline-offset: -2px;
+}
+
+.flyout :global(.ps-menu-icon) {
+  display: none;
+}

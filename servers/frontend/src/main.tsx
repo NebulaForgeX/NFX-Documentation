@@ -4,6 +4,8 @@ import { createRoot } from "react-dom/client";
 import "@radix-ui/themes/styles.css";
 import "nfx-ui/themes/fonts";
 import "nfx-ui/themes/index.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
 
 import { LanguageEnum } from "nfx-ui/enums";
 import { LanguageProvider, ThemeProvider } from "nfx-ui/providers";
@@ -19,12 +21,12 @@ import App from "./App.tsx";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryProvider>
-        <LanguageProvider
-          getBuiltinBundles={getBuiltinI18nBundles}
-          fallbackLng={LanguageEnum.ZH}
-          identityMockErrors={{}}
-          identityMockMessages={{}}
-        >
+      <LanguageProvider
+        getBuiltinBundles={getBuiltinI18nBundles}
+        fallbackLng={LanguageEnum.ZH}
+        identityMockErrors={{}}
+        identityMockMessages={{}}
+      >
         <ThemeProvider onAppearanceChange={syncDocumentLogo}>
           <DataProvider>
             <RouterProvider>

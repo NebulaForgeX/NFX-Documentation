@@ -1,0 +1,27 @@
+.ruler {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: repeating-linear-gradient(135deg, var(--gray-a4) 0 3px, transparent 3px 6px);
+  box-shadow: inset 0 0 0 1px var(--gray-a4);
+}
+
+.open {
+  background: repeating-linear-gradient(90deg, var(--gray-a4) 0 2px, transparent 2px 8px);
+}
+
+.used {
+  height: 100%;
+  border-radius: inherit;
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--accent-8), var(--accent-10));
+  box-shadow: 0 0 10px var(--accent-a6);
+}
+
+.hot {
+  box-shadow:
+    inset 0 0 0 1px var(--accent-a7),
+    0 0 12px var(--accent-a5);
+}

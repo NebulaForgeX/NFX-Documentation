@@ -1,68 +1,123 @@
 {
+  "eyebrow": "TOPOLOGY · LAN",
   "title": "架构",
-  "lead": "Docker 跑服务，Traefik 只做 80/443 入口。连线是运行时流量：公网进 Traefik，再按局域网 IP 和宿主机端口转到各 Compose。拖动节点，点一下只保留相关连线。",
+  "lead": "一块是一个 Docker Compose。块上只写名字和宿主机端口范围。连线标的是拨号端口。悬停一块或一条线才展开明细。",
   "hint": "dev 在前，secure 在斜线后。同一端口在两台 NAS 上不冲突，因为 IP 不同。",
-  "empty": "点一个节点查看端口。",
+  "gridTitle": "主机端口分块",
+  "gridLead": "每个仓一块，块尾补齐到以 9 结尾的端口。实心是已用，斜线是预留。",
+  "legendTitle": "连线",
+  "dialsTitle": "拨号端口",
+  "portsTitle": "宿主机端口",
+  "clickHint": "悬停看明细，点击固定高亮。",
+  "composeCount": "{{count}} 个 Compose",
+  "linkCount": "{{count}} 条连线",
+  "notDocker": "不是 Compose",
+  "dev": "dev",
+  "secure": "secure",
+  "used": "已用 {{range}}",
+  "reserved": "预留 {{range}}",
+  "listenNote": "容器内 {{listen}}",
   "kinds": {
-    "ingress": "入口",
-    "http": "HTTP",
-    "grpc": "gRPC",
-    "console": "Console",
-    "data": "数据面"
-  },
-  "edges": {
     "forward": "转发",
-    "tls": "80 / 443",
+    "tls": "入口",
     "http": "HTTP",
     "grpc": "gRPC",
-    "lan": "局域网",
-    "minio": "MinIO 10012",
-    "nas2": "另一台 NAS"
+    "data": "数据"
   },
-  "nodes": {
+  "tiers": {
+    "ingress": "入口",
+    "proxy": "代理",
+    "product": "产品",
+    "shared": "共享服务"
+  },
+  "cells": {
+    "stack": {
+      "title": "NFX-Stack"
+    },
+    "identity": {
+      "title": "NFX-Identity"
+    },
+    "news": {
+      "title": "NFX-News"
+    },
+    "storages": {
+      "title": "NFX-Storages"
+    },
+    "edge": {
+      "title": "NFX-Edge"
+    },
+    "documentation": {
+      "title": "NFX-Documentation"
+    },
+    "gap": {
+      "title": "空段",
+      "note": "以后的 NFX 仓"
+    },
+    "static": {
+      "title": "静态站",
+      "note": "Vite 10402–10405 只在开发"
+    }
+  },
+  "blocks": {
     "internet": {
       "title": "Internet",
-      "body": "公网只看到路由器。"
+      "body": "公网只看到路由器。",
+      "listen": ""
     },
     "router": {
       "title": "路由器",
-      "body": "只转发 80 和 443 到跑 Traefik 的 NAS。"
+      "body": "只把 80 和 443 转到跑 Traefik 的 NAS。",
+      "listen": ""
     },
     "traefik": {
       "title": "NFX-Edge Traefik",
-      "body": "文件路由 dynamic/*.project.yml。不进 Docker 网络。"
+      "body": "文件路由 dynamic/*.project.yml。不进 Docker 网络。80/443 不进 10000 分块。",
+      "listen": ""
     },
     "identity": {
       "title": "NFX-Identity",
-      "body": "块 10030–10049。容器内 gRPC 仍是 50071 / 50072。"
+      "body": "登录与资料。auth、asset、console。",
+      "listen": "HTTP 8080 · gRPC 50071 / 50072"
     },
     "news": {
       "title": "NFX-News",
-      "body": "块 10050–10079。调用 Identity 用对方的 gRPC 宿主机端口。"
+      "body": "source、news、crawl、report、notify、mcp。调用 Identity 的 auth gRPC。",
+      "listen": "HTTP 8080 · gRPC 50072–50077"
     },
     "storages": {
       "title": "NFX-Storages",
-      "body": "块 10080–10109。S3 走 Host，其余 API 去掉 /nfx-storages。"
+      "body": "顺序 s3、admin、object、iam、notify。S3 走 Host。",
+      "listen": "HTTP 8080 · gRPC 50072–50076"
     },
     "edge": {
-      "title": "NFX-Edge 服务",
-      "body": "块 10110–10119。sites-base 负责证书，ACME 走 80。"
+      "title": "NFX-Edge sites",
+      "body": "sites-base 负责证书。ACME 仍走 Traefik 的 80。",
+      "listen": "HTTP 8080 · gRPC 50071+"
     },
     "documentation": {
       "title": "NFX-Documentation",
-      "body": "块 10120–10129。浏览器路径 /console/nfx-documentation/。"
+      "body": "手册前端。浏览器路径 /console/nfx-documentation/。",
+      "listen": "HTTP 80"
     },
-    "sites": {
-      "title": "静态站",
-      "body": "不属于 NFX 分块，从 10400 起。"
+    "aquaworks": {
+      "title": "AquaWorks",
+      "body": "静态站。局域网路径会跳到这个端口。",
+      "listen": ""
+    },
+    "timetable": {
+      "title": "TimetableCraft",
+      "body": "静态站。局域网路径会跳到这个端口。",
+      "listen": ""
     },
     "stack": {
       "title": "NFX-Stack",
-      "body": "块 10000–10029。产品用 NAS IP 加这些端口，不加入共享网络。"
+      "body": "共享数据面。产品用 NAS IP 加这些端口，不加入共享网络。",
+      "listen": "容器内仍是各服务自己的端口"
     },
     "nas2": {
       "title": "NAS2",
-      "body": "192.168.1.65。端口号与 NAS1 相同，Traefik 只改 URL 里的 IP。"
+      "body": "同一套 Compose 和端口号。Traefik 只把 URL 里的 IP 换成这台机器。",
+      "listen": ""
     }
   }
 }

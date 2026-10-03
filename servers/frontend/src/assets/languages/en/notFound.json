@@ -1,4 +1,6 @@
 {
+  "eyebrow": "ERROR · ROUTE NOT FOUND",
+  "path": "Requested path",
   "title": "Page Not Found",
   "description": "Sorry, the page you are looking for does not exist.",
   "backToHome": "Back to Home"

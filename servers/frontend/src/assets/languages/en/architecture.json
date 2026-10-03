@@ -1,68 +1,123 @@
 {
+  "eyebrow": "TOPOLOGY · LAN",
   "title": "Architecture",
-  "lead": "Docker runs the services. Traefik is only the 80/443 ingress. Lines are live traffic: the public internet enters Traefik, then each Compose is reached by LAN IP and host port. Drag a node. Click one to keep only its lines.",
+  "lead": "One block is one Docker Compose. The face shows the name and the host-port range. Edges are labeled with the dial port. Hover a block or a line for the detail.",
   "hint": "Dev comes first. Secure follows the slash. The same port on two NAS machines does not collide, because the IP differs.",
-  "empty": "Click a node to read its ports.",
+  "gridTitle": "Host port blocks",
+  "gridLead": "One block per repo, padded to a port ending in 9. Solid is used, hatched is reserved.",
+  "legendTitle": "Links",
+  "dialsTitle": "Dial ports",
+  "portsTitle": "Host ports",
+  "clickHint": "Hover for detail, click to pin.",
+  "composeCount": "{{count}} Compose stacks",
+  "linkCount": "{{count}} links",
+  "notDocker": "Not a Compose",
+  "dev": "dev",
+  "secure": "secure",
+  "used": "Used {{range}}",
+  "reserved": "Reserved {{range}}",
+  "listenNote": "Inside the container {{listen}}",
   "kinds": {
-    "ingress": "Ingress",
-    "http": "HTTP",
-    "grpc": "gRPC",
-    "console": "Console",
-    "data": "Data plane"
-  },
-  "edges": {
     "forward": "Forward",
-    "tls": "80 / 443",
+    "tls": "Ingress",
     "http": "HTTP",
     "grpc": "gRPC",
-    "lan": "LAN",
-    "minio": "MinIO 10012",
-    "nas2": "Other NAS"
+    "data": "Data"
   },
-  "nodes": {
+  "tiers": {
+    "ingress": "Ingress",
+    "proxy": "Proxy",
+    "product": "Products",
+    "shared": "Shared"
+  },
+  "cells": {
+    "stack": {
+      "title": "NFX-Stack"
+    },
+    "identity": {
+      "title": "NFX-Identity"
+    },
+    "news": {
+      "title": "NFX-News"
+    },
+    "storages": {
+      "title": "NFX-Storages"
+    },
+    "edge": {
+      "title": "NFX-Edge"
+    },
+    "documentation": {
+      "title": "NFX-Documentation"
+    },
+    "gap": {
+      "title": "Open",
+      "note": "Future NFX repos"
+    },
+    "static": {
+      "title": "Static sites",
+      "note": "Vite 10402–10405 dev only"
+    }
+  },
+  "blocks": {
     "internet": {
       "title": "Internet",
-      "body": "The public network only sees the router."
+      "body": "The public network only sees the router.",
+      "listen": ""
     },
     "router": {
       "title": "Router",
-      "body": "Forwards only 80 and 443 to the NAS that runs Traefik."
+      "body": "Forwards only 80 and 443 to the NAS that runs Traefik.",
+      "listen": ""
     },
     "traefik": {
       "title": "NFX-Edge Traefik",
-      "body": "File routes in dynamic/*.project.yml. No Docker network."
+      "body": "File routes in dynamic/*.project.yml. No Docker network. 80/443 stays out of the 10000 blocks.",
+      "listen": ""
     },
     "identity": {
       "title": "NFX-Identity",
-      "body": "Block 10030–10049. In-container gRPC stays 50071 / 50072."
+      "body": "Login and profiles. auth, asset, and the console.",
+      "listen": "HTTP 8080 · gRPC 50071 / 50072"
     },
     "news": {
       "title": "NFX-News",
-      "body": "Block 10050–10079. Identity is dialed on its host gRPC port."
+      "body": "source, news, crawl, report, notify, mcp. Dials Identity auth gRPC.",
+      "listen": "HTTP 8080 · gRPC 50072–50077"
     },
     "storages": {
       "title": "NFX-Storages",
-      "body": "Block 10080–10109. S3 is a Host route. Other APIs strip /nfx-storages."
+      "body": "Order: s3, admin, object, iam, notify. S3 is a Host route.",
+      "listen": "HTTP 8080 · gRPC 50072–50076"
     },
     "edge": {
-      "title": "NFX-Edge services",
-      "body": "Block 10110–10119. sites-base owns certificates. ACME stays on port 80."
+      "title": "NFX-Edge sites",
+      "body": "sites-base owns certificates. ACME still uses Traefik on port 80.",
+      "listen": "HTTP 8080 · gRPC 50071+"
     },
     "documentation": {
       "title": "NFX-Documentation",
-      "body": "Block 10120–10129. Browser path /console/nfx-documentation/."
+      "body": "Handbook frontend. Browser path /console/nfx-documentation/.",
+      "listen": "HTTP 80"
     },
-    "sites": {
-      "title": "Static sites",
-      "body": "Outside the NFX blocks, starting at 10400."
+    "aquaworks": {
+      "title": "AquaWorks",
+      "body": "Static site. The LAN path redirects to this port.",
+      "listen": ""
+    },
+    "timetable": {
+      "title": "TimetableCraft",
+      "body": "Static site. The LAN path redirects to this port.",
+      "listen": ""
     },
     "stack": {
       "title": "NFX-Stack",
-      "body": "Block 10000–10029. Products use the NAS IP plus these ports. No shared network."
+      "body": "Shared data plane. Products dial the NAS IP plus these ports. No shared network.",
+      "listen": "each service keeps its own container port"
     },
     "nas2": {
       "title": "NAS2",
-      "body": "192.168.1.65. Same port numbers as NAS1. Traefik only changes the IP in the URL."
+      "body": "The same Compose files and port numbers. Traefik only swaps the IP in the URL.",
+      "listen": ""
     }
   }
 }

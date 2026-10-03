@@ -14,3 +14,26 @@ body,
 body {
   margin: 0;
 }
+
+.radix-themes {
+  --docs-font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --code-font-family: var(--docs-font-mono);
+  --docs-grid-line: var(--gray-a3);
+  --docs-glow: var(--accent-a4);
+  --docs-bezel: var(--gray-a4);
+  --docs-rim: var(--accent-a5);
+}
+
+::selection {
+  background: var(--accent-a5);
+  color: var(--gray-12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0ms !important;
+    transition-duration: 0ms !important;
+  }
+}

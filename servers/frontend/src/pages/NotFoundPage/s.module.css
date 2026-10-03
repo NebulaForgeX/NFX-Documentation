@@ -1,4 +1,23 @@
-.page {
-  flex: 1;
-  min-height: 0;
+.code {
+  font-family: var(--docs-font-mono);
+  font-size: clamp(72px, 14vw, 144px);
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  line-height: 0.9;
+  background: linear-gradient(100deg, var(--gray-12) 20%, var(--accent-10) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 28px var(--accent-a5));
+}
+
+.path {
+  max-width: 100%;
+  color: var(--gray-10);
+  font-family: var(--docs-font-mono);
+}
+
+.pathValue {
+  color: var(--accent-11);
+  font-family: var(--docs-font-mono);
 }

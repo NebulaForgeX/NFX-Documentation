@@ -1,0 +1,15 @@
+{
+  "eyebrow": "CHAPITRE {{n}}",
+  "back": "Retour à la vue d'ensemble",
+  "loading": "Chargement...",
+  "loadError": "Impossible de charger le chapitre. Vérifiez que books/ est servi.",
+  "toc": "Sur cette page",
+  "previous": "Précédent",
+  "next": "Suivant",
+  "readTime": "~{{minutes}} min de lecture",
+  "sections": "{{count}} sections",
+  "code": "code",
+  "copy": "Copier",
+  "copied": "Copié",
+  "sourceNote": "Source : books/{{locale}}/{{slug}}.md"
+}

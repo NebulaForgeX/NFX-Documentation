@@ -1,0 +1,29 @@
+{
+  "eyebrow": "NEBULAFORGEX · DEPLOY HANDBOOK",
+  "title": "From the router to every Compose stack, in order.",
+  "lead": "The NebulaForgeX deploy and configuration handbook. Network and NAS first, then Stack, Edge, Identity, then each product. Every chapter lists the ports, routes, and files to change.",
+  "start": "Start at chapter 01",
+  "architecture": "Open the architecture map",
+  "pipeline": {
+    "title": "Deploy pipeline",
+    "hint": "Ten chapters in dependency order. Pick any node to open that chapter."
+  },
+  "stats": {
+    "chapters": "Chapters",
+    "chaptersHint": "中文 / English",
+    "blocks": "Port blocks",
+    "blocksHint": "10000–10129",
+    "compose": "Compose",
+    "composeHint": "One docker-compose per block"
+  },
+  "readout": {
+    "title": "Host port blocks",
+    "lan": "NAS1 LAN",
+    "cells": {
+      "gap": "Open gap",
+      "static": "Static sites"
+    }
+  },
+  "loading": "Loading...",
+  "loadError": "Could not load the index. Confirm books/ is being served."
+}

@@ -3,7 +3,7 @@ import type { Focus, FocusState } from "./focus";
 import type { LayerKeyEnum, LineLevelEnum } from "./layout";
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Box, Container, Flex, Heading, Section, SegmentedControl, Text } from "@radix-ui/themes";
+import { Box, Button, Container, Flex, Heading, Section, SegmentedControl, Text } from "@radix-ui/themes";
 import {
   Background,
   BackgroundVariant,
@@ -15,6 +15,7 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import { useResolvedAppearance } from "nfx-ui/hooks";
+import { AnimatedIcon, ArrowBackUpIcon } from "nfx-ui/icons";
 import { useTranslation } from "react-i18next";
 
 import { Eyebrow } from "@/components";
@@ -24,7 +25,7 @@ import { PageFrame } from "@/layouts";
 import ArchBlock from "./ArchBlock";
 import ComposeFrame from "./ComposeFrame";
 import { FocusContext, RelayoutContext } from "./focus";
-import { FLOW_NODES, LINE_EDGES } from "./grid";
+import { FLOW_NODES, focusEdges, LINE_EDGES } from "./grid";
 import { CONTAINER_BY_ID, layerFocus, LayerKey, LineLevel, linkFocus, neighbours } from "./layout";
 import PortLink from "./PortLink";
 import RangeGrid from "./RangeGrid";
@@ -40,6 +41,7 @@ const nodeTypes = { block: ArchBlock, frame: ComposeFrame, tier: TierLabel };
 const edgeTypes = { link: PortLink };
 const LAYERS = Object.values(LayerKey);
 const LINE_LEVELS = Object.values(LineLevel);
+const FIT_PADDING = 0.04;
 
 type Hover = { kind: "nodes"; ids: string[] } | { kind: "link"; id: string } | null;
 
@@ -59,30 +61,41 @@ const miniStroke = (node: Node) => (node.type === "frame" ? "var(--accent-a6)" :
 function Topology({
   appearance,
   lines,
+  focused,
   onArm,
   onPin,
   onRelayout,
 }: {
   appearance: string;
   lines: LineLevelEnum;
+  focused: string | null;
   onArm: () => void;
   onPin: (id: string | null) => void;
   onRelayout: () => void;
 }) {
   const { fitView } = useReactFlow();
-  const shown = useRef(lines);
+  const shownLines = useRef(lines);
+  const shownFocus = useRef(focused);
 
   useEffect(() => {
-    if (shown.current === lines) return;
-    shown.current = lines;
-    const frame = requestAnimationFrame(onRelayout);
+    if (shownLines.current === lines && shownFocus.current === focused) return;
+    const refocus = shownFocus.current !== focused;
+    shownLines.current = lines;
+    shownFocus.current = focused;
+    const frame = requestAnimationFrame(() => {
+      onRelayout();
+      if (!refocus) return;
+      void fitView(
+        focused ? { nodes: [{ id: focused }], duration: 600, padding: 0.15 } : { duration: 600, padding: FIT_PADDING },
+      );
+    });
     return () => cancelAnimationFrame(frame);
-  }, [lines, onRelayout]);
+  }, [lines, focused, fitView, onRelayout]);
 
   return (
     <ReactFlow
       defaultNodes={FLOW_NODES}
-      edges={LINE_EDGES[lines]}
+      edges={focused ? focusEdges(focused) : LINE_EDGES[lines]}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       className={styles.flow}
@@ -101,7 +114,7 @@ function Topology({
       elementsSelectable={false}
       zoomOnDoubleClick={false}
       fitView
-      fitViewOptions={{ padding: 0.04 }}
+      fitViewOptions={{ padding: FIT_PADDING }}
       minZoom={0.1}
       maxZoom={1.6}
     >
@@ -130,16 +143,27 @@ const ArchitecturePage = memo(() => {
   const [pinned, setPinned] = useState<string | null>(null);
   const [layer, setLayer] = useState<LayerKeyEnum>(LayerKey.ALL);
   const [lines, setLines] = useState<LineLevelEnum>(LineLevel.COMPOSE);
+  const [focused, setFocused] = useState<string | null>(null);
 
   useFlowTimeline(stage, armed, version);
+
+  useEffect(() => {
+    if (!focused) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setFocused(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [focused]);
 
   const focus = useMemo<Focus | null>(() => {
     if (hover?.kind === "link") return linkFocus(hover.id);
     if (hover?.kind === "nodes") return neighbours(hover.ids);
     if (pinned) return neighbours([pinned]);
+    if (focused) return neighbours([focused]);
     if (layer !== LayerKey.ALL) return layerFocus(layer);
     return null;
-  }, [hover, pinned, layer]);
+  }, [hover, pinned, focused, layer]);
 
   const hoverNode = useCallback((id: string | null) => setHover(id ? { kind: "nodes", ids: [id] } : null), []);
   const hoverNodes = useCallback((ids: string[] | null) => setHover(ids ? { kind: "nodes", ids } : null), []);
@@ -152,8 +176,8 @@ const ArchitecturePage = memo(() => {
   );
 
   const context = useMemo<FocusState>(
-    () => ({ focus, pinned, hoverNode, hoverLink }),
-    [focus, pinned, hoverNode, hoverLink],
+    () => ({ focus, pinned, hoverNode, hoverLink, focused, focusFrame: setFocused }),
+    [focus, pinned, hoverNode, hoverLink, focused],
   );
 
   return (
@@ -173,18 +197,30 @@ const ArchitecturePage = memo(() => {
                   </Text>
                 </Flex>
                 <Flex direction="column" align="end" gap="3">
-                  <SegmentedControl.Root
-                    size="1"
-                    value={lines}
-                    onValueChange={(value: string) => setLines(value as LineLevelEnum)}
-                    aria-label={t("lineLabel")}
-                  >
-                    {LINE_LEVELS.map((key) => (
-                      <SegmentedControl.Item key={key} value={key}>
-                        {t(`lines.${key}`)}
-                      </SegmentedControl.Item>
-                    ))}
-                  </SegmentedControl.Root>
+                  {focused ? (
+                    <Flex align="center" gap="3">
+                      <Text as="span" size="1" className={styles.focusing}>
+                        {t("focusing", { name: t(`groups.${focused}.title`) })}
+                      </Text>
+                      <Button size="1" variant="outline" onClick={() => setFocused(null)}>
+                        <AnimatedIcon icon={ArrowBackUpIcon} size={14} />
+                        {t("focusExit")}
+                      </Button>
+                    </Flex>
+                  ) : (
+                    <SegmentedControl.Root
+                      size="1"
+                      value={lines}
+                      onValueChange={(value: string) => setLines(value as LineLevelEnum)}
+                      aria-label={t("lineLabel")}
+                    >
+                      {LINE_LEVELS.map((key) => (
+                        <SegmentedControl.Item key={key} value={key}>
+                          {t(`lines.${key}`)}
+                        </SegmentedControl.Item>
+                      ))}
+                    </SegmentedControl.Root>
+                  )}
                   <SegmentedControl.Root
                     size="1"
                     value={layer}
@@ -222,7 +258,14 @@ const ArchitecturePage = memo(() => {
           <Flex direction={{ initial: "column", md: "row" }} className={styles.body}>
             <Box ref={stage} className={styles.stage} data-armed={armed ? "true" : "false"}>
               <ReactFlowProvider>
-                <Topology appearance={appearance} lines={lines} onArm={arm} onPin={pin} onRelayout={relayout} />
+                <Topology
+                  appearance={appearance}
+                  lines={lines}
+                  focused={focused}
+                  onArm={arm}
+                  onPin={pin}
+                  onRelayout={relayout}
+                />
               </ReactFlowProvider>
             </Box>
             <Box className={styles.side}>

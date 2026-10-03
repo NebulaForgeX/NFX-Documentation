@@ -1,12 +1,13 @@
 import type { NodeProps, ReactFlowState } from "@xyflow/react";
 import type { Geom } from "polyclip-ts";
+import type { MouseEvent } from "react";
 import type { FrameNode } from "../layout";
 
 import { memo, useCallback, useContext, useMemo } from "react";
-import { Box, Container, Flex, HoverCard, Section, Separator, Text } from "@radix-ui/themes";
+import { Box, Container, Flex, HoverCard, IconButton, Section, Separator, Text } from "@radix-ui/themes";
 import { Handle, NodeResizer, Position, useReactFlow, useStore } from "@xyflow/react";
 import clsx from "clsx";
-import { AnimatedIcon, DockerIcon } from "nfx-ui/icons";
+import { AnimatedIcon, DockerIcon, FocusIcon } from "nfx-ui/icons";
 import { union } from "polyclip-ts";
 import { useTranslation } from "react-i18next";
 
@@ -72,7 +73,7 @@ function FrameDetail({ data }: { data: FrameNode["data"] }) {
 
 const ComposeFrame = memo(({ id, data, width = 0, height = 0 }: NodeProps<FrameNode>) => {
   const { t } = useTranslation("architecture");
-  const { hoverNode } = useContext(FocusContext);
+  const { hoverNode, focused, focusFrame } = useContext(FocusContext);
   const relayout = useContext(RelayoutContext);
   const { setNodes } = useReactFlow();
   const level = useAreaFocus(id);
@@ -131,9 +132,25 @@ const ComposeFrame = memo(({ id, data, width = 0, height = 0 }: NodeProps<FrameN
                         {t(`groups.${id}.title`)}
                       </Text>
                     </Flex>
-                    <Text as="span" size="1" className={styles.count}>
-                      {t("containerCount", { count: data.members })}
-                    </Text>
+                    <Flex align="center" gap="2">
+                      <Text as="span" size="1" className={styles.count}>
+                        {t("containerCount", { count: data.members })}
+                      </Text>
+                      <IconButton
+                        size="1"
+                        variant={focused === id ? "solid" : "ghost"}
+                        className={clsx(styles.focus, "nodrag")}
+                        aria-label={focused === id ? t("focusExit") : t("focusAction")}
+                        aria-pressed={focused === id}
+                        onClick={(event: MouseEvent) => {
+                          event.stopPropagation();
+                          focusFrame(focused === id ? null : id);
+                        }}
+                        onDoubleClick={(event: MouseEvent) => event.stopPropagation()}
+                      >
+                        <AnimatedIcon icon={FocusIcon} size={14} />
+                      </IconButton>
+                    </Flex>
                   </Flex>
                   <Flex align="center" justify="between" gap="3" className={styles.kicker}>
                     <Text as="span" size="1" truncate>

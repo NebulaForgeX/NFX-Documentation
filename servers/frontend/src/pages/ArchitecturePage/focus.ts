@@ -11,6 +11,8 @@ export type FocusState = {
   pinned: string | null;
   hoverNode: (id: string | null) => void;
   hoverLink: (id: string | null) => void;
+  focused: string | null;
+  focusFrame: (id: string | null) => void;
 };
 
 export const FocusContext = createContext<FocusState>({
@@ -18,6 +20,8 @@ export const FocusContext = createContext<FocusState>({
   pinned: null,
   hoverNode: () => undefined,
   hoverLink: () => undefined,
+  focused: null,
+  focusFrame: () => undefined,
 });
 
 export const RelayoutContext = createContext<() => void>(() => undefined);

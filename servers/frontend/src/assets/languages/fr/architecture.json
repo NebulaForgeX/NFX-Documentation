@@ -27,6 +27,9 @@
     "compose": "Compose",
     "detail": "Conteneurs"
   },
+  "focusAction": "Cibler ce Compose et afficher ses liens conteneur",
+  "focusExit": "Quitter le focus",
+  "focusing": "Dans {{name}}",
   "composeCount": "{{count}} fichiers Compose",
   "containerCount_one": "{{count}} conteneur",
   "containerCount_other": "{{count}} conteneurs",

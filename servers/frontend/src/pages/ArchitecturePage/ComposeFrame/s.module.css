@@ -65,6 +65,11 @@
   border-bottom-color: var(--accent-a6);
 }
 
+.focus {
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
 .resizeLine:global(.react-flow__resize-control.line) {
   border-color: transparent;
   pointer-events: all;

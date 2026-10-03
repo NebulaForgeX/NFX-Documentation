@@ -27,6 +27,9 @@
     "compose": "Compose 关系",
     "detail": "容器细节"
   },
+  "focusAction": "聚焦这个 Compose，展开它的容器连线",
+  "focusExit": "退出聚焦",
+  "focusing": "正在看 {{name}} 内部",
   "composeCount": "{{count}} 个 Compose 文件",
   "containerCount": "{{count}} 个容器",
   "linkCount": "{{count}} 条连线",

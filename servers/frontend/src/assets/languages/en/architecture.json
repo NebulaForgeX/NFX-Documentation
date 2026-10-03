@@ -27,6 +27,9 @@
     "compose": "Compose",
     "detail": "Containers"
   },
+  "focusAction": "Focus this Compose and show its container lines",
+  "focusExit": "Exit focus",
+  "focusing": "Inside {{name}}",
   "composeCount": "{{count}} Compose files",
   "containerCount_one": "{{count}} container",
   "containerCount_other": "{{count}} containers",

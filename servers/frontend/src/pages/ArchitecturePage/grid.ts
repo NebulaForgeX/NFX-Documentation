@@ -184,6 +184,17 @@ export const LINE_EDGES: Record<LineLevelEnum, LinkEdge[]> = {
   [LineLevel.DETAIL]: TOPOLOGY_LINKS.map(toEdge),
 };
 
+const FOCUS_EDGES = new Map<string, LinkEdge[]>();
+
+export function focusEdges(frameId: string): LinkEdge[] {
+  const cached = FOCUS_EDGES.get(frameId);
+  if (cached) return cached;
+  const members = new Set(containersIn(frameId));
+  const edges = TOPOLOGY_LINKS.filter((link) => members.has(link.source) || members.has(link.target)).map(toEdge);
+  FOCUS_EDGES.set(frameId, edges);
+  return edges;
+}
+
 const sizeOfNode = (node: Node): Size => ({
   width: node.width ?? node.measured?.width ?? 0,
   height: node.height ?? node.measured?.height ?? 0,

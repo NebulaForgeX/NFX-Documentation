@@ -46,9 +46,15 @@
 }
 
 .side {
-  width: 320px;
+  width: 340px;
   flex-shrink: 0;
   min-height: 0;
+  overflow-y: auto;
+  background: var(--color-panel);
+  backdrop-filter: var(--backdrop-filter-panel);
+  border-left: 1px solid var(--docs-bezel);
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-a5) transparent;
 }
 
 .flow {
@@ -79,9 +85,18 @@
   cursor: default;
 }
 
+/* Moving packets repaint the edge layer every frame; keep that off the node layer. */
+.flow :global(.react-flow__edges) {
+  will-change: transform;
+}
+
 /* React Flow writes pointer-events inline; frames only take pointer input on their header. */
 .flow :global(.react-flow__node-frame) {
   pointer-events: none !important;
+}
+
+.flow :global(.react-flow__node-block) {
+  cursor: grab;
 }
 
 .flow :global(.react-flow__controls),

@@ -1,11 +1,5 @@
 .pane {
-  height: 100%;
-  overflow-y: auto;
-  background: var(--color-panel);
-  backdrop-filter: var(--backdrop-filter-panel);
-  border-left: 1px solid var(--docs-bezel);
-  scrollbar-width: thin;
-  scrollbar-color: var(--gray-a5) transparent;
+  border-top: 1px solid var(--docs-bezel);
 }
 
 .cell {

@@ -1,5 +1,6 @@
 import type { RefObject } from "react";
 
+import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
@@ -7,14 +8,17 @@ import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 gsap.registerPlugin(useGSAP, MotionPathPlugin);
 
 const PACKET_SPEED = 170;
+const REDUCED = "(prefers-reduced-motion: no-preference)";
 
-export function useFlowTimeline(scope: RefObject<HTMLElement | null>, armed: boolean) {
+export function useFlowTimeline(scope: RefObject<HTMLElement | null>, armed: boolean, version: number) {
+  const introEnd = useRef(0);
+
   useGSAP(
     () => {
       const root = scope.current;
       if (!armed || !root) return;
       const media = gsap.matchMedia();
-      media.add("(prefers-reduced-motion: no-preference)", () => {
+      media.add(REDUCED, () => {
         const tiers = root.querySelectorAll("[data-tier]");
         const groups = root.querySelectorAll("[data-group]");
         const blocks = root.querySelectorAll("[data-block]");
@@ -72,8 +76,20 @@ export function useFlowTimeline(scope: RefObject<HTMLElement | null>, armed: boo
           },
           "-=0.3",
         );
+        introEnd.current = tl.duration();
+      });
+      return () => media.revert();
+    },
+    { scope, dependencies: [armed] },
+  );
 
-        const start = tl.duration();
+  useGSAP(
+    () => {
+      const root = scope.current;
+      if (!armed || !root) return;
+      const start = version === 0 ? introEnd.current : 0;
+      const media = gsap.matchMedia();
+      media.add(REDUCED, () => {
         root.querySelectorAll<SVGCircleElement>("[data-packet]").forEach((packet, index) => {
           const path = packet.parentElement?.querySelector<SVGPathElement>("[data-draw]");
           if (!path) return;
@@ -91,6 +107,6 @@ export function useFlowTimeline(scope: RefObject<HTMLElement | null>, armed: boo
       });
       return () => media.revert();
     },
-    { scope, dependencies: [armed] },
+    { scope, dependencies: [armed, version] },
   );
 }

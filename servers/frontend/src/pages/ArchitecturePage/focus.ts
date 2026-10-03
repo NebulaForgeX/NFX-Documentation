@@ -3,6 +3,7 @@ import { createContext, useContext } from "react";
 export type Focus = {
   nodes: Set<string>;
   links: Set<string>;
+  areas: Set<string>;
 };
 
 export type FocusState = {
@@ -19,10 +20,20 @@ export const FocusContext = createContext<FocusState>({
   hoverLink: () => undefined,
 });
 
+export const RelayoutContext = createContext<() => void>(() => undefined);
+
 export type FocusLevel = "idle" | "hot" | "dim";
+export type AreaLevel = FocusLevel | "area";
 
 export function useNodeFocus(id: string): FocusLevel {
   const { focus } = useContext(FocusContext);
+  if (!focus) return "idle";
+  return focus.nodes.has(id) ? "hot" : "dim";
+}
+
+export function useAreaFocus(id: string): AreaLevel {
+  const { focus, pinned } = useContext(FocusContext);
+  if (pinned === id || focus?.areas.has(id)) return "area";
   if (!focus) return "idle";
   return focus.nodes.has(id) ? "hot" : "dim";
 }

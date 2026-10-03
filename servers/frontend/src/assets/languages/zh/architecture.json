@@ -1,7 +1,7 @@
 {
   "eyebrow": "TOPOLOGY · LAN",
   "title": "架构",
-  "lead": "一个外框是一个 Docker Compose，框里一块是一个容器。每条线都来自 compose、toml、nginx 或 Traefik 路由里写着的拨号。悬停外框、方块或连线看明细。",
+  "lead": "一个外框是一个 Docker Compose，框线只贴着里面的容器走。粗线连 Compose 与 Compose，细线连容器与容器；每条线都来自 compose、toml、nginx 或 Traefik 路由里写着的拨号。",
   "hint": "dev 在前，secure 在斜线后。同一端口在两台 NAS 上不冲突，因为 IP 不同。",
   "gridTitle": "主机端口分块",
   "gridLead": "每个仓一块，块尾补齐到以 9 结尾的端口。实心是已用，斜线是预留。",
@@ -11,7 +11,9 @@
   "containersTitle": "容器",
   "dialsOut": "拨出",
   "dialsIn": "被谁拨入",
-  "clickHint": "悬停看明细，点击固定高亮。",
+  "clickHint": "悬停看明细，点击固定高亮。拖标题移动外框，拖边缘改大小，双击放大到该框。",
+  "servicesTitle": "服务",
+  "servicesLead": "悬停一个 Compose 或容器，画布上它的框范围会亮起。点击固定。",
   "layerLabel": "只高亮一类连线",
   "layers": {
     "all": "全部",
@@ -19,6 +21,11 @@
     "grpc": "gRPC",
     "http": "HTTP",
     "ingress": "入口"
+  },
+  "lineLabel": "显示 Compose 大线或容器小线",
+  "lines": {
+    "compose": "Compose 关系",
+    "detail": "容器细节"
   },
   "composeCount": "{{count}} 个 Compose 文件",
   "containerCount": "{{count}} 个容器",
@@ -73,75 +80,75 @@
     }
   },
   "groups": {
-    "traefik": {
+    "frame-traefik": {
       "title": "NFX-Edge Traefik",
       "body": "反向代理，单独一个 Compose 文件。dynamic/*.project.yml 里的文件路由拨 NAS_IP 加宿主机端口。80/443 不进 10000 分块。"
     },
-    "identity": {
+    "frame-identity": {
       "title": "NFX-Identity",
       "body": "登录、资料和资产。其它产品都用 gRPC 拨 auth-base，每个 console 都把 auth 和 asset 代理出去。"
     },
-    "news": {
+    "frame-news": {
       "title": "NFX-News",
       "body": "六个后端加一个 console。mcp、crawl、report 之间还会用 gRPC 互相调用。"
     },
-    "storages": {
+    "frame-storages": {
       "title": "NFX-Storages",
       "body": "五个后端加一个 console。对象数据放在 NAS 卷上，不在 Stack 的 MinIO。s3 走 Host 路由，不经过 console。"
     },
-    "edge": {
+    "frame-edge": {
       "title": "NFX-Edge",
       "body": "sites-base 负责站点和证书。ACME 仍走 Traefik 的 80。"
     },
-    "documentation": {
+    "frame-documentation": {
       "title": "NFX-Documentation",
       "body": "一个前端容器。浏览器路径 /console/nfx-documentation/。"
     },
-    "static": {
+    "frame-static": {
       "title": "静态站",
       "body": "不是 Compose。各自的 start.sh 构建镜像后用 docker run 起一个容器。"
     },
-    "stack": {
+    "frame-stack": {
       "title": "NFX-Stack",
       "body": "共享数据面，由十个 Compose 文件组成。产品用 NAS_IP 加这些宿主机端口拨入，不加入共享 Docker 网络。"
     },
-    "stack-mysql": {
+    "frame-stack-mysql": {
       "title": "MySQL",
       "body": "MySQL 和 phpMyAdmin。UI 用 Compose 服务名连数据库。"
     },
-    "stack-mongodb": {
+    "frame-stack-mongodb": {
       "title": "MongoDB",
       "body": "MongoDB 和 mongo-express。UI 用 Compose 服务名连数据库。"
     },
-    "stack-postgresql": {
+    "frame-stack-postgresql": {
       "title": "PostgreSQL",
       "body": "每个 NFX 后端的数据库都在这里。pgAdmin 只有 depends_on，服务器要手动添加。"
     },
-    "stack-redis": {
+    "frame-stack-redis": {
       "title": "Redis",
       "body": "每个 NFX 后端的缓存。RedisInsight 只有 depends_on，连接要手动添加。"
     },
-    "stack-kafka": {
+    "frame-stack-kafka": {
       "title": "Kafka",
       "body": "每个 NFX 后端的事件总线。产品走 EXTERNAL 监听，Kafka UI 走 kafka:9092。"
     },
-    "stack-rabbitmq": {
+    "frame-stack-rabbitmq": {
       "title": "RabbitMQ",
       "body": "AMQP 和管理界面在同一个容器。目前没有 NFX 产品拨它。"
     },
-    "stack-minio": {
+    "frame-stack-minio": {
       "title": "MinIO",
       "body": "S3 API 和控制台在同一个容器。Identity asset-base 把图片存在这里，Traefik 对外提供公开桶路径。"
     },
-    "stack-centrifugo": {
+    "frame-stack-centrifugo": {
       "title": "Centrifugo",
       "body": "实时推送服务。目前没有 NFX 产品拨它。"
     },
-    "stack-otel": {
+    "frame-stack-otel": {
       "title": "OpenTelemetry",
       "body": "Collector 接收每个后端的 OTLP，链路发给 Jaeger，日志发给 Loki，指标给 Prometheus 抓取。Grafana 读这三个。"
     },
-    "stack-opensearch": {
+    "frame-stack-opensearch": {
       "title": "OpenSearch",
       "body": "OpenSearch 和 Dashboards。目前没有 NFX 产品拨它。"
     }

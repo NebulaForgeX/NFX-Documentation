@@ -59,51 +59,81 @@ export type PortBlock = {
 };
 
 export const TOPOLOGY_GROUPS: TopologyGroup[] = [
-  { id: "traefik", repo: "NFX-Edge", compose: "docker-compose.traefik.yml", range: "80 / 443" },
-  { id: "news", repo: "NFX-News", compose: "docker-compose.yml", range: "10050–10079" },
-  { id: "storages", repo: "NFX-Storages", compose: "docker-compose.yml", range: "10080–10109" },
-  { id: "edge", repo: "NFX-Edge", compose: "docker-compose.yml", range: "10110–10119" },
-  { id: "documentation", repo: "NFX-Documentation", compose: "docker-compose.yml", range: "10120–10129" },
-  { id: "static", repo: "AquaWorks · TimetableCraft", range: "10400–10405" },
-  { id: "identity", repo: "NFX-Identity", compose: "docker-compose.yml", range: "10030–10049" },
-  { id: "stack", repo: "NFX-Stack", range: "10000–10029" },
-  { id: "stack-mysql", repo: "NFX-Stack", parent: "stack", compose: "docker-compose.mysql.yml", range: "10000–10001" },
+  { id: "frame-traefik", repo: "NFX-Edge", compose: "docker-compose.traefik.yml", range: "80 / 443" },
+  { id: "frame-news", repo: "NFX-News", compose: "docker-compose.yml", range: "10050–10079" },
+  { id: "frame-storages", repo: "NFX-Storages", compose: "docker-compose.yml", range: "10080–10109" },
+  { id: "frame-edge", repo: "NFX-Edge", compose: "docker-compose.yml", range: "10110–10119" },
+  { id: "frame-documentation", repo: "NFX-Documentation", compose: "docker-compose.yml", range: "10120–10129" },
+  { id: "frame-static", repo: "AquaWorks · TimetableCraft", range: "10400–10405" },
+  { id: "frame-identity", repo: "NFX-Identity", compose: "docker-compose.yml", range: "10030–10049" },
+  { id: "frame-stack", repo: "NFX-Stack", range: "10000–10029" },
   {
-    id: "stack-mongodb",
+    id: "frame-stack-mysql",
     repo: "NFX-Stack",
-    parent: "stack",
+    parent: "frame-stack",
+    compose: "docker-compose.mysql.yml",
+    range: "10000–10001",
+  },
+  {
+    id: "frame-stack-mongodb",
+    repo: "NFX-Stack",
+    parent: "frame-stack",
     compose: "docker-compose.mongodb.yml",
     range: "10002–10003",
   },
   {
-    id: "stack-postgresql",
+    id: "frame-stack-postgresql",
     repo: "NFX-Stack",
-    parent: "stack",
+    parent: "frame-stack",
     compose: "docker-compose.postgresql.yml",
     range: "10004–10005",
   },
-  { id: "stack-redis", repo: "NFX-Stack", parent: "stack", compose: "docker-compose.redis.yml", range: "10006–10007" },
-  { id: "stack-kafka", repo: "NFX-Stack", parent: "stack", compose: "docker-compose.kafka.yml", range: "10008–10009" },
   {
-    id: "stack-rabbitmq",
+    id: "frame-stack-redis",
     repo: "NFX-Stack",
-    parent: "stack",
+    parent: "frame-stack",
+    compose: "docker-compose.redis.yml",
+    range: "10006–10007",
+  },
+  {
+    id: "frame-stack-kafka",
+    repo: "NFX-Stack",
+    parent: "frame-stack",
+    compose: "docker-compose.kafka.yml",
+    range: "10008–10009",
+  },
+  {
+    id: "frame-stack-rabbitmq",
+    repo: "NFX-Stack",
+    parent: "frame-stack",
     compose: "docker-compose.rabbitmq.yml",
     range: "10010–10011",
   },
-  { id: "stack-minio", repo: "NFX-Stack", parent: "stack", compose: "docker-compose.minio.yml", range: "10012–10013" },
   {
-    id: "stack-centrifugo",
+    id: "frame-stack-minio",
     repo: "NFX-Stack",
-    parent: "stack",
+    parent: "frame-stack",
+    compose: "docker-compose.minio.yml",
+    range: "10012–10013",
+  },
+  {
+    id: "frame-stack-centrifugo",
+    repo: "NFX-Stack",
+    parent: "frame-stack",
     compose: "docker-compose.centrifugo.yml",
     range: "10014",
   },
-  { id: "stack-otel", repo: "NFX-Stack", parent: "stack", compose: "docker-compose.otel.yml", range: "10015–10022" },
   {
-    id: "stack-opensearch",
+    id: "frame-stack-otel",
     repo: "NFX-Stack",
-    parent: "stack",
+    parent: "frame-stack",
+    compose: "docker-compose.otel.yml",
+    range: "10015–10022",
+  },
+  {
+    id: "frame-stack-opensearch",
+    repo: "NFX-Stack",
+    parent: "frame-stack",
     compose: "docker-compose.opensearch.yml",
     range: "10023–10024",
   },
@@ -165,7 +195,7 @@ export const TOPOLOGY_CONTAINERS: TopologyContainer[] = [
   { id: "nas2", docker: false, service: "nas2", names: [], ports: [{ name: "LAN", dev: "192.168.1.65" }] },
   {
     id: "traefik",
-    group: "traefik",
+    group: "frame-traefik",
     docker: true,
     service: "traefik",
     names: ["NFX-Edge-Reverse-Proxy"],
@@ -176,9 +206,10 @@ export const TOPOLOGY_CONTAINERS: TopologyContainer[] = [
     ],
   },
 
+  frontendConsole("identity-console", "frame-identity", "NFX-Identity-Console", ["10034", "10039"]),
   backend(
     "identity-auth",
-    "identity",
+    "frame-identity",
     "auth-base",
     "NFX-Identity-Auth-Base",
     "50071",
@@ -187,29 +218,45 @@ export const TOPOLOGY_CONTAINERS: TopologyContainer[] = [
   ),
   backend(
     "identity-asset",
-    "identity",
+    "frame-identity",
     "asset-base",
     "NFX-Identity-Asset-Base",
     "50072",
     ["10032", "10037"],
     ["10033", "10038"],
   ),
-  frontendConsole("identity-console", "identity", "NFX-Identity-Console", ["10034", "10039"]),
 
+  frontendConsole("news-console", "frame-news", "NFX-News-Console", ["10062", "10075"]),
   backend(
     "news-source",
-    "news",
+    "frame-news",
     "source-base",
     "NFX-News-Source-Base",
     "50072",
     ["10050", "10063"],
     ["10051", "10064"],
   ),
-  backend("news-news", "news", "news-base", "NFX-News-News-Base", "50073", ["10052", "10065"], ["10053", "10066"]),
-  backend("news-crawl", "news", "crawl-base", "NFX-News-Crawl-Base", "50074", ["10054", "10067"], ["10055", "10068"]),
+  backend(
+    "news-news",
+    "frame-news",
+    "news-base",
+    "NFX-News-News-Base",
+    "50073",
+    ["10052", "10065"],
+    ["10053", "10066"],
+  ),
+  backend(
+    "news-crawl",
+    "frame-news",
+    "crawl-base",
+    "NFX-News-Crawl-Base",
+    "50074",
+    ["10054", "10067"],
+    ["10055", "10068"],
+  ),
   backend(
     "news-report",
-    "news",
+    "frame-news",
     "report-base",
     "NFX-News-Report-Base",
     "50075",
@@ -218,19 +265,19 @@ export const TOPOLOGY_CONTAINERS: TopologyContainer[] = [
   ),
   backend(
     "news-notify",
-    "news",
+    "frame-news",
     "notify-base",
     "NFX-News-Notify-Base",
     "50076",
     ["10058", "10071"],
     ["10059", "10072"],
   ),
-  backend("news-mcp", "news", "mcp-base", "NFX-News-Mcp-Base", "50077", ["10060", "10073"], ["10061", "10074"]),
-  frontendConsole("news-console", "news", "NFX-News-Console", ["10062", "10075"]),
+  backend("news-mcp", "frame-news", "mcp-base", "NFX-News-Mcp-Base", "50077", ["10060", "10073"], ["10061", "10074"]),
 
+  frontendConsole("storages-console", "frame-storages", "NFX-Storages-Console", ["10090", "10101"], "Prod"),
   backend(
     "storages-s3",
-    "storages",
+    "frame-storages",
     "s3-base",
     "NFX-Storages-S3-Base",
     "50072",
@@ -240,7 +287,7 @@ export const TOPOLOGY_CONTAINERS: TopologyContainer[] = [
   ),
   backend(
     "storages-admin",
-    "storages",
+    "frame-storages",
     "admin-base",
     "NFX-Storages-Admin-Base",
     "50075",
@@ -250,7 +297,7 @@ export const TOPOLOGY_CONTAINERS: TopologyContainer[] = [
   ),
   backend(
     "storages-object",
-    "storages",
+    "frame-storages",
     "object-base",
     "NFX-Storages-Object-Base",
     "50073",
@@ -260,7 +307,7 @@ export const TOPOLOGY_CONTAINERS: TopologyContainer[] = [
   ),
   backend(
     "storages-iam",
-    "storages",
+    "frame-storages",
     "iam-base",
     "NFX-Storages-Iam-Base",
     "50074",
@@ -270,7 +317,7 @@ export const TOPOLOGY_CONTAINERS: TopologyContainer[] = [
   ),
   backend(
     "storages-notify",
-    "storages",
+    "frame-storages",
     "notify-base",
     "NFX-Storages-Notify-Base",
     "50076",
@@ -278,14 +325,21 @@ export const TOPOLOGY_CONTAINERS: TopologyContainer[] = [
     ["10089", "10100"],
     "Prod",
   ),
-  frontendConsole("storages-console", "storages", "NFX-Storages-Console", ["10090", "10101"], "Prod"),
 
-  backend("edge-sites", "edge", "sites-base", "NFX-Edge-Sites-Base", "50072", ["10110", "10113"], ["10111", "10114"]),
-  frontendConsole("edge-console", "edge", "NFX-Edge-Console", ["10112", "10115"]),
+  frontendConsole("edge-console", "frame-edge", "NFX-Edge-Console", ["10112", "10115"]),
+  backend(
+    "edge-sites",
+    "frame-edge",
+    "sites-base",
+    "NFX-Edge-Sites-Base",
+    "50072",
+    ["10110", "10113"],
+    ["10111", "10114"],
+  ),
 
   {
     id: "documentation-frontend",
-    group: "documentation",
+    group: "frame-documentation",
     docker: true,
     service: "frontend",
     names: ["NFX-Documentation-Frontend"],
@@ -294,7 +348,7 @@ export const TOPOLOGY_CONTAINERS: TopologyContainer[] = [
   },
   {
     id: "aquaworks",
-    group: "static",
+    group: "frame-static",
     docker: true,
     service: "aquaworks-web",
     names: ["AquaWorks-WEB-Prod-Local"],
@@ -303,7 +357,7 @@ export const TOPOLOGY_CONTAINERS: TopologyContainer[] = [
   },
   {
     id: "timetable",
-    group: "static",
+    group: "frame-static",
     docker: true,
     service: "timetablecraft-web",
     names: ["TimetableCraft-WEB-Prod-Local"],
@@ -311,37 +365,37 @@ export const TOPOLOGY_CONTAINERS: TopologyContainer[] = [
     ports: [{ name: "HTTP", dev: "10401" }],
   },
 
-  stack("stack-mysql", "stack-mysql", "MySQL", "3306", [{ name: "MySQL", dev: "10000" }]),
-  stack("stack-mysql-ui", "stack-mysql", "MySQL-UI", "80", [{ name: "phpMyAdmin", dev: "10001" }]),
-  stack("stack-mongodb", "stack-mongodb", "MongoDB", "27017", [{ name: "MongoDB", dev: "10002" }]),
-  stack("stack-mongodb-ui", "stack-mongodb", "MongoDB-UI", "8081", [{ name: "mongo-express", dev: "10003" }]),
-  stack("stack-postgresql", "stack-postgresql", "PostgreSQL", "5432", [{ name: "PostgreSQL", dev: "10004" }]),
-  stack("stack-postgresql-ui", "stack-postgresql", "PostgreSQL-UI", "80", [{ name: "pgAdmin", dev: "10005" }]),
-  stack("stack-redis", "stack-redis", "Redis", "6379", [{ name: "Redis", dev: "10006" }]),
-  stack("stack-redis-ui", "stack-redis", "Redis-UI", "5540", [{ name: "RedisInsight", dev: "10007" }]),
-  stack("stack-kafka", "stack-kafka", "Kafka", "9092 · EXTERNAL 9094", [{ name: "EXTERNAL", dev: "10008" }]),
-  stack("stack-kafka-ui", "stack-kafka", "Kafka-UI", "8080", [{ name: "Kafka UI", dev: "10009" }]),
-  stack("stack-rabbitmq", "stack-rabbitmq", "RabbitMQ", "5672 · 15672", [
+  stack("stack-mysql", "frame-stack-mysql", "MySQL", "3306", [{ name: "MySQL", dev: "10000" }]),
+  stack("stack-mysql-ui", "frame-stack-mysql", "MySQL-UI", "80", [{ name: "phpMyAdmin", dev: "10001" }]),
+  stack("stack-mongodb", "frame-stack-mongodb", "MongoDB", "27017", [{ name: "MongoDB", dev: "10002" }]),
+  stack("stack-mongodb-ui", "frame-stack-mongodb", "MongoDB-UI", "8081", [{ name: "mongo-express", dev: "10003" }]),
+  stack("stack-postgresql", "frame-stack-postgresql", "PostgreSQL", "5432", [{ name: "PostgreSQL", dev: "10004" }]),
+  stack("stack-postgresql-ui", "frame-stack-postgresql", "PostgreSQL-UI", "80", [{ name: "pgAdmin", dev: "10005" }]),
+  stack("stack-redis", "frame-stack-redis", "Redis", "6379", [{ name: "Redis", dev: "10006" }]),
+  stack("stack-redis-ui", "frame-stack-redis", "Redis-UI", "5540", [{ name: "RedisInsight", dev: "10007" }]),
+  stack("stack-kafka", "frame-stack-kafka", "Kafka", "9092 · EXTERNAL 9094", [{ name: "EXTERNAL", dev: "10008" }]),
+  stack("stack-kafka-ui", "frame-stack-kafka", "Kafka-UI", "8080", [{ name: "Kafka UI", dev: "10009" }]),
+  stack("stack-rabbitmq", "frame-stack-rabbitmq", "RabbitMQ", "5672 · 15672", [
     { name: "AMQP", dev: "10010" },
     { name: "UI", dev: "10011" },
   ]),
-  stack("stack-minio", "stack-minio", "MinIO", "9000 · 9001", [
+  stack("stack-minio", "frame-stack-minio", "MinIO", "9000 · 9001", [
     { name: "API", dev: "10012" },
     { name: "UI", dev: "10013" },
   ]),
-  stack("stack-centrifugo", "stack-centrifugo", "Centrifugo", "8000", [{ name: "Centrifugo", dev: "10014" }]),
-  stack("stack-otel-collector", "stack-otel", "Otel-Collector", "4317 · 4318 · 13133 · 8889", [
+  stack("stack-centrifugo", "frame-stack-centrifugo", "Centrifugo", "8000", [{ name: "Centrifugo", dev: "10014" }]),
+  stack("stack-otel-collector", "frame-stack-otel", "Otel-Collector", "4317 · 4318 · 13133 · 8889", [
     { name: "OTLP gRPC", dev: "10016" },
     { name: "OTLP HTTP", dev: "10017" },
     { name: "health", dev: "10018" },
     { name: "Prometheus", dev: "10019" },
   ]),
-  stack("stack-jaeger", "stack-otel", "Jaeger", "16686 · 4317", [{ name: "Jaeger UI", dev: "10015" }]),
-  stack("stack-prometheus", "stack-otel", "Prometheus", "9090", [{ name: "Prometheus", dev: "10020" }]),
-  stack("stack-loki", "stack-otel", "Loki", "3100", [{ name: "Loki", dev: "10021" }]),
-  stack("stack-grafana", "stack-otel", "Grafana", "3000", [{ name: "Grafana", dev: "10022" }]),
-  stack("stack-opensearch", "stack-opensearch", "OpenSearch", "9200", [{ name: "OpenSearch", dev: "10023" }]),
-  stack("stack-opensearch-dashboards", "stack-opensearch", "OpenSearch-Dashboards", "5601", [
+  stack("stack-jaeger", "frame-stack-otel", "Jaeger", "16686 · 4317", [{ name: "Jaeger UI", dev: "10015" }]),
+  stack("stack-prometheus", "frame-stack-otel", "Prometheus", "9090", [{ name: "Prometheus", dev: "10020" }]),
+  stack("stack-loki", "frame-stack-otel", "Loki", "3100", [{ name: "Loki", dev: "10021" }]),
+  stack("stack-grafana", "frame-stack-otel", "Grafana", "3000", [{ name: "Grafana", dev: "10022" }]),
+  stack("stack-opensearch", "frame-stack-opensearch", "OpenSearch", "9200", [{ name: "OpenSearch", dev: "10023" }]),
+  stack("stack-opensearch-dashboards", "frame-stack-opensearch", "OpenSearch-Dashboards", "5601", [
     { name: "Dashboards", dev: "10024" },
   ]),
 ];
@@ -430,6 +484,57 @@ export const TOPOLOGY_LINKS: TopologyLink[] = [
   dockerLink("stack-grafana", "stack-jaeger", LinkProtocol.HTTP, "jaeger:16686"),
 ];
 
+const GROUP_IDS = new Set(TOPOLOGY_GROUPS.map((group) => group.id));
+TOPOLOGY_CONTAINERS.forEach((container) => {
+  if (GROUP_IDS.has(container.id)) throw new Error(`topology: ${container.id} is both a frame and a container`);
+});
+
+const GROUP_BY_ID = new Map(TOPOLOGY_GROUPS.map((group) => [group.id, group]));
+
+export function topUnitOf(containerId: string): string {
+  let unit = CONTAINER_BY_ID.get(containerId)?.group;
+  if (!unit) return containerId;
+  while (GROUP_BY_ID.get(unit)?.parent) unit = GROUP_BY_ID.get(unit)?.parent ?? unit;
+  return unit;
+}
+
+export type OverviewLink = TopologyLink & { members: string[] };
+
+const PROTOCOL_RANK: LinkProtocolEnum[] = [
+  LinkProtocol.TLS,
+  LinkProtocol.FORWARD,
+  LinkProtocol.GRPC,
+  LinkProtocol.DATA,
+  LinkProtocol.HTTP,
+];
+
+function overviewLinks(): OverviewLink[] {
+  const pairs = new Map<string, TopologyLink[]>();
+  TOPOLOGY_LINKS.forEach((item) => {
+    const source = topUnitOf(item.source);
+    const target = topUnitOf(item.target);
+    if (source === target) return;
+    if (source === item.source && target === item.target) return;
+    const key = `${source}==${target}`;
+    pairs.set(key, [...(pairs.get(key) ?? []), item]);
+  });
+  return [...pairs.entries()].map(([key, members]) => {
+    const [source, target] = key.split("==");
+    const protocol =
+      PROTOCOL_RANK.find((rank) => members.some((member) => member.protocol === rank)) ?? members[0].protocol;
+    return {
+      id: `overview--${source}--${target}`,
+      source,
+      target,
+      protocol,
+      dials: members.flatMap((member) => member.dials),
+      members: members.map((member) => member.id),
+    };
+  });
+}
+
+export const OVERVIEW_LINKS: OverviewLink[] = overviewLinks();
+
 export const PORT_BLOCKS: PortBlock[] = [
   {
     id: "stack",
@@ -439,7 +544,7 @@ export const PORT_BLOCKS: PortBlock[] = [
     end: 10029,
     usedStart: 10000,
     usedEnd: 10024,
-    groupIds: ["stack"],
+    groupIds: ["frame-stack"],
   },
   {
     id: "identity",
@@ -449,7 +554,7 @@ export const PORT_BLOCKS: PortBlock[] = [
     end: 10049,
     usedStart: 10030,
     usedEnd: 10039,
-    groupIds: ["identity"],
+    groupIds: ["frame-identity"],
   },
   {
     id: "news",
@@ -459,7 +564,7 @@ export const PORT_BLOCKS: PortBlock[] = [
     end: 10079,
     usedStart: 10050,
     usedEnd: 10075,
-    groupIds: ["news"],
+    groupIds: ["frame-news"],
   },
   {
     id: "storages",
@@ -469,7 +574,7 @@ export const PORT_BLOCKS: PortBlock[] = [
     end: 10109,
     usedStart: 10080,
     usedEnd: 10101,
-    groupIds: ["storages"],
+    groupIds: ["frame-storages"],
   },
   {
     id: "edge",
@@ -479,7 +584,7 @@ export const PORT_BLOCKS: PortBlock[] = [
     end: 10119,
     usedStart: 10110,
     usedEnd: 10115,
-    groupIds: ["edge"],
+    groupIds: ["frame-edge"],
   },
   {
     id: "documentation",
@@ -489,10 +594,10 @@ export const PORT_BLOCKS: PortBlock[] = [
     end: 10129,
     usedStart: 10120,
     usedEnd: 10120,
-    groupIds: ["documentation"],
+    groupIds: ["frame-documentation"],
   },
   { id: "gap", nfx: false, start: 10130, end: 10399, groupIds: [] },
-  { id: "static", nfx: false, start: 10400, end: 10405, usedStart: 10400, usedEnd: 10405, groupIds: ["static"] },
+  { id: "static", nfx: false, start: 10400, end: 10405, usedStart: 10400, usedEnd: 10405, groupIds: ["frame-static"] },
 ];
 
 export function blockRange(block: PortBlock): string {

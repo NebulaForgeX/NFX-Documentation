@@ -1,7 +1,7 @@
 {
   "eyebrow": "TOPOLOGY · LAN",
   "title": "Architecture",
-  "lead": "One frame is one Docker Compose. One block inside it is one container. Every line is a dial written in a compose file, a toml, nginx, or a Traefik route. Hover a frame, a block, or a line for the detail.",
+  "lead": "One frame is one Docker Compose, and its outline hugs exactly the containers inside it. Thick lines join Compose to Compose, thin lines join container to container, and every line is a dial written in a compose file, a toml, nginx, or a Traefik route.",
   "hint": "Dev comes first. Secure follows the slash. The same port on two NAS machines does not collide, because the IP differs.",
   "gridTitle": "Host port blocks",
   "gridLead": "One block per repo, padded to a port ending in 9. Solid is used, hatched is reserved.",
@@ -11,7 +11,9 @@
   "containersTitle": "Containers",
   "dialsOut": "Dials",
   "dialsIn": "Dialed by",
-  "clickHint": "Hover for detail, click to pin.",
+  "clickHint": "Hover for detail, click to pin. Drag a frame by its header, drag its edge to resize, and double-click to zoom in.",
+  "servicesTitle": "Services",
+  "servicesLead": "Hover a Compose or a container to light its area on the canvas. Click to pin it.",
   "layerLabel": "Highlight one kind of link",
   "layers": {
     "all": "All",
@@ -19,6 +21,11 @@
     "grpc": "gRPC",
     "http": "HTTP",
     "ingress": "Ingress"
+  },
+  "lineLabel": "Show Compose lines or container lines",
+  "lines": {
+    "compose": "Compose",
+    "detail": "Containers"
   },
   "composeCount": "{{count}} Compose files",
   "containerCount_one": "{{count}} container",
@@ -74,75 +81,75 @@
     }
   },
   "groups": {
-    "traefik": {
+    "frame-traefik": {
       "title": "NFX-Edge Traefik",
       "body": "The reverse proxy on its own Compose file. File routes in dynamic/*.project.yml dial NAS_IP plus the host port. 80/443 stays out of the 10000 blocks."
     },
-    "identity": {
+    "frame-identity": {
       "title": "NFX-Identity",
       "body": "Login, profiles, and assets. Every other product dials auth-base over gRPC, and every console proxies to auth and asset."
     },
-    "news": {
+    "frame-news": {
       "title": "NFX-News",
       "body": "Six backends and a console. mcp, crawl, and report also dial each other over gRPC."
     },
-    "storages": {
+    "frame-storages": {
       "title": "NFX-Storages",
       "body": "Five backends and a console. Object bytes live on NAS volumes, not in Stack MinIO. s3 is reached by Host route, not through the console."
     },
-    "edge": {
+    "frame-edge": {
       "title": "NFX-Edge",
       "body": "sites-base owns certificates and sites. ACME still goes through Traefik on port 80."
     },
-    "documentation": {
+    "frame-documentation": {
       "title": "NFX-Documentation",
       "body": "One frontend container. Browser path /console/nfx-documentation/."
     },
-    "static": {
+    "frame-static": {
       "title": "Static sites",
       "body": "Not a Compose. Each start.sh builds the image and runs one container with docker run."
     },
-    "stack": {
+    "frame-stack": {
       "title": "NFX-Stack",
       "body": "Shared data plane made of ten Compose files. Products dial NAS_IP plus these host ports. There is no shared Docker network."
     },
-    "stack-mysql": {
+    "frame-stack-mysql": {
       "title": "MySQL",
       "body": "MySQL and phpMyAdmin. The UI reaches the database by its Compose service name."
     },
-    "stack-mongodb": {
+    "frame-stack-mongodb": {
       "title": "MongoDB",
       "body": "MongoDB and mongo-express. The UI reaches the database by its Compose service name."
     },
-    "stack-postgresql": {
+    "frame-stack-postgresql": {
       "title": "PostgreSQL",
       "body": "Every NFX backend keeps its database here. pgAdmin only depends on it; servers are added by hand."
     },
-    "stack-redis": {
+    "frame-stack-redis": {
       "title": "Redis",
       "body": "Cache for every NFX backend. RedisInsight only depends on it; the connection is added by hand."
     },
-    "stack-kafka": {
+    "frame-stack-kafka": {
       "title": "Kafka",
       "body": "Event bus for every NFX backend. Products use the EXTERNAL listener; Kafka UI uses kafka:9092."
     },
-    "stack-rabbitmq": {
+    "frame-stack-rabbitmq": {
       "title": "RabbitMQ",
       "body": "AMQP and the management UI in one container. No NFX product dials it today."
     },
-    "stack-minio": {
+    "frame-stack-minio": {
       "title": "MinIO",
       "body": "S3 API and console in one container. Identity asset-base stores images here, and Traefik serves the public bucket path."
     },
-    "stack-centrifugo": {
+    "frame-stack-centrifugo": {
       "title": "Centrifugo",
       "body": "Realtime server. No NFX product dials it today."
     },
-    "stack-otel": {
+    "frame-stack-otel": {
       "title": "OpenTelemetry",
       "body": "The collector takes OTLP from every backend, sends traces to Jaeger and logs to Loki, and exposes metrics for Prometheus. Grafana reads all three."
     },
-    "stack-opensearch": {
+    "frame-stack-opensearch": {
       "title": "OpenSearch",
       "body": "OpenSearch and its Dashboards. No NFX product dials it today."
     }

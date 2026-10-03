@@ -1,10 +1,19 @@
 import type { Node } from "@xyflow/react";
 import type { Focus, FocusState } from "./focus";
-import type { LayerKeyEnum } from "./layout";
+import type { LayerKeyEnum, LineLevelEnum } from "./layout";
 
-import { memo, Suspense, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box, Container, Flex, Heading, Section, SegmentedControl, Text } from "@radix-ui/themes";
-import { Background, BackgroundVariant, Controls, MiniMap, ReactFlow, useNodesInitialized } from "@xyflow/react";
+import {
+  Background,
+  BackgroundVariant,
+  Controls,
+  MiniMap,
+  ReactFlow,
+  ReactFlowProvider,
+  useNodesInitialized,
+  useReactFlow,
+} from "@xyflow/react";
 import { useResolvedAppearance } from "nfx-ui/hooks";
 import { useTranslation } from "react-i18next";
 
@@ -14,10 +23,12 @@ import { PageFrame } from "@/layouts";
 
 import ArchBlock from "./ArchBlock";
 import ComposeFrame from "./ComposeFrame";
-import { FocusContext } from "./focus";
-import { layerFocus, LayerKey, linkFocus, loadFlowLayout, neighbours } from "./layout";
+import { FocusContext, RelayoutContext } from "./focus";
+import { FLOW_NODES, LINE_EDGES } from "./grid";
+import { CONTAINER_BY_ID, layerFocus, LayerKey, LineLevel, linkFocus, neighbours } from "./layout";
 import PortLink from "./PortLink";
 import RangeGrid from "./RangeGrid";
+import ServiceList from "./ServiceList";
 import TierLabel from "./TierLabel";
 import { useFlowTimeline } from "./timeline";
 
@@ -28,6 +39,7 @@ import styles from "./s.module.css";
 const nodeTypes = { block: ArchBlock, frame: ComposeFrame, tier: TierLabel };
 const edgeTypes = { link: PortLink };
 const LAYERS = Object.values(LayerKey);
+const LINE_LEVELS = Object.values(LineLevel);
 
 type Hover = { kind: "nodes"; ids: string[] } | { kind: "link"; id: string } | null;
 
@@ -46,18 +58,31 @@ const miniStroke = (node: Node) => (node.type === "frame" ? "var(--accent-a6)" :
 
 function Topology({
   appearance,
+  lines,
   onArm,
   onPin,
+  onRelayout,
 }: {
   appearance: string;
+  lines: LineLevelEnum;
   onArm: () => void;
   onPin: (id: string | null) => void;
+  onRelayout: () => void;
 }) {
-  const { nodes, edges } = use(loadFlowLayout());
+  const { fitView } = useReactFlow();
+  const shown = useRef(lines);
+
+  useEffect(() => {
+    if (shown.current === lines) return;
+    shown.current = lines;
+    const frame = requestAnimationFrame(onRelayout);
+    return () => cancelAnimationFrame(frame);
+  }, [lines, onRelayout]);
+
   return (
     <ReactFlow
-      defaultNodes={nodes}
-      defaultEdges={edges}
+      defaultNodes={FLOW_NODES}
+      edges={LINE_EDGES[lines]}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       className={styles.flow}
@@ -65,10 +90,16 @@ function Topology({
       onNodeClick={(_, node) => {
         if (node.type === "block" || node.type === "frame") onPin(node.id);
       }}
+      onNodeDoubleClick={(_, node) => {
+        if (node.type === "tier") return;
+        const target = node.type === "block" ? (CONTAINER_BY_ID.get(node.id)?.group ?? node.id) : node.id;
+        void fitView({ nodes: [{ id: target }], duration: 500, padding: 0.12 });
+      }}
+      onNodeDragStop={onRelayout}
       onPaneClick={() => onPin(null)}
-      nodesDraggable={false}
       nodesConnectable={false}
       elementsSelectable={false}
+      zoomOnDoubleClick={false}
       fitView
       fitViewOptions={{ padding: 0.04 }}
       minZoom={0.1}
@@ -94,11 +125,13 @@ const ArchitecturePage = memo(() => {
   const appearance = useResolvedAppearance();
   const stage = useRef<HTMLDivElement>(null);
   const [armed, setArmed] = useState(false);
+  const [version, setVersion] = useState(0);
   const [hover, setHover] = useState<Hover>(null);
   const [pinned, setPinned] = useState<string | null>(null);
   const [layer, setLayer] = useState<LayerKeyEnum>(LayerKey.ALL);
+  const [lines, setLines] = useState<LineLevelEnum>(LineLevel.COMPOSE);
 
-  useFlowTimeline(stage, armed);
+  useFlowTimeline(stage, armed, version);
 
   const focus = useMemo<Focus | null>(() => {
     if (hover?.kind === "link") return linkFocus(hover.id);
@@ -109,8 +142,10 @@ const ArchitecturePage = memo(() => {
   }, [hover, pinned, layer]);
 
   const hoverNode = useCallback((id: string | null) => setHover(id ? { kind: "nodes", ids: [id] } : null), []);
+  const hoverNodes = useCallback((ids: string[] | null) => setHover(ids ? { kind: "nodes", ids } : null), []);
   const hoverLink = useCallback((id: string | null) => setHover(id ? { kind: "link", id } : null), []);
   const arm = useCallback(() => setArmed(true), []);
+  const relayout = useCallback(() => setVersion((current) => current + 1), []);
   const pin = useCallback(
     (id: string | null) => setPinned((current) => (id === null || current === id ? null : id)),
     [],
@@ -124,63 +159,78 @@ const ArchitecturePage = memo(() => {
   return (
     <PageFrame fullHeight>
       <FocusContext.Provider value={context}>
-        <Section size="1" py="4" className={styles.hud} data-reveal>
-          <Container size="4" width="100%" maxWidth="100%" px="5">
-            <Flex align="end" justify="between" gap="5" wrap="wrap">
-              <Flex direction="column" gap="2" minWidth="0">
-                <Eyebrow>{t("eyebrow")}</Eyebrow>
-                <Heading as="h1" size="7" className={styles.title}>
-                  {t("title")}
-                </Heading>
-                <Text as="p" size="2" color="gray" className={styles.lead}>
-                  {t("lead")}
-                </Text>
-              </Flex>
-              <Flex direction="column" align="end" gap="3">
-                <SegmentedControl.Root
-                  size="1"
-                  value={layer}
-                  onValueChange={(value: string) => setLayer(value as LayerKeyEnum)}
-                  aria-label={t("layerLabel")}
-                >
-                  {LAYERS.map((key) => (
-                    <SegmentedControl.Item key={key} value={key}>
-                      {t(`layers.${key}`)}
-                    </SegmentedControl.Item>
-                  ))}
-                </SegmentedControl.Root>
-                <Flex align="center" gap="4" wrap="wrap" className={styles.readout}>
-                  <Text as="span" size="1">
-                    {t("composeCount", { count: COMPOSE_COUNT })}
-                  </Text>
-                  <Box className={styles.dot} aria-hidden />
-                  <Text as="span" size="1">
-                    {t("containerCount", { count: CONTAINER_COUNT })}
-                  </Text>
-                  <Box className={styles.dot} aria-hidden />
-                  <Text as="span" size="1">
-                    {t("linkCount", { count: TOPOLOGY_LINKS.length })}
-                  </Text>
-                  <Box className={styles.dot} aria-hidden />
-                  <Text as="span" size="1">
-                    {t("clickHint")}
+        <RelayoutContext.Provider value={relayout}>
+          <Section size="1" py="4" className={styles.hud} data-reveal>
+            <Container size="4" width="100%" maxWidth="100%" px="5">
+              <Flex align="end" justify="between" gap="5" wrap="wrap">
+                <Flex direction="column" gap="2" minWidth="0">
+                  <Eyebrow>{t("eyebrow")}</Eyebrow>
+                  <Heading as="h1" size="7" className={styles.title}>
+                    {t("title")}
+                  </Heading>
+                  <Text as="p" size="2" color="gray" className={styles.lead}>
+                    {t("lead")}
                   </Text>
                 </Flex>
+                <Flex direction="column" align="end" gap="3">
+                  <SegmentedControl.Root
+                    size="1"
+                    value={lines}
+                    onValueChange={(value: string) => setLines(value as LineLevelEnum)}
+                    aria-label={t("lineLabel")}
+                  >
+                    {LINE_LEVELS.map((key) => (
+                      <SegmentedControl.Item key={key} value={key}>
+                        {t(`lines.${key}`)}
+                      </SegmentedControl.Item>
+                    ))}
+                  </SegmentedControl.Root>
+                  <SegmentedControl.Root
+                    size="1"
+                    value={layer}
+                    onValueChange={(value: string) => setLayer(value as LayerKeyEnum)}
+                    aria-label={t("layerLabel")}
+                  >
+                    {LAYERS.map((key) => (
+                      <SegmentedControl.Item key={key} value={key}>
+                        {t(`layers.${key}`)}
+                      </SegmentedControl.Item>
+                    ))}
+                  </SegmentedControl.Root>
+                  <Flex align="center" gap="4" wrap="wrap" className={styles.readout}>
+                    <Text as="span" size="1">
+                      {t("composeCount", { count: COMPOSE_COUNT })}
+                    </Text>
+                    <Box className={styles.dot} aria-hidden />
+                    <Text as="span" size="1">
+                      {t("containerCount", { count: CONTAINER_COUNT })}
+                    </Text>
+                    <Box className={styles.dot} aria-hidden />
+                    <Text as="span" size="1">
+                      {t("linkCount", { count: TOPOLOGY_LINKS.length })}
+                    </Text>
+                    <Box className={styles.dot} aria-hidden />
+                    <Text as="span" size="1">
+                      {t("clickHint")}
+                    </Text>
+                  </Flex>
+                </Flex>
               </Flex>
-            </Flex>
-          </Container>
-        </Section>
+            </Container>
+          </Section>
 
-        <Flex direction={{ initial: "column", md: "row" }} className={styles.body}>
-          <Box ref={stage} className={styles.stage} data-armed={armed ? "true" : "false"}>
-            <Suspense fallback={null}>
-              <Topology appearance={appearance} onArm={arm} onPin={pin} />
-            </Suspense>
-          </Box>
-          <Box className={styles.side}>
-            <RangeGrid focus={focus} onHover={(ids) => setHover(ids ? { kind: "nodes", ids } : null)} onPin={pin} />
-          </Box>
-        </Flex>
+          <Flex direction={{ initial: "column", md: "row" }} className={styles.body}>
+            <Box ref={stage} className={styles.stage} data-armed={armed ? "true" : "false"}>
+              <ReactFlowProvider>
+                <Topology appearance={appearance} lines={lines} onArm={arm} onPin={pin} onRelayout={relayout} />
+              </ReactFlowProvider>
+            </Box>
+            <Box className={styles.side}>
+              <ServiceList focus={focus} pinned={pinned} onHover={hoverNodes} onPin={pin} />
+              <RangeGrid focus={focus} onHover={hoverNodes} onPin={pin} />
+            </Box>
+          </Flex>
+        </RelayoutContext.Provider>
       </FocusContext.Provider>
     </PageFrame>
   );

@@ -1,0 +1,71 @@
+.frame {
+  background: var(--color-panel-solid);
+  box-shadow:
+    inset 0 0 0 1px var(--docs-bezel),
+    inset 0 1px 0 var(--gray-a3);
+  transition:
+    box-shadow 180ms ease,
+    background-color 180ms ease,
+    opacity 180ms ease;
+}
+
+.nested {
+  background: var(--gray-a2);
+  box-shadow: inset 0 0 0 1px var(--gray-a5);
+}
+
+.frame.hot {
+  box-shadow:
+    inset 0 0 0 1px var(--accent-a7),
+    inset 0 1px 0 var(--accent-a8);
+}
+
+.frame.area {
+  background: var(--accent-a3);
+  box-shadow:
+    inset 0 0 0 1px var(--accent-8),
+    0 0 20px -6px var(--accent-a6);
+}
+
+.frame[data-dim="true"],
+.chip[data-dim="true"] {
+  opacity: 0.5;
+}
+
+.head {
+  cursor: pointer;
+}
+
+.range {
+  flex-shrink: 0;
+  color: var(--accent-11);
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.chip {
+  color: var(--gray-11);
+  background: var(--color-background);
+  box-shadow: inset 0 0 0 1px var(--gray-a5);
+  font-family: var(--docs-font-mono);
+  cursor: pointer;
+  transition:
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+.chip :global(.rt-Text) {
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+
+.chip:hover,
+.chip.hot {
+  color: var(--accent-12);
+  background: var(--accent-a3);
+  box-shadow: inset 0 0 0 1px var(--accent-8);
+}

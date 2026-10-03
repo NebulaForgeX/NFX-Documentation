@@ -6,14 +6,14 @@ HTTP/HTTPS does **not** live here. Ingress is Edge (Chapter 4). This repo does *
 
 ## Why it comes first
 
-Identity / Edge / News / Storages assume Stack is already up for Postgres, Redis, Kafka, OTEL, and MinIO. Without it there is no Atlas migration, no Kafka topics, no MinIO for Identity avatars.
+Identity / Edge / News / Storages assume Stack is already up for Postgres, Redis, Kafka, OTEL, and MinIO. Without it there is no Atlas migration, no database the token clock depends on, no Kafka topics, and no MinIO for Identity avatars.
 
 ## Layout
 
 ```
 NFX-Stack/
 ├── .example.env                 # copy to .env; never commit .env
-├── start.sh                     # create network, chown data dirs, up in order
+├── start.sh                     # chown data dirs, up in order
 ├── version.sh
 ├── Infrastructure/
 │   ├── docker-compose.<name>.yml
@@ -40,7 +40,7 @@ cp .example.env .env
 # passwords, bind IPs, ports, data paths. Replace /home/kali/repo placeholders
 ./start.sh
 ./start.sh ps
-./start.sh logs
+./start.sh logs     # last 50 lines of each compose
 ./start.sh down     # containers stop; bind data stays
 ```
 
@@ -105,20 +105,20 @@ Processes in one compose file (Kafka UI → `kafka:9092`) use that file's defaul
 
 | File | Services | Images (versions track the repo) |
 |------|----------|----------------------------------|
-| `docker-compose.mysql.yml` | mysql, mysql-ui | `mysql:9.7.2`, `phpmyadmin` |
+| `docker-compose.mysql.yml` | mysql, mysql-ui | `mysql:9.7.2`, `phpmyadmin:5.2.3` |
 | `docker-compose.mongodb.yml` | mongodb, mongodb-ui | `mongo:4.4`, `mongo-express` |
-| `docker-compose.postgresql.yml` | postgresql, postgresql-ui | `postgres:18.6`, `pgadmin4` |
-| `docker-compose.redis.yml` | redis, redis-ui | `redis:8.8.2`, RedisInsight |
-| `docker-compose.kafka.yml` | kafka, kafka-ui | Apache Kafka, kafka-ui |
+| `docker-compose.postgresql.yml` | postgresql, postgresql-ui | `postgres:18.6`, `dpage/pgadmin4` |
+| `docker-compose.redis.yml` | redis, redis-ui | `redis:8.8.2`, `redis/redisinsight` |
+| `docker-compose.kafka.yml` | kafka, kafka-ui | `apache/kafka`, `provectuslabs/kafka-ui` |
 | `docker-compose.rabbitmq.yml` | rabbitmq | `rabbitmq:*-management` |
 | `docker-compose.minio.yml` | minio | `quay.io/minio/minio` |
 | `docker-compose.centrifugo.yml` | centrifugo | `centrifugo/centrifugo` |
-| `docker-compose.otel.yml` | collector, jaeger, prometheus, loki, grafana | OTEL stack |
-| `docker-compose.opensearch.yml` | opensearch, dashboards | OpenSearch 3.x |
+| `docker-compose.otel.yml` | otel-collector, jaeger, prometheus, loki, grafana | Collector / Jaeger / Prometheus / Loki / Grafana |
+| `docker-compose.opensearch.yml` | opensearch, opensearch-dashboards | OpenSearch 3.x |
 
 ## Data paths
 
-`.env` holds `MYSQL_DATA_PATH` / `POSTGRESQL_DATA_PATH` / `REDIS_DATA_PATH` / `KAFKA_DATA_PATH` / `MINIO_DATA_PATH` / `PROMETHEUS_DATA_PATH` / `LOKI_DATA_PATH` / `GRAFANA_DATA_PATH` / `OPENSEARCH_DATA_PATH` plus matching `*_LOG_PATH` / `*_INIT_PATH`. On Windows use drive-letter paths.
+`.env` data paths: `MYSQL_DATA_PATH`, `MONGO_DATA_PATH`, `POSTGRESQL_DATA_PATH`, `REDIS_DATA_PATH`, `KAFKA_DATA_PATH`, `RABBITMQ_DATA_PATH`, `MINIO_DATA_PATH`, `PROMETHEUS_DATA_PATH`, `LOKI_DATA_PATH`, `GRAFANA_DATA_PATH`, `OPENSEARCH_DATA_PATH`. Log and init directories exist only for some of them: MySQL, Mongo, and PostgreSQL have both `*_LOG_PATH` and `*_INIT_PATH` (Mongo uses `MONGO_INIT_PATH` / `MONGO_LOG_PATH`); Redis, Kafka, MinIO, and RabbitMQ have `*_LOG_PATH` and no INIT; Prometheus, Loki, Grafana, and OpenSearch are DATA only. On Windows use a drive-letter path, for example `D:/Code/NFX-Stack/Databases/mysql`.
 
 Before `up`, `./start.sh` `chown`s:
 
@@ -143,7 +143,7 @@ Otherwise `sudo docker` creates `root:root` dirs and non-root image users Restar
 | Centrifugo Admin | `http://<lan-ip>:${CENTRIFUGO_PORT}` | `admin` block in `Infrastructure/config/centrifugo.json` |
 | Jaeger | `http://<lan-ip>:${OTEL_JAEGER_UI_PORT}` | none |
 | Prometheus | `http://<lan-ip>:${OTEL_PROMETHEUS_PORT}` | none |
-| Grafana | `http://<lan-ip>:${OTEL_GRAFANA_PORT}` | `GRAFANA_ADMIN_*` |
+| Grafana | `http://<lan-ip>:${OTEL_GRAFANA_PORT}` | `GRAFANA_ADMIN_USER` / `GRAFANA_ADMIN_PASSWORD` |
 | OpenSearch Dashboards | `http://<lan-ip>:${OPENSEARCH_DASHBOARDS_PORT}` | `admin` / `OPENSEARCH_PASSWORD` |
 
 Collector health: `http://<lan-ip>:${OTEL_COLLECTOR_HEALTH_PORT}`.
@@ -158,7 +158,7 @@ Collector health: `http://<lan-ip>:${OTEL_COLLECTOR_HEALTH_PORT}`.
 - OpenSearch: password must pass zxcvbn; data dir writable by uid 1000; heap via `OPENSEARCH_JAVA_OPTS` (NAS sample `-Xms512m -Xmx512m`). **`OPENSEARCH_PASSWORD` applies only on first data-dir init**; rotate by wiping `OPENSEARCH_DATA_PATH`
 - Grafana / Prometheus / Loki Restarting: see chown above
 - MinIO data-dir errors after leaving AIStor: wipe `MINIO_DATA_PATH` if the on-disk format is incompatible
-- Logs: `./start.sh logs` or `docker logs -f NFX-Stack-PostgreSQL`. Most stacks cap json-file at `10m × 10`
+- Logs: `./start.sh logs` or `docker logs -f NFX-Stack-PostgreSQL`. Most stacks cap json-file at `10m × 10`; Kafka's cap is larger
 
 Keep these ports on a trusted LAN. The public internet should only see Edge 80/443.
 

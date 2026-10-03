@@ -16,14 +16,14 @@ There is **no** `nfx-ui/layouts`, `LayoutFrame`, `PageFrame`, or `ModalProvider`
 
 - `ThemeProvider` / `LanguageProvider` / `DataProvider`
 
-Theme follows the preference store; do not pass `defaultTheme` to override the user. Hosts import:
+Theme is read only from the preference store. `ThemeProvider` takes `children` and `onAppearanceChange`; it has no prop that overrides the theme. Hosts import:
 
 ```ts
 import "nfx-ui/themes/index.css";
 import "nfx-ui/themes/fonts";
 ```
 
-Chrome is **`@radix-ui/themes`** (peer `^3.3.0`) plus each host’s Sidebar. The documentation site is the same: Radix + lucide, no card wall as the page shell.
+Chrome is **`@radix-ui/themes`** (peer `^3.3.0`) plus each host's Sidebar. The documentation site uses Radix the same way; icons are mostly `nfx-ui/icons`, with a little `lucide-react`. Do not use a card wall as the page shell.
 
 ### navigations
 
@@ -33,13 +33,13 @@ Identity’s Forger/Authority trees are **Identity console** `ScopeRoute`, not n
 
 ### hooks (pages may use these only — never axios or `useAuthRepository` in a page)
 
-Auth: `useAuthQueryScope`, `useCurrentProfile`, `useSendVerificationCode`, `useSignupWithEmail`, `useLoginWithEmail`, `useLoginWithPhone`, `useSelectProfile`, `usePatchProfile`, `useUpdateProfileSettings`, `useUpdatePreference`, `useListProfiles`, `useCreateForgerProfile`, `useCreateAuthorityProfile`, `useDeleteProfile`, `useConfirmProfileAvatar`, `useClearProfileAvatar`, `useConfirmProfileBackgrounds`, the full **email** and **phone** CRUD sets, `useSendChangePasswordVerificationCode`, `useChangePassword`, `useSearchForgerProfiles`, `useSearchAuthorityProfiles`, `useGetPublicProfileCard`, `useListOwnerForgerProfiles`, `useListOwnerAuthorityProfiles`, `useUpdateAuthorityProfileRoles`.
+Auth (`nfx-ui/hooks`): `useAuthQueryScope`, `useCurrentProfile`, `useSendVerificationCode`, `useSignupWithEmail`, `useLoginWithEmail`, `useLoginWithPhone`, `useSelectProfile`, `usePatchProfile`, `useUpdateProfileSettings`, `useUpdatePreference`, `useListProfiles`, `useCreateForgerProfile`, `useCreateAuthorityProfile`, `useDeleteProfile`, `useConfirmProfileAvatar`, `useClearProfileAvatar`, `useConfirmProfileBackgrounds`, `useListEmails` / `useCreateEmail` / `useSendEmailVerificationCode` / `useVerifyEmail` / `useUpdateEmail` / `useSetPrimaryEmail` / `useDeleteEmail`, `useListPhones` / `useCreatePhone` / `useSendPhoneVerificationCode` / `useVerifyPhone` / `useUpdatePhone` / `useSetPrimaryPhone` / `useDeletePhone`, `useSendChangePasswordVerificationCode`, `useChangePassword`, `useSearchForgerProfiles`, `useSearchAuthorityProfiles`, `useGetPublicProfileCard`, `useListOwnerForgerProfiles`, `useListOwnerAuthorityProfiles`, `useUpdateAuthorityProfileRoles`.
 
 Asset: `useAssetFileURL`, `usePrepareUpload`, `useConfirmUpload`, `useDeleteAsset`, `useListAssets`, `usePrepareImageUpload`, `useConfirmImageUpload`, `useDeleteImage`.
 
-Also: `useUnifiedQuery`, preference (`useResolvedAppearance`, `useApplyPreferenceOnLoad`, `useSyncPreference`), dom helpers.
+Also: `useUnifiedQuery`, `useUnifiedInfiniteQuery`, `useUnifiedSuspenseQuery`, `useUnifiedSuspenseInfiniteQuery` (factory), preference (`useResolvedAppearance`, `useApplyPreferenceOnLoad`, `useSyncPreference`, `configurePreferenceSync`), dom (`useDebouncedValue`, `useWheelHorizontalScroll`, `useLockDocumentScrollOnDesktop`), language labels (`useLanguageLabel`, `useBaseLabel`, `useLayoutLabel`, `usePreferenceLabel`, `useThemeLabel`).
 
-Cache invalidation: **only** `invalidateEventEmitter` + `useInvalidateInv`. Pages must not call `useQueryClient().invalidateQueries`.
+List invalidation lives in the **host**: `invalidateEventEmitter` + `useInvalidateInv` from `@/events/invalidate`. Inside the library, auth invalidation uses `authEventEmitter` and query invalidation uses `queryEventEmitter`, both from `nfx-ui/events`. Pages must not call `useQueryClient().invalidateQueries`.
 
 ### Other subpaths
 
@@ -57,7 +57,7 @@ Do not use `input type="date"`. The reference is CityPulso PulsoNear `DateTimePi
 
 ## Peer dependencies
 
-`react` / `react-dom` `^19.2.8`, `react-router` `^8.3.1`, `@radix-ui/themes` `^3.3.0`, `@tanstack/react-query` `^5`, `axios` `^1.20`, `vite` `^8.2.2` (see `package.json`).
+`react` / `react-dom` `^19.3.0`, `react-router` `^8.4.0`, `@radix-ui/themes` `^3.3.0`, `@tanstack/react-query` `^5.103.1`, `axios` `^1.20.0`. `vite` is not a peer; the build devDependency is `vite` `^8.3.0` (see `package.json`).
 
 ## Developing the library
 

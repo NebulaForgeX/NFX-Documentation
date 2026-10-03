@@ -79,6 +79,11 @@
   cursor: default;
 }
 
+/* React Flow writes pointer-events inline; frames only take pointer input on their header. */
+.flow :global(.react-flow__node-frame) {
+  pointer-events: none !important;
+}
+
 .flow :global(.react-flow__controls),
 .flow :global(.react-flow__minimap) {
   overflow: hidden;

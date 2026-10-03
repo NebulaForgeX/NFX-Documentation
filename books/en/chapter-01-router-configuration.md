@@ -4,7 +4,7 @@ Before any NFX service goes live, lock the public ingress on the router. After D
 
 ## Prerequisites
 
-- Stable broadband; know the router admin URL (often `192.168.1.1`)
+- Stable broadband; know the router admin URL (often `192.168.1.1`, or the management IP the ISP assigned)
 - **DHCP reservation** for the NAS (MAC → fixed LAN IP) so port forwards do not drift
 - In mainland China: ask the ISP to open inbound 80/443 (port multiplexing or ICP filing may be required). Timeouts from the public internet are often ISP policy, not Traefik
 - Prefer a single NAT layer: ONT in bridge mode, router does PPPoE. With double NAT, **both** layers must forward 80/443 to the NAS
@@ -19,11 +19,11 @@ Docker documents published ports as insecure by default. Therefore:
 
 - Do not trust the NAS firewall as the edge
 - Whitelist on the router; forward only what you need
-- Turn **UPnP** off so a container cannot punch extra ports by itself
+- Turn **UPnP** off, then add the forwards by hand so a container cannot punch extra ports by itself
 
 ## Forward only 80 and 443
 
-[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) is the **sole** HTTP ingress in the fleet and owns host `80/443`. Chapter 4 deploys it.
+[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) is the **sole** HTTP/HTTPS ingress in the fleet and owns host `80/443`. Chapter 4 deploys it.
 
 | Port | Use |
 |------|-----|
@@ -34,6 +34,7 @@ Docker documents published ports as insecure by default. Therefore:
 
 - Stack data plane **10000–10024** (MySQL / Postgres / Redis / Kafka / MinIO / OTEL / OpenSearch …)
 - Product host HTTP/gRPC/console **10030–10120** (`GRPC_EXT_*`, optional console maps)
+- Static-site host ports from **10400** (AquaWorks / TimetableCraft; reach them through Traefik Host rules, do not forward the raw ports to the internet)
 - Container-internal HTTP 8080+ and gRPC 50071+
 - SSH (22 or the NAS custom port)
 
@@ -43,7 +44,7 @@ Docker documents published ports as insecure by default. Therefore:
 
 1. Router admin page opens on the LAN
 2. NAS LAN IP is static and matches the forward target
-3. From **outside** the LAN (phone off Wi-Fi, or a VPS), ports `80` and `443` reach that IP. Certificates can wait for Edge; first prove the ports
+3. From **outside** the LAN (phone off Wi-Fi, or a VPS), ports `80` and `443` reach that IP. Certificates can wait; Edge sites-base issues them later, and Traefik does not. First prove the ports
 4. UPnP is off
 5. No leftover forwards for 3306 / 5432 / 6379 / 9092
 

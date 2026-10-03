@@ -1,17 +1,30 @@
 {
   "eyebrow": "TOPOLOGY · LAN",
   "title": "架构",
-  "lead": "一块是一个 Docker Compose。块上只写名字和宿主机端口范围。连线标的是拨号端口。悬停一块或一条线才展开明细。",
+  "lead": "一个外框是一个 Docker Compose，框里一块是一个容器。每条线都来自 compose、toml、nginx 或 Traefik 路由里写着的拨号。悬停外框、方块或连线看明细。",
   "hint": "dev 在前，secure 在斜线后。同一端口在两台 NAS 上不冲突，因为 IP 不同。",
   "gridTitle": "主机端口分块",
   "gridLead": "每个仓一块，块尾补齐到以 9 结尾的端口。实心是已用，斜线是预留。",
   "legendTitle": "连线",
   "dialsTitle": "拨号端口",
   "portsTitle": "宿主机端口",
+  "containersTitle": "容器",
+  "dialsOut": "拨出",
+  "dialsIn": "被谁拨入",
   "clickHint": "悬停看明细，点击固定高亮。",
-  "composeCount": "{{count}} 个 Compose",
+  "layerLabel": "只高亮一类连线",
+  "layers": {
+    "all": "全部",
+    "data": "数据",
+    "grpc": "gRPC",
+    "http": "HTTP",
+    "ingress": "入口"
+  },
+  "composeCount": "{{count}} 个 Compose 文件",
+  "containerCount": "{{count}} 个容器",
   "linkCount": "{{count}} 条连线",
-  "notDocker": "不是 Compose",
+  "notDocker": "不是容器",
+  "notCompose": "docker run · start.sh",
   "dev": "dev",
   "secure": "secure",
   "used": "已用 {{range}}",
@@ -28,6 +41,7 @@
     "ingress": "入口",
     "proxy": "代理",
     "product": "产品",
+    "identity": "身份",
     "shared": "共享服务"
   },
   "cells": {
@@ -58,66 +72,260 @@
       "note": "Vite 10402–10405 只在开发"
     }
   },
-  "blocks": {
-    "internet": {
-      "title": "Internet",
-      "body": "公网只看到路由器。",
-      "listen": ""
-    },
-    "router": {
-      "title": "路由器",
-      "body": "只把 80 和 443 转到跑 Traefik 的 NAS。",
-      "listen": ""
-    },
+  "groups": {
     "traefik": {
       "title": "NFX-Edge Traefik",
-      "body": "文件路由 dynamic/*.project.yml。不进 Docker 网络。80/443 不进 10000 分块。",
-      "listen": ""
+      "body": "反向代理，单独一个 Compose 文件。dynamic/*.project.yml 里的文件路由拨 NAS_IP 加宿主机端口。80/443 不进 10000 分块。"
     },
     "identity": {
       "title": "NFX-Identity",
-      "body": "登录与资料。auth、asset、console。",
-      "listen": "HTTP 8080 · gRPC 50071 / 50072"
+      "body": "登录、资料和资产。其它产品都用 gRPC 拨 auth-base，每个 console 都把 auth 和 asset 代理出去。"
     },
     "news": {
       "title": "NFX-News",
-      "body": "source、news、crawl、report、notify、mcp。调用 Identity 的 auth gRPC。",
-      "listen": "HTTP 8080 · gRPC 50072–50077"
+      "body": "六个后端加一个 console。mcp、crawl、report 之间还会用 gRPC 互相调用。"
     },
     "storages": {
       "title": "NFX-Storages",
-      "body": "顺序 s3、admin、object、iam、notify。S3 走 Host。",
-      "listen": "HTTP 8080 · gRPC 50072–50076"
+      "body": "五个后端加一个 console。对象数据放在 NAS 卷上，不在 Stack 的 MinIO。s3 走 Host 路由，不经过 console。"
     },
     "edge": {
-      "title": "NFX-Edge sites",
-      "body": "sites-base 负责证书。ACME 仍走 Traefik 的 80。",
-      "listen": "HTTP 8080 · gRPC 50071+"
+      "title": "NFX-Edge",
+      "body": "sites-base 负责站点和证书。ACME 仍走 Traefik 的 80。"
     },
     "documentation": {
       "title": "NFX-Documentation",
-      "body": "手册前端。浏览器路径 /console/nfx-documentation/。",
-      "listen": "HTTP 80"
+      "body": "一个前端容器。浏览器路径 /console/nfx-documentation/。"
     },
-    "aquaworks": {
-      "title": "AquaWorks",
-      "body": "静态站。局域网路径会跳到这个端口。",
-      "listen": ""
-    },
-    "timetable": {
-      "title": "TimetableCraft",
-      "body": "静态站。局域网路径会跳到这个端口。",
-      "listen": ""
+    "static": {
+      "title": "静态站",
+      "body": "不是 Compose。各自的 start.sh 构建镜像后用 docker run 起一个容器。"
     },
     "stack": {
       "title": "NFX-Stack",
-      "body": "共享数据面。产品用 NAS IP 加这些端口，不加入共享网络。",
-      "listen": "容器内仍是各服务自己的端口"
+      "body": "共享数据面，由十个 Compose 文件组成。产品用 NAS_IP 加这些宿主机端口拨入，不加入共享 Docker 网络。"
+    },
+    "stack-mysql": {
+      "title": "MySQL",
+      "body": "MySQL 和 phpMyAdmin。UI 用 Compose 服务名连数据库。"
+    },
+    "stack-mongodb": {
+      "title": "MongoDB",
+      "body": "MongoDB 和 mongo-express。UI 用 Compose 服务名连数据库。"
+    },
+    "stack-postgresql": {
+      "title": "PostgreSQL",
+      "body": "每个 NFX 后端的数据库都在这里。pgAdmin 只有 depends_on，服务器要手动添加。"
+    },
+    "stack-redis": {
+      "title": "Redis",
+      "body": "每个 NFX 后端的缓存。RedisInsight 只有 depends_on，连接要手动添加。"
+    },
+    "stack-kafka": {
+      "title": "Kafka",
+      "body": "每个 NFX 后端的事件总线。产品走 EXTERNAL 监听，Kafka UI 走 kafka:9092。"
+    },
+    "stack-rabbitmq": {
+      "title": "RabbitMQ",
+      "body": "AMQP 和管理界面在同一个容器。目前没有 NFX 产品拨它。"
+    },
+    "stack-minio": {
+      "title": "MinIO",
+      "body": "S3 API 和控制台在同一个容器。Identity asset-base 把图片存在这里，Traefik 对外提供公开桶路径。"
+    },
+    "stack-centrifugo": {
+      "title": "Centrifugo",
+      "body": "实时推送服务。目前没有 NFX 产品拨它。"
+    },
+    "stack-otel": {
+      "title": "OpenTelemetry",
+      "body": "Collector 接收每个后端的 OTLP，链路发给 Jaeger，日志发给 Loki，指标给 Prometheus 抓取。Grafana 读这三个。"
+    },
+    "stack-opensearch": {
+      "title": "OpenSearch",
+      "body": "OpenSearch 和 Dashboards。目前没有 NFX 产品拨它。"
+    }
+  },
+  "containers": {
+    "internet": {
+      "title": "Internet",
+      "body": "公网只看到路由器。"
+    },
+    "router": {
+      "title": "路由器",
+      "body": "只把 80 和 443 转到跑 Traefik 的 NAS。"
     },
     "nas2": {
       "title": "NAS2",
-      "body": "同一套 Compose 和端口号。Traefik 只把 URL 里的 IP 换成这台机器。",
-      "listen": ""
+      "body": "同一套 Compose 和端口号。Traefik 只把 URL 里的 IP 换成这台机器。"
+    },
+    "traefik": {
+      "title": "Traefik",
+      "body": "按路径或 Host 把请求路由到每个后端、console、MinIO 和静态站。"
+    },
+    "identity-auth": {
+      "title": "Identity 认证",
+      "body": "账号、会话和资料。通过 SMTP 发邮件。"
+    },
+    "identity-asset": {
+      "title": "Identity 资产",
+      "body": "上传和图片。对象存进 MinIO，令牌交给 auth 校验。"
+    },
+    "identity-console": {
+      "title": "Identity 控制台",
+      "body": "nginx 提供构建产物，并代理 /nfx-identity/auth 和 /nfx-identity/asset。"
+    },
+    "news-source": {
+      "title": "News 来源",
+      "body": "来源目录和抓取。"
+    },
+    "news-news": {
+      "title": "News 新闻",
+      "body": "条目、搜索和栏目偏好。"
+    },
+    "news-crawl": {
+      "title": "News 抓取",
+      "body": "抓取会话。用 gRPC 拨 source 和 report。"
+    },
+    "news-report": {
+      "title": "News 报告",
+      "body": "关键词 DSL 和快照。用 gRPC 拨 news。"
+    },
+    "news-notify": {
+      "title": "News 通知",
+      "body": "飞书、钉钉、企业微信、Telegram webhook。从 Kafka 消费 nfxnews.report。"
+    },
+    "news-mcp": {
+      "title": "News MCP",
+      "body": "工具列表和调用。用 gRPC 拨 news、report、source、crawl。"
+    },
+    "news-console": {
+      "title": "News 控制台",
+      "body": "nginx 提供构建产物，并代理 News 六个后端和 Identity。"
+    },
+    "storages-s3": {
+      "title": "Storages S3",
+      "body": "Go 实现的 S3，Host 是 s3.nebulaforgex.com。对象数据在 NAS 卷上，不在 Stack MinIO。"
+    },
+    "storages-admin": {
+      "title": "Storages 管理",
+      "body": "浏览器的所有 /admin/v3 路由：用户、策略、KMS 等。"
+    },
+    "storages-object": {
+      "title": "Storages 对象",
+      "body": "对象模块。HTTP 路由为空，浏览器走 admin。"
+    },
+    "storages-iam": {
+      "title": "Storages IAM",
+      "body": "IAM 授权。HTTP 路由为空，浏览器走 admin。"
+    },
+    "storages-notify": {
+      "title": "Storages 通知",
+      "body": "事件目标。HTTP 路由为空，浏览器走 admin。"
+    },
+    "storages-console": {
+      "title": "Storages 控制台",
+      "body": "nginx 提供构建产物，并代理 admin、object、iam、notify 和 Identity。"
+    },
+    "edge-sites": {
+      "title": "Edge 站点",
+      "body": "站点和证书。在 Traefik 后面应答 ACME 质询。"
+    },
+    "edge-console": {
+      "title": "Edge 控制台",
+      "body": "nginx 提供构建产物，并代理 sites 和 Identity。"
+    },
+    "documentation-frontend": {
+      "title": "文档前端",
+      "body": "就是这本手册。容器里 nginx 监听 80。"
+    },
+    "aquaworks": {
+      "title": "AquaWorks",
+      "body": "静态站。局域网路径会跳到这个端口。"
+    },
+    "timetable": {
+      "title": "TimetableCraft",
+      "body": "静态站。局域网路径会跳到这个端口。"
+    },
+    "stack-mysql": {
+      "title": "MySQL",
+      "body": "MySQL 服务。"
+    },
+    "stack-mysql-ui": {
+      "title": "MySQL UI",
+      "body": "phpMyAdmin，PMA_HOST=mysql。"
+    },
+    "stack-mongodb": {
+      "title": "MongoDB",
+      "body": "MongoDB 服务。"
+    },
+    "stack-mongodb-ui": {
+      "title": "MongoDB UI",
+      "body": "mongo-express，ME_CONFIG_MONGODB_SERVER=mongodb。"
+    },
+    "stack-postgresql": {
+      "title": "PostgreSQL",
+      "body": "每个产品一个库，例如 nfxidentity、nfxnews。"
+    },
+    "stack-postgresql-ui": {
+      "title": "PostgreSQL UI",
+      "body": "pgAdmin，没有预配置服务器。"
+    },
+    "stack-redis": {
+      "title": "Redis",
+      "body": "Redis 服务。"
+    },
+    "stack-redis-ui": {
+      "title": "Redis UI",
+      "body": "RedisInsight，没有预配置连接。"
+    },
+    "stack-kafka": {
+      "title": "Kafka",
+      "body": "KRaft broker。容器内 PLAINTEXT kafka:9092，宿主机端口是 EXTERNAL。"
+    },
+    "stack-kafka-ui": {
+      "title": "Kafka UI",
+      "body": "Bootstrap server 是 kafka:9092。"
+    },
+    "stack-rabbitmq": {
+      "title": "RabbitMQ",
+      "body": "AMQP 和管理界面。"
+    },
+    "stack-minio": {
+      "title": "MinIO",
+      "body": "S3 API 在 9000，控制台在 9001。"
+    },
+    "stack-centrifugo": {
+      "title": "Centrifugo",
+      "body": "实时推送服务。"
+    },
+    "stack-otel-collector": {
+      "title": "Otel Collector",
+      "body": "收 OTLP。链路给 Jaeger，日志给 Loki，指标在 8889。"
+    },
+    "stack-jaeger": {
+      "title": "Jaeger",
+      "body": "链路存储和界面。"
+    },
+    "stack-prometheus": {
+      "title": "Prometheus",
+      "body": "抓取 otel-collector:8889。"
+    },
+    "stack-loki": {
+      "title": "Loki",
+      "body": "日志存储，走 HTTP 的 OTLP。"
+    },
+    "stack-grafana": {
+      "title": "Grafana",
+      "body": "数据源是 Prometheus、Loki、Jaeger。"
+    },
+    "stack-opensearch": {
+      "title": "OpenSearch",
+      "body": "搜索引擎，HTTPS 9200。"
+    },
+    "stack-opensearch-dashboards": {
+      "title": "OpenSearch Dashboards",
+      "body": "opensearch.hosts 是 https://opensearch:9200。"
     }
   }
 }

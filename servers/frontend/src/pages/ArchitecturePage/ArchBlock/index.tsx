@@ -1,5 +1,6 @@
 import type { NodeProps } from "@xyflow/react";
 import type { PointerEvent } from "react";
+import type { TopologyLink } from "@/constants";
 import type { BlockNode } from "../layout";
 
 import { memo, useContext, useRef } from "react";
@@ -12,6 +13,7 @@ import { AnimatedIcon, DockerIcon, GlobeIcon, RouterIcon } from "nfx-ui/icons";
 import { useTranslation } from "react-i18next";
 
 import { FocusContext, useNodeFocus } from "../focus";
+import { linksFrom, linksTo } from "../layout";
 import styles from "./s.module.css";
 
 gsap.registerPlugin(useGSAP);
@@ -22,25 +24,54 @@ function BlockIcon({ id, docker }: { id: string; docker: boolean }) {
   return <AnimatedIcon icon={RouterIcon} size={14} />;
 }
 
+function LinkList({ title, links, end }: { title: string; links: TopologyLink[]; end: "source" | "target" }) {
+  const { t } = useTranslation("architecture");
+  if (!links.length) return null;
+  return (
+    <Flex direction="column" gap="1">
+      <Text size="1" className={styles.caption}>
+        {title}
+      </Text>
+      {links.map((link) => (
+        <Flex key={link.id} justify="between" gap="4">
+          <Text size="1" color="gray" truncate>
+            {t(`containers.${link[end]}.title`)}
+          </Text>
+          <Text size="1" className={styles.mono}>
+            {t(`kinds.${link.protocol}`)}
+          </Text>
+        </Flex>
+      ))}
+    </Flex>
+  );
+}
+
 function BlockDetail({ data }: { data: BlockNode["data"] }) {
   const { t } = useTranslation("architecture");
-  const listen = t(`blocks.${data.id}.listen`);
   return (
     <Flex direction="column" gap="3">
       <Flex direction="column" gap="1">
         <Text size="3" weight="bold">
-          {t(`blocks.${data.id}.title`)}
+          {t(`containers.${data.id}.title`)}
         </Text>
-        <Text size="1" className={styles.mono}>
-          {data.compose ?? t("notDocker")}
-        </Text>
+        {data.names.length ? (
+          data.names.map((name) => (
+            <Text key={name} size="1" className={styles.mono}>
+              {name}
+            </Text>
+          ))
+        ) : (
+          <Text size="1" className={styles.mono}>
+            {t("notDocker")}
+          </Text>
+        )}
       </Flex>
       <Text size="2" color="gray">
-        {t(`blocks.${data.id}.body`)}
+        {t(`containers.${data.id}.body`)}
       </Text>
-      {listen ? (
+      {data.listen ? (
         <Text size="1" color="gray">
-          {t("listenNote", { listen })}
+          {t("listenNote", { listen: data.listen })}
         </Text>
       ) : null}
       {data.ports.length ? (
@@ -64,6 +95,8 @@ function BlockDetail({ data }: { data: BlockNode["data"] }) {
           </Flex>
         </>
       ) : null}
+      <LinkList title={t("dialsOut")} links={linksFrom(data.id)} end="target" />
+      <LinkList title={t("dialsIn")} links={linksTo(data.id)} end="source" />
     </Flex>
   );
 }
@@ -74,16 +107,16 @@ const ArchBlock = memo(({ id, data }: NodeProps<BlockNode>) => {
   const level = useNodeFocus(id);
   const ref = useRef<HTMLDivElement>(null);
   const { contextSafe } = useGSAP({ scope: ref });
+  const [port] = data.ports;
 
   const lift = contextSafe((target: HTMLElement, up: boolean) => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    gsap.to(target, { y: up ? -4 : 0, duration: 0.25, ease: "power2.out", overwrite: "auto" });
+    gsap.to(target, { y: up ? -3 : 0, duration: 0.25, ease: "power2.out", overwrite: "auto" });
   });
 
   return (
     <>
-      <Handle id="l" type="target" position={Position.Left} className={styles.handle} />
-      <Handle id="t" type="target" position={Position.Top} className={styles.handle} />
+      <Handle type="target" position={Position.Left} className={styles.handle} />
       <HoverCard.Root openDelay={160} closeDelay={80}>
         <HoverCard.Trigger>
           <Box
@@ -101,23 +134,23 @@ const ArchBlock = memo(({ id, data }: NodeProps<BlockNode>) => {
             }}
           >
             <Section size="1" py="3">
-              <Container size="4" width="100%" maxWidth="100%" px="4">
-                <Flex direction="column" gap="2">
+              <Container size="4" width="100%" maxWidth="100%" px="3">
+                <Flex direction="column" gap="1">
                   <Flex align="center" justify="between" gap="2">
                     <Flex align="center" gap="2" minWidth="0" className={styles.kicker}>
                       <BlockIcon id={id} docker={data.docker} />
                       <Text as="span" size="1" truncate>
-                        {data.compose ?? t("notDocker")}
+                        {data.docker ? data.service : t("notDocker")}
                       </Text>
                     </Flex>
                     <Box className={styles.led} aria-hidden />
                   </Flex>
-                  <Text as="span" size="3" weight="bold" truncate>
-                    {t(`blocks.${id}.title`)}
+                  <Text as="span" size="2" weight="bold" truncate>
+                    {t(`containers.${id}.title`)}
                   </Text>
                   <Flex align="center" justify="between" gap="2">
-                    <Text as="span" size="1" className={styles.range}>
-                      {data.range ?? "—"}
+                    <Text as="span" size="1" className={styles.range} truncate>
+                      {port ? `${port.dev}${port.secure ? ` / ${port.secure}` : ""}` : "—"}
                     </Text>
                     {data.ports.length ? (
                       <Text as="span" size="1" className={styles.count}>
@@ -130,13 +163,11 @@ const ArchBlock = memo(({ id, data }: NodeProps<BlockNode>) => {
             </Section>
           </Box>
         </HoverCard.Trigger>
-        <HoverCard.Content side="right" align="start" sideOffset={12} maxWidth="340px" className={styles.card}>
+        <HoverCard.Content side="right" align="start" sideOffset={12} maxWidth="360px" className={styles.card}>
           <BlockDetail data={data} />
         </HoverCard.Content>
       </HoverCard.Root>
-      <Handle id="r" type="source" position={Position.Right} className={styles.handle} />
-      <Handle id="b" type="source" position={Position.Bottom} className={styles.handle} />
-      <Handle id="ts" type="source" position={Position.Top} className={styles.handle} />
+      <Handle type="source" position={Position.Right} className={styles.handle} />
     </>
   );
 });

@@ -4,11 +4,21 @@ export type PortRow = {
   secure?: string;
 };
 
-export type TopologyNode = {
+export type TopologyGroup = {
   id: string;
-  docker: boolean;
+  repo: string;
   compose?: string;
+  parent?: string;
   range?: string;
+};
+
+export type TopologyContainer = {
+  id: string;
+  group?: string;
+  docker: boolean;
+  service: string;
+  names: string[];
+  listen?: string;
   ports: PortRow[];
 };
 
@@ -22,18 +32,11 @@ export const LinkProtocol = {
 
 export type LinkProtocolEnum = (typeof LinkProtocol)[keyof typeof LinkProtocol];
 
-export const LinkSide = {
-  RIGHT_LEFT: "right-left",
-  BOTTOM_TOP: "bottom-top",
-  OVERPASS: "overpass",
-} as const;
-
-export type LinkSideEnum = (typeof LinkSide)[keyof typeof LinkSide];
-
 export type Dial = {
   service?: string;
-  dev: string;
+  dev?: string;
   secure?: string;
+  address?: string;
 };
 
 export type TopologyLink = {
@@ -41,7 +44,6 @@ export type TopologyLink = {
   source: string;
   target: string;
   protocol: LinkProtocolEnum;
-  side: LinkSideEnum;
   dials: Dial[];
 };
 
@@ -53,172 +55,379 @@ export type PortBlock = {
   end: number;
   usedStart?: number;
   usedEnd?: number;
-  nodeIds: string[];
+  groupIds: string[];
 };
 
-export const TOPOLOGY_NODES: TopologyNode[] = [
-  { id: "internet", docker: false, ports: [] },
-  { id: "router", docker: false, range: "80 / 443", ports: [{ name: "TCP", dev: "80 / 443" }] },
+export const TOPOLOGY_GROUPS: TopologyGroup[] = [
+  { id: "traefik", repo: "NFX-Edge", compose: "docker-compose.traefik.yml", range: "80 / 443" },
+  { id: "news", repo: "NFX-News", compose: "docker-compose.yml", range: "10050–10079" },
+  { id: "storages", repo: "NFX-Storages", compose: "docker-compose.yml", range: "10080–10109" },
+  { id: "edge", repo: "NFX-Edge", compose: "docker-compose.yml", range: "10110–10119" },
+  { id: "documentation", repo: "NFX-Documentation", compose: "docker-compose.yml", range: "10120–10129" },
+  { id: "static", repo: "AquaWorks · TimetableCraft", range: "10400–10405" },
+  { id: "identity", repo: "NFX-Identity", compose: "docker-compose.yml", range: "10030–10049" },
+  { id: "stack", repo: "NFX-Stack", range: "10000–10029" },
+  { id: "stack-mysql", repo: "NFX-Stack", parent: "stack", compose: "docker-compose.mysql.yml", range: "10000–10001" },
+  {
+    id: "stack-mongodb",
+    repo: "NFX-Stack",
+    parent: "stack",
+    compose: "docker-compose.mongodb.yml",
+    range: "10002–10003",
+  },
+  {
+    id: "stack-postgresql",
+    repo: "NFX-Stack",
+    parent: "stack",
+    compose: "docker-compose.postgresql.yml",
+    range: "10004–10005",
+  },
+  { id: "stack-redis", repo: "NFX-Stack", parent: "stack", compose: "docker-compose.redis.yml", range: "10006–10007" },
+  { id: "stack-kafka", repo: "NFX-Stack", parent: "stack", compose: "docker-compose.kafka.yml", range: "10008–10009" },
+  {
+    id: "stack-rabbitmq",
+    repo: "NFX-Stack",
+    parent: "stack",
+    compose: "docker-compose.rabbitmq.yml",
+    range: "10010–10011",
+  },
+  { id: "stack-minio", repo: "NFX-Stack", parent: "stack", compose: "docker-compose.minio.yml", range: "10012–10013" },
+  {
+    id: "stack-centrifugo",
+    repo: "NFX-Stack",
+    parent: "stack",
+    compose: "docker-compose.centrifugo.yml",
+    range: "10014",
+  },
+  { id: "stack-otel", repo: "NFX-Stack", parent: "stack", compose: "docker-compose.otel.yml", range: "10015–10022" },
+  {
+    id: "stack-opensearch",
+    repo: "NFX-Stack",
+    parent: "stack",
+    compose: "docker-compose.opensearch.yml",
+    range: "10023–10024",
+  },
+];
+
+const BACKEND_LISTEN = (grpc: string) => `HTTP 8080 · gRPC ${grpc}`;
+
+const backend = (
+  id: string,
+  group: string,
+  service: string,
+  name: string,
+  grpc: string,
+  http: [string, string],
+  rpc: [string, string],
+  suffix = "Secure",
+): TopologyContainer => ({
+  id,
+  group,
+  docker: true,
+  service,
+  names: [`${name}-Dev`, `${name}-${suffix}`],
+  listen: BACKEND_LISTEN(grpc),
+  ports: [
+    { name: "HTTP", dev: http[0], secure: http[1] },
+    { name: "gRPC", dev: rpc[0], secure: rpc[1] },
+  ],
+});
+
+const frontendConsole = (
+  id: string,
+  group: string,
+  name: string,
+  ports: [string, string],
+  suffix = "Secure",
+): TopologyContainer => ({
+  id,
+  group,
+  docker: true,
+  service: "console",
+  names: [`${name}-Dev`, `${name}-${suffix}`],
+  listen: "HTTP 80",
+  ports: [{ name: "HTTP", dev: ports[0], secure: ports[1] }],
+});
+
+const stack = (id: string, group: string, name: string, listen: string, ports: PortRow[]): TopologyContainer => ({
+  id,
+  group,
+  docker: true,
+  service: id.replace("stack-", ""),
+  names: [`NFX-Stack-${name}`],
+  listen,
+  ports,
+});
+
+export const TOPOLOGY_CONTAINERS: TopologyContainer[] = [
+  { id: "internet", docker: false, service: "internet", names: [], ports: [] },
+  { id: "router", docker: false, service: "router", names: [], ports: [{ name: "TCP", dev: "80 / 443" }] },
+  { id: "nas2", docker: false, service: "nas2", names: [], ports: [{ name: "LAN", dev: "192.168.1.65" }] },
   {
     id: "traefik",
+    group: "traefik",
     docker: true,
-    compose: "docker-compose.traefik.yml",
-    range: "80 / 443",
+    service: "traefik",
+    names: ["NFX-Edge-Reverse-Proxy"],
+    listen: "80 / 443",
     ports: [
       { name: "HTTP", dev: "80" },
       { name: "HTTPS", dev: "443" },
     ],
   },
-  { id: "nas2", docker: false, range: "192.168.1.65", ports: [{ name: "LAN", dev: "192.168.1.65" }] },
+
+  backend(
+    "identity-auth",
+    "identity",
+    "auth-base",
+    "NFX-Identity-Auth-Base",
+    "50071",
+    ["10030", "10035"],
+    ["10031", "10036"],
+  ),
+  backend(
+    "identity-asset",
+    "identity",
+    "asset-base",
+    "NFX-Identity-Asset-Base",
+    "50072",
+    ["10032", "10037"],
+    ["10033", "10038"],
+  ),
+  frontendConsole("identity-console", "identity", "NFX-Identity-Console", ["10034", "10039"]),
+
+  backend(
+    "news-source",
+    "news",
+    "source-base",
+    "NFX-News-Source-Base",
+    "50072",
+    ["10050", "10063"],
+    ["10051", "10064"],
+  ),
+  backend("news-news", "news", "news-base", "NFX-News-News-Base", "50073", ["10052", "10065"], ["10053", "10066"]),
+  backend("news-crawl", "news", "crawl-base", "NFX-News-Crawl-Base", "50074", ["10054", "10067"], ["10055", "10068"]),
+  backend(
+    "news-report",
+    "news",
+    "report-base",
+    "NFX-News-Report-Base",
+    "50075",
+    ["10056", "10069"],
+    ["10057", "10070"],
+  ),
+  backend(
+    "news-notify",
+    "news",
+    "notify-base",
+    "NFX-News-Notify-Base",
+    "50076",
+    ["10058", "10071"],
+    ["10059", "10072"],
+  ),
+  backend("news-mcp", "news", "mcp-base", "NFX-News-Mcp-Base", "50077", ["10060", "10073"], ["10061", "10074"]),
+  frontendConsole("news-console", "news", "NFX-News-Console", ["10062", "10075"]),
+
+  backend(
+    "storages-s3",
+    "storages",
+    "s3-base",
+    "NFX-Storages-S3-Base",
+    "50072",
+    ["10080", "10091"],
+    ["10081", "10092"],
+    "Prod",
+  ),
+  backend(
+    "storages-admin",
+    "storages",
+    "admin-base",
+    "NFX-Storages-Admin-Base",
+    "50075",
+    ["10082", "10093"],
+    ["10083", "10094"],
+    "Prod",
+  ),
+  backend(
+    "storages-object",
+    "storages",
+    "object-base",
+    "NFX-Storages-Object-Base",
+    "50073",
+    ["10084", "10095"],
+    ["10085", "10096"],
+    "Prod",
+  ),
+  backend(
+    "storages-iam",
+    "storages",
+    "iam-base",
+    "NFX-Storages-Iam-Base",
+    "50074",
+    ["10086", "10097"],
+    ["10087", "10098"],
+    "Prod",
+  ),
+  backend(
+    "storages-notify",
+    "storages",
+    "notify-base",
+    "NFX-Storages-Notify-Base",
+    "50076",
+    ["10088", "10099"],
+    ["10089", "10100"],
+    "Prod",
+  ),
+  frontendConsole("storages-console", "storages", "NFX-Storages-Console", ["10090", "10101"], "Prod"),
+
+  backend("edge-sites", "edge", "sites-base", "NFX-Edge-Sites-Base", "50072", ["10110", "10113"], ["10111", "10114"]),
+  frontendConsole("edge-console", "edge", "NFX-Edge-Console", ["10112", "10115"]),
+
   {
-    id: "news",
+    id: "documentation-frontend",
+    group: "documentation",
     docker: true,
-    compose: "docker-compose.yml",
-    range: "10050–10079",
-    ports: [
-      { name: "source…mcp HTTP/gRPC", dev: "10050–10061", secure: "10063–10074" },
-      { name: "console", dev: "10062", secure: "10075" },
-    ],
-  },
-  {
-    id: "storages",
-    docker: true,
-    compose: "docker-compose.yml",
-    range: "10080–10109",
-    ports: [
-      { name: "s3…notify HTTP/gRPC", dev: "10080–10089", secure: "10091–10100" },
-      { name: "console", dev: "10090", secure: "10101" },
-    ],
-  },
-  {
-    id: "edge",
-    docker: true,
-    compose: "docker-compose.yml",
-    range: "10110–10119",
-    ports: [
-      { name: "sites HTTP", dev: "10110", secure: "10113" },
-      { name: "sites gRPC", dev: "10111", secure: "10114" },
-      { name: "console", dev: "10112", secure: "10115" },
-    ],
-  },
-  {
-    id: "documentation",
-    docker: true,
-    compose: "docker-compose.yml",
-    range: "10120–10129",
-    ports: [{ name: "frontend HTTP", dev: "10120" }],
+    service: "frontend",
+    names: ["NFX-Documentation-Frontend"],
+    listen: "HTTP 80",
+    ports: [{ name: "HTTP", dev: "10120" }],
   },
   {
     id: "aquaworks",
+    group: "static",
     docker: true,
-    compose: "docker-compose.yml",
-    range: "10400",
+    service: "aquaworks-web",
+    names: ["AquaWorks-WEB-Prod-Local"],
+    listen: "HTTP 80",
     ports: [{ name: "HTTP", dev: "10400" }],
   },
   {
     id: "timetable",
+    group: "static",
     docker: true,
-    compose: "docker-compose.yml",
-    range: "10401",
+    service: "timetablecraft-web",
+    names: ["TimetableCraft-WEB-Prod-Local"],
+    listen: "HTTP 80",
     ports: [{ name: "HTTP", dev: "10401" }],
   },
-  {
-    id: "identity",
-    docker: true,
-    compose: "docker-compose.yml",
-    range: "10030–10049",
-    ports: [
-      { name: "auth HTTP", dev: "10030", secure: "10035" },
-      { name: "auth gRPC", dev: "10031", secure: "10036" },
-      { name: "asset HTTP", dev: "10032", secure: "10037" },
-      { name: "asset gRPC", dev: "10033", secure: "10038" },
-      { name: "console", dev: "10034", secure: "10039" },
-    ],
-  },
-  {
-    id: "stack",
-    docker: true,
-    compose: "docker-compose.yml",
-    range: "10000–10029",
-    ports: [
-      { name: "MySQL", dev: "10000" },
-      { name: "MySQL UI", dev: "10001" },
-      { name: "MongoDB", dev: "10002" },
-      { name: "Mongo UI", dev: "10003" },
-      { name: "PostgreSQL", dev: "10004" },
-      { name: "PostgreSQL UI", dev: "10005" },
-      { name: "Redis", dev: "10006" },
-      { name: "Redis UI", dev: "10007" },
-      { name: "Kafka EXTERNAL", dev: "10008" },
-      { name: "Kafka UI", dev: "10009" },
-      { name: "RabbitMQ", dev: "10010" },
-      { name: "RabbitMQ UI", dev: "10011" },
-      { name: "MinIO API", dev: "10012" },
-      { name: "MinIO UI", dev: "10013" },
-      { name: "Centrifugo", dev: "10014" },
-      { name: "Jaeger UI", dev: "10015" },
-      { name: "OTLP gRPC", dev: "10016" },
-      { name: "OTLP HTTP", dev: "10017" },
-      { name: "collector health", dev: "10018" },
-      { name: "collector Prometheus", dev: "10019" },
-      { name: "Prometheus", dev: "10020" },
-      { name: "Loki", dev: "10021" },
-      { name: "Grafana", dev: "10022" },
-      { name: "OpenSearch", dev: "10023" },
-      { name: "OpenSearch Dashboards", dev: "10024" },
-    ],
-  },
+
+  stack("stack-mysql", "stack-mysql", "MySQL", "3306", [{ name: "MySQL", dev: "10000" }]),
+  stack("stack-mysql-ui", "stack-mysql", "MySQL-UI", "80", [{ name: "phpMyAdmin", dev: "10001" }]),
+  stack("stack-mongodb", "stack-mongodb", "MongoDB", "27017", [{ name: "MongoDB", dev: "10002" }]),
+  stack("stack-mongodb-ui", "stack-mongodb", "MongoDB-UI", "8081", [{ name: "mongo-express", dev: "10003" }]),
+  stack("stack-postgresql", "stack-postgresql", "PostgreSQL", "5432", [{ name: "PostgreSQL", dev: "10004" }]),
+  stack("stack-postgresql-ui", "stack-postgresql", "PostgreSQL-UI", "80", [{ name: "pgAdmin", dev: "10005" }]),
+  stack("stack-redis", "stack-redis", "Redis", "6379", [{ name: "Redis", dev: "10006" }]),
+  stack("stack-redis-ui", "stack-redis", "Redis-UI", "5540", [{ name: "RedisInsight", dev: "10007" }]),
+  stack("stack-kafka", "stack-kafka", "Kafka", "9092 · EXTERNAL 9094", [{ name: "EXTERNAL", dev: "10008" }]),
+  stack("stack-kafka-ui", "stack-kafka", "Kafka-UI", "8080", [{ name: "Kafka UI", dev: "10009" }]),
+  stack("stack-rabbitmq", "stack-rabbitmq", "RabbitMQ", "5672 · 15672", [
+    { name: "AMQP", dev: "10010" },
+    { name: "UI", dev: "10011" },
+  ]),
+  stack("stack-minio", "stack-minio", "MinIO", "9000 · 9001", [
+    { name: "API", dev: "10012" },
+    { name: "UI", dev: "10013" },
+  ]),
+  stack("stack-centrifugo", "stack-centrifugo", "Centrifugo", "8000", [{ name: "Centrifugo", dev: "10014" }]),
+  stack("stack-otel-collector", "stack-otel", "Otel-Collector", "4317 · 4318 · 13133 · 8889", [
+    { name: "OTLP gRPC", dev: "10016" },
+    { name: "OTLP HTTP", dev: "10017" },
+    { name: "health", dev: "10018" },
+    { name: "Prometheus", dev: "10019" },
+  ]),
+  stack("stack-jaeger", "stack-otel", "Jaeger", "16686 · 4317", [{ name: "Jaeger UI", dev: "10015" }]),
+  stack("stack-prometheus", "stack-otel", "Prometheus", "9090", [{ name: "Prometheus", dev: "10020" }]),
+  stack("stack-loki", "stack-otel", "Loki", "3100", [{ name: "Loki", dev: "10021" }]),
+  stack("stack-grafana", "stack-otel", "Grafana", "3000", [{ name: "Grafana", dev: "10022" }]),
+  stack("stack-opensearch", "stack-opensearch", "OpenSearch", "9200", [{ name: "OpenSearch", dev: "10023" }]),
+  stack("stack-opensearch-dashboards", "stack-opensearch", "OpenSearch-Dashboards", "5601", [
+    { name: "Dashboards", dev: "10024" },
+  ]),
 ];
 
-const PRODUCT_DATA: Dial[] = [
-  { service: "Postgres", dev: "10004" },
-  { service: "Redis", dev: "10006" },
-  { service: "Kafka", dev: "10008" },
-  { service: "OTLP gRPC", dev: "10016" },
+const CONTAINER_BY_ID = new Map(TOPOLOGY_CONTAINERS.map((container) => [container.id, container]));
+
+function portDial(id: string, name: string): Dial {
+  const port = CONTAINER_BY_ID.get(id)?.ports.find((row) => row.name === name);
+  if (!port) throw new Error(`topology: ${id} has no ${name} port`);
+  return { service: name, dev: port.dev, secure: port.secure };
+}
+
+const link = (source: string, target: string, protocol: LinkProtocolEnum, dials: Dial[]): TopologyLink => ({
+  id: `${source}--${target}`,
+  source,
+  target,
+  protocol,
+  dials,
+});
+
+const IDENTITY_BACKENDS = ["identity-auth", "identity-asset"];
+const NEWS_BACKENDS = ["news-source", "news-news", "news-crawl", "news-report", "news-notify", "news-mcp"];
+const STORAGES_BACKENDS = ["storages-s3", "storages-admin", "storages-object", "storages-iam", "storages-notify"];
+const EDGE_BACKENDS = ["edge-sites"];
+const BACKENDS = [...IDENTITY_BACKENDS, ...NEWS_BACKENDS, ...STORAGES_BACKENDS, ...EDGE_BACKENDS];
+const CONSOLES = ["identity-console", "news-console", "storages-console", "edge-console"];
+
+const DATA_PLANE = [
+  { target: "stack-postgresql", dial: portDial("stack-postgresql", "PostgreSQL") },
+  { target: "stack-redis", dial: portDial("stack-redis", "Redis") },
+  { target: "stack-kafka", dial: portDial("stack-kafka", "EXTERNAL") },
+  { target: "stack-otel-collector", dial: portDial("stack-otel-collector", "OTLP gRPC") },
 ];
 
-const IDENTITY_AUTH: Dial[] = [{ service: "auth gRPC", dev: "10031", secure: "10036" }];
-
-const link = (
-  id: string,
-  source: string,
-  target: string,
-  protocol: LinkProtocolEnum,
-  side: LinkSideEnum,
-  dials: Dial[],
-): TopologyLink => ({ id, source, target, protocol, side, dials });
+const httpLink = (source: string, target: string) =>
+  link(source, target, LinkProtocol.HTTP, [portDial(target, "HTTP")]);
+const grpcLink = (source: string, target: string) =>
+  link(source, target, LinkProtocol.GRPC, [portDial(target, "gRPC")]);
+const nginxLink = (source: string, target: string) => {
+  const { secure } = portDial(target, "HTTP");
+  return link(source, target, LinkProtocol.HTTP, [{ service: "nginx proxy_pass", secure }]);
+};
+const dockerLink = (source: string, target: string, protocol: LinkProtocolEnum, address: string) =>
+  link(source, target, protocol, [{ service: "Docker network", address }]);
 
 export const TOPOLOGY_LINKS: TopologyLink[] = [
-  link("net-router", "internet", "router", LinkProtocol.FORWARD, LinkSide.BOTTOM_TOP, [{ dev: "WAN" }]),
-  link("router-traefik", "router", "traefik", LinkProtocol.TLS, LinkSide.RIGHT_LEFT, [{ dev: "80 / 443" }]),
-  link("traefik-nas2", "traefik", "nas2", LinkProtocol.FORWARD, LinkSide.BOTTOM_TOP, [{ dev: "192.168.1.65" }]),
-  link("traefik-identity", "traefik", "identity", LinkProtocol.HTTP, LinkSide.OVERPASS, [
-    { service: "console", dev: "10034", secure: "10039" },
-  ]),
-  link("traefik-news", "traefik", "news", LinkProtocol.HTTP, LinkSide.RIGHT_LEFT, [
-    { service: "console", dev: "10062", secure: "10075" },
-  ]),
-  link("traefik-storages", "traefik", "storages", LinkProtocol.HTTP, LinkSide.RIGHT_LEFT, [
-    { service: "console", dev: "10090", secure: "10101" },
-  ]),
-  link("traefik-edge", "traefik", "edge", LinkProtocol.HTTP, LinkSide.RIGHT_LEFT, [
-    { service: "console", dev: "10112", secure: "10115" },
-  ]),
-  link("traefik-docs", "traefik", "documentation", LinkProtocol.HTTP, LinkSide.RIGHT_LEFT, [
-    { service: "frontend", dev: "10120" },
-  ]),
-  link("traefik-aquaworks", "traefik", "aquaworks", LinkProtocol.HTTP, LinkSide.RIGHT_LEFT, [{ dev: "10400" }]),
-  link("traefik-timetable", "traefik", "timetable", LinkProtocol.HTTP, LinkSide.RIGHT_LEFT, [{ dev: "10401" }]),
-  link("news-identity", "news", "identity", LinkProtocol.GRPC, LinkSide.RIGHT_LEFT, IDENTITY_AUTH),
-  link("storages-identity", "storages", "identity", LinkProtocol.GRPC, LinkSide.RIGHT_LEFT, IDENTITY_AUTH),
-  link("edge-identity", "edge", "identity", LinkProtocol.GRPC, LinkSide.RIGHT_LEFT, IDENTITY_AUTH),
-  link("news-stack", "news", "stack", LinkProtocol.DATA, LinkSide.RIGHT_LEFT, PRODUCT_DATA),
-  link("storages-stack", "storages", "stack", LinkProtocol.DATA, LinkSide.RIGHT_LEFT, PRODUCT_DATA),
-  link("edge-stack", "edge", "stack", LinkProtocol.DATA, LinkSide.RIGHT_LEFT, PRODUCT_DATA),
-  link("identity-stack", "identity", "stack", LinkProtocol.DATA, LinkSide.BOTTOM_TOP, [
-    ...PRODUCT_DATA,
-    { service: "MinIO", dev: "10012" },
-  ]),
+  link("internet", "router", LinkProtocol.FORWARD, [{ dev: "WAN" }]),
+  link("router", "traefik", LinkProtocol.TLS, [{ dev: "80 / 443" }]),
+  link("traefik", "nas2", LinkProtocol.FORWARD, [{ dev: "192.168.1.65" }]),
+
+  ...[...BACKENDS, ...CONSOLES, "documentation-frontend", "aquaworks", "timetable"].map((target) =>
+    httpLink("traefik", target),
+  ),
+  link("traefik", "stack-minio", LinkProtocol.HTTP, [portDial("stack-minio", "API")]),
+
+  ...CONSOLES.flatMap((source) => IDENTITY_BACKENDS.map((target) => nginxLink(source, target))),
+  ...NEWS_BACKENDS.map((target) => nginxLink("news-console", target)),
+  ...["storages-admin", "storages-object", "storages-iam", "storages-notify"].map((target) =>
+    nginxLink("storages-console", target),
+  ),
+  nginxLink("edge-console", "edge-sites"),
+
+  ...BACKENDS.filter((source) => source !== "identity-auth").map((source) => grpcLink(source, "identity-auth")),
+  grpcLink("news-mcp", "news-news"),
+  grpcLink("news-mcp", "news-report"),
+  grpcLink("news-mcp", "news-source"),
+  grpcLink("news-mcp", "news-crawl"),
+  grpcLink("news-report", "news-news"),
+  grpcLink("news-crawl", "news-source"),
+  grpcLink("news-crawl", "news-report"),
+
+  ...BACKENDS.flatMap((source) =>
+    DATA_PLANE.map(({ target, dial }) => link(source, target, LinkProtocol.DATA, [dial])),
+  ),
+  link("identity-asset", "stack-minio", LinkProtocol.DATA, [portDial("stack-minio", "API")]),
+
+  dockerLink("stack-mysql-ui", "stack-mysql", LinkProtocol.DATA, "mysql:3306"),
+  dockerLink("stack-mongodb-ui", "stack-mongodb", LinkProtocol.DATA, "mongodb:27017"),
+  dockerLink("stack-kafka-ui", "stack-kafka", LinkProtocol.DATA, "kafka:9092"),
+  dockerLink("stack-opensearch-dashboards", "stack-opensearch", LinkProtocol.HTTP, "opensearch:9200"),
+  dockerLink("stack-otel-collector", "stack-jaeger", LinkProtocol.GRPC, "jaeger:4317"),
+  dockerLink("stack-otel-collector", "stack-loki", LinkProtocol.HTTP, "loki:3100/otlp"),
+  dockerLink("stack-prometheus", "stack-otel-collector", LinkProtocol.HTTP, "otel-collector:8889"),
+  dockerLink("stack-grafana", "stack-prometheus", LinkProtocol.HTTP, "prometheus:9090"),
+  dockerLink("stack-grafana", "stack-loki", LinkProtocol.HTTP, "loki:3100"),
+  dockerLink("stack-grafana", "stack-jaeger", LinkProtocol.HTTP, "jaeger:16686"),
 ];
 
 export const PORT_BLOCKS: PortBlock[] = [
@@ -230,7 +439,7 @@ export const PORT_BLOCKS: PortBlock[] = [
     end: 10029,
     usedStart: 10000,
     usedEnd: 10024,
-    nodeIds: ["stack"],
+    groupIds: ["stack"],
   },
   {
     id: "identity",
@@ -240,7 +449,7 @@ export const PORT_BLOCKS: PortBlock[] = [
     end: 10049,
     usedStart: 10030,
     usedEnd: 10039,
-    nodeIds: ["identity"],
+    groupIds: ["identity"],
   },
   {
     id: "news",
@@ -250,7 +459,7 @@ export const PORT_BLOCKS: PortBlock[] = [
     end: 10079,
     usedStart: 10050,
     usedEnd: 10075,
-    nodeIds: ["news"],
+    groupIds: ["news"],
   },
   {
     id: "storages",
@@ -260,7 +469,7 @@ export const PORT_BLOCKS: PortBlock[] = [
     end: 10109,
     usedStart: 10080,
     usedEnd: 10101,
-    nodeIds: ["storages"],
+    groupIds: ["storages"],
   },
   {
     id: "edge",
@@ -270,7 +479,7 @@ export const PORT_BLOCKS: PortBlock[] = [
     end: 10119,
     usedStart: 10110,
     usedEnd: 10115,
-    nodeIds: ["edge"],
+    groupIds: ["edge"],
   },
   {
     id: "documentation",
@@ -280,18 +489,10 @@ export const PORT_BLOCKS: PortBlock[] = [
     end: 10129,
     usedStart: 10120,
     usedEnd: 10120,
-    nodeIds: ["documentation"],
+    groupIds: ["documentation"],
   },
-  { id: "gap", nfx: false, start: 10130, end: 10399, nodeIds: [] },
-  {
-    id: "static",
-    nfx: false,
-    start: 10400,
-    end: 10405,
-    usedStart: 10400,
-    usedEnd: 10405,
-    nodeIds: ["aquaworks", "timetable"],
-  },
+  { id: "gap", nfx: false, start: 10130, end: 10399, groupIds: [] },
+  { id: "static", nfx: false, start: 10400, end: 10405, usedStart: 10400, usedEnd: 10405, groupIds: ["static"] },
 ];
 
 export function blockRange(block: PortBlock): string {
@@ -309,5 +510,6 @@ export function blockReserved(block: PortBlock): string {
   return `${block.usedEnd + 1}–${block.end}`;
 }
 
-export const COMPOSE_COUNT = TOPOLOGY_NODES.filter((node) => node.docker).length;
+export const COMPOSE_COUNT = TOPOLOGY_GROUPS.filter((group) => group.compose).length;
+export const CONTAINER_COUNT = TOPOLOGY_CONTAINERS.filter((container) => container.docker).length;
 export const NFX_BLOCK_COUNT = PORT_BLOCKS.filter((block) => block.nfx).length;

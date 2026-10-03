@@ -13,7 +13,7 @@ Identity / Edge / News / Storages 的 Postgres、Redis、Kafka、OTEL、MinIO �
 ```
 NFX-Stack/
 ├── .example.env                 # 模板；复制为 .env，勿提交 .env
-├── start.sh                     # 建网络、chown 数据目录、按序 up
+├── start.sh                     # chown 数据目录、按序 up
 ├── version.sh                   # 镜像版本检查
 ├── Infrastructure/
 │   ├── docker-compose.<name>.yml
@@ -118,7 +118,7 @@ docker compose --project-directory Infrastructure --env-file .env \
 
 ## 数据路径
 
-`.env` 里 `MYSQL_DATA_PATH` / `POSTGRESQL_DATA_PATH` / `REDIS_DATA_PATH` / `KAFKA_DATA_PATH` / `MINIO_DATA_PATH` / `PROMETHEUS_DATA_PATH` / `LOKI_DATA_PATH` / `GRAFANA_DATA_PATH` / `OPENSEARCH_DATA_PATH` 以及对应 `*_LOG_PATH` / `*_INIT_PATH`。Windows 用盘符路径，例如 `D:/Code/NFX-Stack/Databases/mysql`。
+`.env` 里的数据路径：`MYSQL_DATA_PATH`、`MONGO_DATA_PATH`、`POSTGRESQL_DATA_PATH`、`REDIS_DATA_PATH`、`KAFKA_DATA_PATH`、`RABBITMQ_DATA_PATH`、`MINIO_DATA_PATH`、`PROMETHEUS_DATA_PATH`、`LOKI_DATA_PATH`、`GRAFANA_DATA_PATH`、`OPENSEARCH_DATA_PATH`。配套的日志和初始化目录只在这些键上存在：MySQL、Mongo、PostgreSQL 有 `*_LOG_PATH` 和 `*_INIT_PATH`（Mongo 是 `MONGO_INIT_PATH` / `MONGO_LOG_PATH`）；Redis、Kafka、MinIO、RabbitMQ 有 `*_LOG_PATH`，没有 INIT；Prometheus、Loki、Grafana、OpenSearch 只有 DATA。Windows 用盘符路径，例如 `D:/Code/NFX-Stack/Databases/mysql`。
 
 `./start.sh` 在 `up` 前会 `chown`：
 

@@ -9,22 +9,22 @@
 3. Storages verifies the JWT, calls Identity `EnsureOwnedProfile` over gRPC, writes a temporary AK/SK into `storages.access_keys` (`account_id` / `profile_id` / `expires_at`)
 4. Browsers and the AWS SDK speak SigV4 to the S3 Host. There is no local Storages password table
 
-`VITE_S3_ENDPOINT` in `.example.env` still mentions Stack MinIO `10012` as a leftover. The object plane should use Edge `TRAEFIK_S3_HOST`. Do not store Storages objects in Identity MinIO.
+`VITE_S3_ENDPOINT` in `.example.env` and `.secure.env` still points at Stack MinIO `10012`. That value is a placeholder. The object plane uses the Host rule hardcoded in Edge, `Host(s3.nebulaforgex.com)`, and the secure backend is `NAS1_IP:10091`. This repo has no `TRAEFIK_S3_HOST` environment variable. Do not store Storages object bytes in the MinIO Identity uses.
 
 ## Ports
 
-`GRPC_PORT_AUTH=50071` is still an Identity client.
+This repo has no `GRPC_PORT_AUTH`. It dials Identity at `GRPC_HOST_AUTH:GRPC_EXT_PORT_AUTH` (dev `10031`, secure `10036`). Identity still listens on `50071` inside its container.
 
-| Module | `GRPC_PORT` | `GRPC_EXT` |
-|--------|-------------|------------|
-| S3 | 50072 | **10081** |
-| OBJECT | 50073 | **10085** |
-| IAM | 50074 | **10087** |
-| ADMIN | 50075 | **10083** |
-| NOTIFY | 50076 | **10089** |
-| Console | — | **10090** |
+| Module | In-container gRPC | dev HTTP | dev gRPC | secure HTTP | secure gRPC |
+|--------|-------------------|----------|----------|-------------|-------------|
+| S3 | 50072 | **10080** | **10081** | **10091** | **10092** |
+| ADMIN | 50075 | **10082** | **10083** | **10093** | **10094** |
+| OBJECT | 50073 | **10084** | **10085** | **10095** | **10096** |
+| IAM | 50074 | **10086** | **10087** | **10097** | **10098** |
+| NOTIFY | 50076 | **10088** | **10089** | **10099** | **10100** |
+| Console (`CONSOLE_EXTERNAL_PORT`, not gRPC) | — | **10090** | — | **10101** | — |
 
-Vite `5176`. Gateway `API_GATEWAY_PREFIX=/nfx-storages`. Prefixes: `API_PREFIX_PATH_ADMIN=/admin/v3`, `/object`, `/iam`, `/notify`. S3 uses Host `TRAEFIK_S3_HOST`. Console uses PathPrefix `/console/nfx-storages`.
+Vite `VITE_PORT=5176`. This repo has no `API_GATEWAY_PREFIX` and no `API_PREFIX_PATH_*`. Edge PathPrefix values are `/nfx-storages/admin`, `/nfx-storages/object`, `/nfx-storages/iam`, and `/nfx-storages/notify` (dev adds a `/dev` prefix). Admin code hardcodes `Group("/admin/v3")`. `RegisterRoutes()` on object, iam, and notify is empty today, so the browser admin UI goes through admin. S3 uses Host `s3.nebulaforgex.com` with no strip. Console uses PathPrefix `/console/nfx-storages`.
 
 The browser admin UI uses **admin `/admin/v3`** (including locales/messages); object bytes use the **s3** catch-all.
 
@@ -35,11 +35,12 @@ cd /volume1/Projects/NebulaForgeX/NFX-Storages
 cp .example.env .env
 # STORAGES_VOLUME_* = absolute NAS paths; TOKEN_* matches Identity
 task proto:gen
-task db:create
 task atlas:pipeline:run
 task console
-sudo docker compose up -d
+sudo docker compose -f docker-compose.dev.yml up -d
 ```
+
+There is no `task db:create`. `task atlas:pipeline:run` creates the databases inside its pipeline. To create them on their own, run `bash scripts/create_databases.sh` after exporting the Postgres variables. The default `docker-compose.yml` is secure. Dev uses the `-f docker-compose.dev.yml` line above, or `task run`.
 
 All four volumes must exist and be writable. Kafka `NAS_IP:10008`. Postgres 10004, Redis 10006.
 
@@ -57,9 +58,9 @@ Users: `GET /list-users`, `PUT /add-user`, `GET /user-info`, `PUT /user/:name`, 
 
 Groups: `GET /groups`, `GET /group`, `POST /groups`, `DELETE /group/:name`, `PUT /group/:name`, `PUT /set-group-status`, `PUT /update-group-members`.
 
-Policies: `PUT /set-policy` `/set-policy-multi` `/set-user-or-group-policy`, canned policy CRUD, `GET /policy/:name/users`.
+Policies: `PUT /set-policy`, `PUT /set-policy-multi`, `PUT /set-user-or-group-policy`, `GET /list-canned-policies`, `POST /add-canned-policy`, `GET /info-canned-policy`, `DELETE /remove-canned-policy`, `GET /policy/:name/users`.
 
-Service accounts: list/add/info/update/delete plus `POST /service-account-credentials`.
+Service accounts: `GET /list-service-accounts`, `PUT /add-service-accounts`, `GET /info-service-account`, `POST /update-service-account`, `DELETE /delete-service-accounts`, `POST /service-account-credentials`.
 
 Cluster: `GET /info` `/storageinfo` `/datausageinfo` `/metrics` `/license`.
 
@@ -67,7 +68,7 @@ Event targets: `GET /target/list` `/target/arns`, `PUT /target/:type/:name`, `DE
 
 Tiers: `GET/PUT /tier`, `POST/DELETE /tier/:name`.
 
-KMS: status/config/configure/start/stop/reconfigure/clear-cache, key CRUD, `POST /kms/generate-data-key`.
+KMS: `GET /kms/service-status`, `GET /kms/status`, `GET /kms/config`, `POST /kms/configure`, `POST /kms/start`, `POST /kms/stop`, `POST /kms/reconfigure`, `POST /kms/clear-cache`, `GET/POST /kms/keys`, `GET /kms/keys/:id`, `DELETE /kms/keys/delete`, `POST /kms/keys/cancel-deletion`, `POST /kms/generate-data-key`.
 
 IAM import/export: `GET /export-iam`, `PUT /import-iam`.
 

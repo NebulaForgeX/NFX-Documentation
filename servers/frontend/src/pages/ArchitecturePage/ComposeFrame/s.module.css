@@ -1,44 +1,52 @@
-.block {
-  position: relative;
+.frame {
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  border-radius: var(--radius-4);
-  color: var(--gray-12);
-  background: linear-gradient(180deg, var(--accent-a2), transparent 60%), var(--color-panel-solid);
+  border-radius: var(--radius-5);
+  background: linear-gradient(180deg, var(--accent-a2), transparent 120px), var(--gray-a2);
   box-shadow:
     0 0 0 1px var(--docs-bezel),
-    0 0 0 5px var(--gray-a2),
-    0 0 0 6px var(--gray-a3),
+    0 0 0 6px var(--gray-a2),
+    0 0 0 7px var(--gray-a3),
     inset 0 1px 0 var(--docs-rim),
-    0 18px 36px -22px var(--black-a9);
-  cursor: pointer;
+    0 28px 60px -40px var(--black-a9);
   transition:
     box-shadow 200ms ease,
     opacity 200ms ease;
 }
 
-.plain {
+.nested {
+  border-radius: var(--radius-4);
   background: var(--color-background);
   box-shadow:
     0 0 0 1px var(--gray-a5),
-    inset 0 0 0 1px var(--gray-a3);
-  outline: 1px dashed var(--gray-a6);
-  outline-offset: 4px;
+    inset 0 1px 0 var(--docs-rim);
 }
 
-.block[data-level="hot"],
+.loose {
+  background: transparent;
+  box-shadow: 0 0 0 1px var(--gray-a5);
+  outline: 1px dashed var(--gray-a6);
+  outline-offset: 5px;
+}
+
+.frame[data-level="hot"],
 .pinned {
   box-shadow:
     0 0 0 1px var(--accent-8),
-    0 0 0 5px var(--accent-a3),
-    0 0 0 6px var(--accent-a6),
-    inset 0 1px 0 var(--accent-a9),
-    0 0 36px -4px var(--accent-a6);
+    0 0 0 6px var(--accent-a2),
+    0 0 0 7px var(--accent-a5),
+    inset 0 1px 0 var(--accent-a7),
+    0 0 48px -12px var(--accent-a6);
 }
 
-.block[data-level="dim"] {
-  opacity: 0.35;
+.frame[data-level="dim"] {
+  opacity: 0.4;
+}
+
+.header {
+  border-bottom: 1px solid var(--gray-a4);
+  pointer-events: all;
+  cursor: pointer;
 }
 
 .kicker {
@@ -52,45 +60,19 @@
   font: inherit;
 }
 
-.led {
-  width: 6px;
-  height: 6px;
-  flex-shrink: 0;
-  border-radius: 999px;
-  background: var(--gray-8);
-}
-
-.block:not(.plain) .led {
-  background: var(--accent-9);
-  box-shadow: 0 0 8px var(--accent-9);
-}
-
 .range {
   color: var(--accent-11);
-  font-family: var(--docs-font-mono);
-  font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 
 .count {
+  flex-shrink: 0;
   color: var(--gray-10);
   font-family: var(--docs-font-mono);
   font-size: 10px;
 }
 
-.handle:global(.react-flow__handle) {
-  width: 6px;
-  height: 6px;
-  min-width: 0;
-  min-height: 0;
-  border: 0;
-  background: transparent;
-  pointer-events: none;
-}
-
 .card:global(.rt-HoverCardContent) {
-  max-height: min(520px, 70vh);
-  overflow-y: auto;
   box-shadow:
     0 0 0 1px var(--accent-a6),
     inset 0 1px 0 var(--accent-a7),

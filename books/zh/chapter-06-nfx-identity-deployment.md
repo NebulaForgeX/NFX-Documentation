@@ -6,7 +6,7 @@
 
 ## Console 路由（按 kind 分树）
 
-不要再用 `/user/*`。kind 是 `FORGER` 或 `AUTHORITY`（不是 HL 的 COMMUNITY）。来源：`console/src/navigations/routes.ts` + `ScopeRoute`。
+不要再用 `/user/*`。JWT 和 `POST /auth/me/select-profile` 的 `kind`（即 `profile_scope`）是 **`community` | `authority`**（小写）。`forger` 是 community 档上的角色（`forger_role`），不是 kind。Console 的 URL 树仍按路径分：`/forger/*` 对应 community，`/authority/*` 对应 authority。路径前缀和 wire 值不是同一个词。来源：`console/src/navigations/routes.ts` + `ScopeRoute` + `databases/src/schemas/auth/enums/profile_scope.sql`。
 
 | 阶段 | 路径 |
 |------|------|
@@ -28,10 +28,13 @@
 | AUTH / ASSET gRPC 容器 | `GRPC_PORT_*` | 50071 / 50072 |
 | 主机 gRPC（dev） | `GRPC_EXT_PORT_*` | **10031 / 10033** |
 | Console 主机映射（dev） | `CONSOLE_EXTERNAL_PORT` | **10034** |
+| AUTH / ASSET 主机 HTTP（secure） | `HTTP_EXT_PORT_*` | **10035 / 10037** |
+| 主机 gRPC（secure） | `GRPC_EXT_PORT_*` | **10036 / 10038** |
+| Console 主机映射（secure） | `CONSOLE_EXTERNAL_PORT` | **10039** |
 | Vite | `VITE_PORT` | 5173 |
-| 网关前缀 | Edge `identity.project.yml` | `/nfx-identity`（StripPrefix 后 Fiber 仍是 `/auth` `/asset`） |
+| 网关前缀 | Edge `identity.project.yml` | secure `/nfx-identity`，dev `/dev/nfx-identity`（StripPrefix 后 Fiber 仍是 `/auth` `/asset`） |
 
-Edge：PathPrefix `/nfx-identity/auth|asset` + StripPrefix `/nfx-identity`；console 用 PathPrefix `/console/nfx-identity`（域名或局域网 IP 都行）。`VITE_API_URL=/nfx-identity`（同源，构建进 console）。
+Edge：PathPrefix `/nfx-identity/auth|asset`（dev 为 `/dev/nfx-identity/...`）+ StripPrefix。console 用 PathPrefix `/console/nfx-identity`。域名走 HTTPS 反代；局域网 `Host(NAS1_IP)` 会 302 到控制台端口（dev `10034`，secure `10039`），见第四章。浏览器变量：dev `VITE_API_URL=/dev/nfx-identity`、`VITE_BASE=/dev/console/nfx-identity/`；secure `VITE_API_URL=/nfx-identity`、`VITE_BASE=/console/nfx-identity/`。
 
 compose 服务名：`auth-base` / `asset-base`（容器名 `NFX-Identity-*-Base-Dev`）。发布在 `NAS_IP` 上。没有 Traefik labels，也不加入共享 Docker 网络。
 
@@ -45,7 +48,7 @@ TOKEN_REFRESH_TTL=168h
 TOKEN_ALGORITHM=HS256
 ```
 
-Edge / News / Storages 必须复制同一组。**不要**把真实密钥写进 Git 或本手册。JWT `profile_scope` 枚举：`forger` | `authority`。
+Edge / News / Storages 必须复制同一组。**不要**把真实密钥写进 Git 或本手册。JWT `profile_scope` 枚举：`community` | `authority`。
 
 ## 部署
 
@@ -78,7 +81,7 @@ Schema 源头：`databases/src/**.sql`。改表先改 SQL，再跑 Atlas。
 
 ## HTTP：auth `/auth`
 
-实现：`modules/auth/interface/http/platform_router.go`。
+实现：`modules/auth/interface/http/router.go`。
 
 ### 公开
 
@@ -139,7 +142,7 @@ SMTP：`.env` 的 `EMAIL_SMTP_*`（注册验证码）。
 
 ## HTTP：asset `/asset`
 
-`modules/asset/interface/http/server.go`。`kind` ∈ `images` | `files` | `videos` | `audios`。列表/上传需 Token；读文件 `GET /asset/{kind}/{id}/file` 公开（仍校验所属逻辑在 handler）。
+路由：`modules/asset/interface/http/router.go`（由 `server.go` 挂载）。`kind` ∈ `images` | `files` | `videos` | `audios`。列表/上传需 Token；读文件 `GET /asset/{kind}/{id}/file` 公开（仍校验所属逻辑在 handler）。
 
 | 方法 | 路径 |
 |------|------|
@@ -168,7 +171,7 @@ SMTP：`.env` 的 `EMAIL_SMTP_*`（注册验证码）。
 | `RefreshTokens` | 只存 `token_hash`；`device_id` 用于同设备 revoke；`profile_scope` |
 | 链接表 | forger/authority 的 avatars、backgrounds、settings |
 
-枚举：`forger_role`（目前仅 `forger`）、`authority_role`、`profile_scope`（`forger`/`authority`）、`account_status`、`signup_platform`、`profile_language`、`identity_provider`。
+枚举：`forger_role`（目前仅 `forger`）、`authority_role`（`auditor` / `administrator` / `owner`）、`profile_scope`（`community` / `authority`）、`account_status`（`active` / `suspended` / `deleted`）、`signup_platform`（默认 `nfxidentity`，另有 `nfxnews` / `nfxstorages` / `nfxedge`）、`profile_language`（`en` / `zh` / `fr`）、`identity_provider`（目前仅 `password`）。
 
 角色是 **数组成员**，不是层级：SQL `@>` / `= ANY`，Go `HasRole`。
 
@@ -184,7 +187,7 @@ SMTP：`.env` 的 `EMAIL_SMTP_*`（注册验证码）。
 2. gRPC 打 Identity AUTH：`EnsureOwnedProfile(account_id, profile_id, profile_scope)`
 3. 需要 Forger 能力时 `HasForgerRole`
 
-Edge/News/Storages 的 `GRPC_HOST_AUTH` 指向 Identity auth 容器，`GRPC_PORT_AUTH=50071`。
+Edge / News / Storages 拨 Identity：`GRPC_HOST_AUTH` 填 NAS IP，端口是 `GRPC_EXT_PORT_AUTH`（dev `10031`，secure `10036`）。Identity 容器内 listen 仍是 `50071`。本仓以外的 `.env` 没有 `GRPC_PORT_AUTH`。
 
 ## kafkax（各 Go 仓同一套包）
 
@@ -193,11 +196,13 @@ Edge/News/Storages 的 `GRPC_HOST_AUTH` 指向 Identity auth 容器，`GRPC_PORT
 ```toml
 [kafka]
     brokers = ["${KAFKA_BROKERS}"]
-    client_id = "nfxidentity-auth"
+    client_id = "nfxidentity-auth-service"
     [kafka.producer]
         acks = "all"
         compression = "snappy"
         idempotent = true
+    [kafka.consumer]
+        group_id = "nfxidentity-auth"
     [kafka.producer_topics]
         auth = "nfxidentity.auth"
         auth_poison = "nfxidentity.auth_poison"

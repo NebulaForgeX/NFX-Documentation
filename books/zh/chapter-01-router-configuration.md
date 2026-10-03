@@ -23,7 +23,7 @@ Docker 官方说明：发布容器端口默认不安全。所以：
 
 ## 只转发 80 和 443
 
-[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) 是生态里 **唯一** 的 HTTP 入口，独占主机 `80/443`。第四章会部署它。
+[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) 是生态里 **唯一** 的 HTTP/HTTPS 入口，独占主机 `80/443`。第四章会部署它。
 
 | 端口 | 用途 |
 |------|------|
@@ -34,6 +34,7 @@ Docker 官方说明：发布容器端口默认不安全。所以：
 
 - Stack 数据面 **10000–10024**（MySQL / Postgres / Redis / Kafka / MinIO / OTEL / OpenSearch …）
 - 产品主机 HTTP/gRPC/Console **10030–10120**（`GRPC_EXT_*`、各 console 可选映射）
+- 静态站宿主机端口 **10400** 起（AquaWorks / TimetableCraft；经 Traefik 的 Host 规则暴露，不单独转到公网）
 - 容器内部 HTTP 8080+、gRPC 50071+
 - SSH（22 或 NAS 自定义端口）
 

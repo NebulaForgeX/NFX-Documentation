@@ -64,7 +64,8 @@ bash --version
 | 内容 | 放哪 |
 |------|------|
 | Git 仓库 | SSD / 应用卷（本手册示例 `/volume1/Projects/NebulaForgeX`） |
-| Stack 数据（Postgres、Kafka、MinIO、OpenSearch …） | 大容量数据盘，写入各仓 `.env` 的 `*_DATA_PATH` / `STORAGES_VOLUME_*` |
+| Stack 数据（Postgres、Kafka、MinIO、OpenSearch …） | 大容量数据盘，写入 NFX-Stack `.env` 的 `*_DATA_PATH` |
+| Storages 对象卷 | NFX-Storages `.env` 的 `STORAGES_VOLUME_0` … `_3` |
 | sites-base 写出的证书 | Edge 仓库 `websites/<site>/`（权限收紧，勿提交 Git） |
 
 不要把数据库目录提交进 Git。`.env` / `.secure.env` 也不要提交。

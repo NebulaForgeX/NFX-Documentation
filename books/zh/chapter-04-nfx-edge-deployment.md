@@ -1,6 +1,6 @@
 # 第四章：NFX-Edge 反向代理
 
-[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) 是 NebulaForgeX **唯一** 的 HTTP/HTTPS 入口（Traefik v3.7）。Docker 跑服务，Traefik 只做反向代理。产品 Compose **没有** Traefik labels，也 **不**加入共享 Docker 网络。
+[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) 是 NebulaForgeX **唯一** 的 HTTP/HTTPS 入口（Traefik **v3.7.13**，见 `docker-compose.traefik.yml`）。Docker 跑服务，Traefik 只做反向代理。产品 Compose **没有** Traefik labels，也 **不**加入共享 Docker 网络。
 
 - 独占主机 **80 / 443**（容器 `NFX-Edge-Reverse-Proxy`）
 - 静态配置是 `traefik.yml`（file provider，`watch: true`）
@@ -41,11 +41,17 @@ NFX-Edge/
 ```bash
 cp .example.env .env
 # NAS1_IP / NAS2_IP
-cp dynamic.example/*.project.yml dynamic/   # tls.yaml 已在 dynamic.example
+cp dynamic.example/*.project.yml dynamic/   # 这条不复制 tls.yaml
 task traefik
 ```
 
-`task traefik` 只起反向代理，不创建 Docker 网络。
+`*.project.yml` 的通配不会带上 `tls.yaml`。证书文件已经在 `websites/<site>/` 里时，再单独复制：
+
+```bash
+cp dynamic.example/tls.yaml dynamic/tls.yaml
+```
+
+文件还不存在就不要放进 `dynamic/`，否则整份 file provider 加载失败。`task traefik` 只起反向代理，不创建 Docker 网络。
 
 ## 产品怎么被转到
 
@@ -60,6 +66,33 @@ Dev 默认（`task run`）：
 PathPrefix 与以前一致。例如 `/nfx-identity/auth` 去掉 `/nfx-identity`，Fiber 仍收到 `/auth`。Storages S3 是 Host `s3.nebulaforgex.com`，不 strip。ACME `/.well-known/acme-challenge` 在 `edge.project.yml`，走 web 入口，不跟随 80→443 重定向。
 
 服务迁到另一台 NAS 时，只改对应 URL 里的 `NAS1_IP` / `NAS2_IP`。
+
+## 局域网 Console 跳转
+
+`dynamic/*.project.yml`（模板在 `dynamic.example/`）里，局域网 `Host(NAS1_IP)` 的 `*-console-lan` 和 `documentation-lan` 挂了 `redirectRegex` 中间件，`permanent: false`，所以是 HTTP 302。浏览器打开 `https://<NAS1_IP>/console/nfx-*` 会跳到 `http://<NAS1_IP>:<端口>/console/nfx-*/`。端口不同，登录状态就不会在几个控制台之间串。
+
+| 路由 | 跳到端口 |
+|------|----------|
+| `/console/nfx-identity` | `10039` |
+| `/console/nfx-edge` | `10115` |
+| `/console/nfx-news` | `10075` |
+| `/console/nfx-storages` | `10101` |
+| `/console/nfx-documentation` | `10120` |
+
+域名路由（`*-console-host`、`documentation-host`）不挂这个中间件，仍然经 Traefik 走 HTTPS。文档站的公网 Host 是 `identity.nebulaforgex.com`。
+
+## Console nginx（局域网直连端口用）
+
+跳到宿主机端口之后，接口不再经过 Traefik，由各产品 **secure** console 的 nginx 转发。Identity、Edge、News、Storages 的 `console/nginx.conf` 增加了 `/nfx-*` 反代：去掉产品前缀后转到本机 secure 后端。
+
+| Console | 去掉前缀后的后端 |
+|---------|------------------|
+| Identity | auth `10035`、asset `10037` |
+| Edge | sites `10113`，并转发 `/nfx-identity/auth` `10035`、`/nfx-identity/asset` `10037` |
+| News | source `10063`、news `10065`、crawl `10067`、report `10069`、notify `10071`、mcp `10073`，并转发 Identity 的 `10035` / `10037` |
+| Storages | admin `10093`、object `10095`、iam `10097`、notify `10099`，并转发 Identity 的 `10035` / `10037` |
+
+四份配置都有 `absolute_redirect off`、`client_max_body_size 0`、WebSocket 升级头、`proxy_read_timeout 600s`。Dockerfile 把该文件放到 `/etc/nginx/templates/default.conf.template`。secure compose 传入 `NAS_IP` 和 `NGINX_ENVSUBST_FILTER=NAS_IP`，由官方 nginx 镜像做 envsubst。Documentation 的 `servers/frontend/nginx.conf` 只加了 `absolute_redirect off`，仍复制到 `/etc/nginx/conf.d/default.conf`，没有接口反代。
 
 ## 证书
 

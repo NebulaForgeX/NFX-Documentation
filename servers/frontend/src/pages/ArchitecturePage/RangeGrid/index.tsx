@@ -11,8 +11,8 @@ import styles from "./s.module.css";
 
 type RangeGridProps = {
   focus: Focus | null;
-  onHover: (nodeIds: string[] | null) => void;
-  onPin: (nodeId: string | null) => void;
+  onHover: (groupIds: string[] | null) => void;
+  onPin: (groupId: string | null) => void;
 };
 
 const LEGEND = [LinkProtocol.HTTP, LinkProtocol.GRPC, LinkProtocol.DATA, LinkProtocol.TLS] as const;
@@ -36,17 +36,17 @@ export default function RangeGrid({ focus, onHover, onPin }: RangeGridProps) {
 
           <Grid columns="1" gap="3">
             {PORT_BLOCKS.map((block) => {
-              const hot = Boolean(focus && block.nodeIds.some((id) => focus.nodes.has(id)));
-              const interactive = block.nodeIds.length > 0;
+              const hot = Boolean(focus && block.groupIds.some((id) => focus.nodes.has(id)));
+              const interactive = block.groupIds.length > 0;
               const note = block.nfx ? "" : t(`cells.${block.id}.note`);
               return (
                 <Box
                   key={block.id}
                   className={clsx(styles.cell, hot && styles.hot, interactive && styles.interactive)}
                   data-cell
-                  onPointerEnter={() => interactive && onHover(block.nodeIds)}
+                  onPointerEnter={() => interactive && onHover(block.groupIds)}
                   onPointerLeave={() => onHover(null)}
-                  onClick={() => interactive && onPin(block.nodeIds[0])}
+                  onClick={() => interactive && onPin(block.groupIds[0])}
                 >
                   <Section size="1" py="3">
                     <Container size="4" width="100%" maxWidth="100%" px="3">

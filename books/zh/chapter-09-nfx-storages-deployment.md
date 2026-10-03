@@ -9,22 +9,22 @@
 3. Storages 验 JWT、gRPC 问 Identity `EnsureOwnedProfile`，签发临时 AK/SK，写入 `storages.access_keys`（`account_id` / `profile_id` / `expires_at`）
 4. 浏览器与 AWS SDK 用 SigV4 打 S3 Host。没有 Storages 本地密码表
 
-`VITE_S3_ENDPOINT` 在 `.example.env` 里曾指向 Stack MinIO `10012`——那是历史占位。对象面应走 Edge 的 `TRAEFIK_S3_HOST`，不要把 Storages 数据写进 Identity MinIO。
+`VITE_S3_ENDPOINT` 在 `.example.env` 和 `.secure.env` 里现在仍指向 Stack MinIO `10012`。那是占位。对象面走 Edge 里写死的 `Host(s3.nebulaforgex.com)`，secure 后端是 `NAS1_IP:10091`。本仓没有 `TRAEFIK_S3_HOST` 这个环境变量。不要把 Storages 的对象字节写进 Identity 用的 MinIO。
 
 ## 端口
 
-`GRPC_PORT_AUTH=50071` 仍是 Identity 客户端。
+本仓没有 `GRPC_PORT_AUTH`。拨 Identity 用 `GRPC_HOST_AUTH:GRPC_EXT_PORT_AUTH`（dev `10031`，secure `10036`）。Identity 容器内 listen 仍是 `50071`。
 
-| 模块 | `GRPC_PORT` | `GRPC_EXT` |
-|------|-------------|------------|
-| S3 | 50072 | **10081** |
-| OBJECT | 50073 | **10085** |
-| IAM | 50074 | **10087** |
-| ADMIN | 50075 | **10083** |
-| NOTIFY | 50076 | **10089** |
-| Console | — | **10090** |
+| 模块 | 容器 gRPC | dev HTTP | dev gRPC | secure HTTP | secure gRPC |
+|------|-----------|----------|----------|-------------|-------------|
+| S3 | 50072 | **10080** | **10081** | **10091** | **10092** |
+| ADMIN | 50075 | **10082** | **10083** | **10093** | **10094** |
+| OBJECT | 50073 | **10084** | **10085** | **10095** | **10096** |
+| IAM | 50074 | **10086** | **10087** | **10097** | **10098** |
+| NOTIFY | 50076 | **10088** | **10089** | **10099** | **10100** |
+| Console（`CONSOLE_EXTERNAL_PORT`，不是 gRPC） | — | **10090** | — | **10101** | — |
 
-Vite `5176`。网关 `API_GATEWAY_PREFIX=/nfx-storages`。前缀：`API_PREFIX_PATH_ADMIN=/admin/v3`、`/object`、`/iam`、`/notify`。S3 用独立 Host `TRAEFIK_S3_HOST`。Console 用 PathPrefix `/console/nfx-storages`。
+Vite `VITE_PORT=5176`。本仓没有 `API_GATEWAY_PREFIX`，也没有 `API_PREFIX_PATH_*`。Edge PathPrefix 是 `/nfx-storages/admin`、`/nfx-storages/object`、`/nfx-storages/iam`、`/nfx-storages/notify`（dev 加 `/dev` 前缀）。admin 代码里写死 `Group("/admin/v3")`。object、iam、notify 的 `RegisterRoutes()` 目前是空的，浏览器管理面走 admin。S3 用独立 Host `s3.nebulaforgex.com`，不 strip。Console 用 PathPrefix `/console/nfx-storages`。
 
 浏览器管理面走 **admin `/admin/v3`**（含 locales/messages）；对象字节走 **s3** catch-all。
 
@@ -35,11 +35,12 @@ cd /volume1/Projects/NebulaForgeX/NFX-Storages
 cp .example.env .env
 # STORAGES_VOLUME_* = NAS 盘绝对路径；TOKEN_* 与 Identity 相同
 task proto:gen
-task db:create
 task atlas:pipeline:run
 task console
-sudo docker compose up -d
+sudo docker compose -f docker-compose.dev.yml up -d
 ```
+
+没有 `task db:create`。建库由 `task atlas:pipeline:run` 里的 pipeline 做。要单独建库时用 `bash scripts/create_databases.sh`，先 export Postgres 变量。默认的 `docker-compose.yml` 是 secure；dev 用上面的 `-f docker-compose.dev.yml`，或 `task run`。
 
 四块盘必须存在且可写。Kafka `NAS_IP:10008`。Postgres 10004，Redis 10006。
 
@@ -67,7 +68,7 @@ sudo docker compose up -d
 
 分层：`GET/PUT /tier`、`POST/DELETE /tier/:name`。
 
-KMS：`/kms/service-status` `/kms/status` `/kms/config`、`POST /kms/configure` `/start` `/stop` `/reconfigure` `/clear-cache`、keys CRUD、`POST /kms/generate-data-key`。
+KMS：`GET /kms/service-status`、`GET /kms/status`、`GET /kms/config`、`POST /kms/configure`、`POST /kms/start`、`POST /kms/stop`、`POST /kms/reconfigure`、`POST /kms/clear-cache`、`GET/POST /kms/keys`、`GET /kms/keys/:id`、`DELETE /kms/keys/delete`、`POST /kms/keys/cancel-deletion`、`POST /kms/generate-data-key`。
 
 IAM 导入导出：`GET /export-iam`、`PUT /import-iam`。
 

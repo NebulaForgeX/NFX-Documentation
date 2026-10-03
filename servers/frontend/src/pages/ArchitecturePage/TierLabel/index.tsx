@@ -5,13 +5,12 @@ import { memo } from "react";
 import { Box, Flex, Text } from "@radix-ui/themes";
 import { useTranslation } from "react-i18next";
 
-import { BLOCK_WIDTH } from "../layout";
 import styles from "./s.module.css";
 
 const TierLabel = memo(({ data }: NodeProps<TierNode>) => {
   const { t } = useTranslation("architecture");
   return (
-    <Flex direction="column" gap="2" width={`${BLOCK_WIDTH}px`} data-tier>
+    <Flex direction="column" gap="2" width={`${data.width}px`} data-tier>
       <Flex align="center" justify="between" gap="2">
         <Text as="span" size="1" className={styles.label}>
           {t(`tiers.${data.tier}`)}

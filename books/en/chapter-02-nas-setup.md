@@ -20,7 +20,7 @@ Clone repos and run `task` / `docker compose` over SSH. Prefer:
 
 - Key login; no password root login
 - **Do not** port-forward SSH to the internet (Chapter 1 already forbids it)
-- A normal user that can `sudo docker` (scripts in this fleet use `sudo docker`)
+- A normal user that can `sudo docker`, or a user in the docker group who still runs the scripts' `sudo docker`
 
 ![Asustor NAS Service](/images/AsustorNas_Service.png)
 
@@ -64,7 +64,8 @@ Suggested split:
 | What | Where |
 |------|--------|
 | Git checkouts | SSD / app volume (this handbook uses `/volume1/Projects/NebulaForgeX`) |
-| Stack data (Postgres, Kafka, MinIO, OpenSearch …) | Large data volume via `*_DATA_PATH` / `STORAGES_VOLUME_*` in `.env` |
+| Stack data (Postgres, Kafka, MinIO, OpenSearch …) | Large data volume via `*_DATA_PATH` in the NFX-Stack `.env` |
+| Storages object volumes | `STORAGES_VOLUME_0` … `_3` in the NFX-Storages `.env` |
 | Certs written by sites-base | Edge repo `websites/<site>/` (tight permissions; do not commit) |
 
 Do not commit database directories. Do not commit `.env` / `.secure.env`.

@@ -6,7 +6,7 @@ Do not resurrect the deleted tenants / access / directory / clients table docs. 
 
 ## Console routes (split by kind)
 
-Do not use `/user/*`. Kind is `FORGER` or `AUTHORITY` (not HL COMMUNITY). Source: `console/src/navigations/routes.ts` + `ScopeRoute`.
+Do not use `/user/*`. JWT and `POST /auth/me/select-profile` `kind` (the same value as `profile_scope`) is **`community` | `authority`** (lowercase). `forger` is a role on the community profile (`forger_role`), not a kind. The console URL tree is still split by path: `/forger/*` is community and `/authority/*` is authority. The path prefix and the wire value are different words. Sources: `console/src/navigations/routes.ts` + `ScopeRoute` + `databases/src/schemas/auth/enums/profile_scope.sql`.
 
 | Stage | Paths |
 |-------|--------|
@@ -15,7 +15,7 @@ Do not use `/user/*`. Kind is `FORGER` or `AUTHORITY` (not HL COMMUNITY). Source
 | Forger | `/forger/desk`, `/forger/profile/overview\|edit\|identity\|security`, `/forger/assets`, `/forger/settings` |
 | Authority | same under `/authority/*`, plus `/authority/directory` |
 
-The wrong tree is bounced by `ScopeRoute` to `profileHome(kind)` (Forger → `/forger/desk`, Authority → `/authority/desk`). Pages use **nfx-ui hooks** only. Pin **nfx-ui 0.36.0**.
+The wrong tree is bounced by `ScopeRoute` to `profileHome(kind)` (Forger → `/forger/desk`, Authority → `/authority/desk`). Pages use **nfx-ui hooks** only. Do not call a repository from a page. Pin **nfx-ui 0.36.0**.
 
 Birthday on profile edit is a read-only trigger. It opens the calendar `Dialog` mounted by `ModalProvider` (`showDateTimePickerModal`) and writes `YYYY-MM-DD` on confirm. Do not use the browser date input.
 
@@ -28,10 +28,13 @@ Birthday on profile edit is a read-only trigger. It opens the calendar `Dialog` 
 | AUTH / ASSET gRPC | `GRPC_PORT_*` | 50071 / 50072 |
 | Host gRPC (dev) | `GRPC_EXT_PORT_*` | **10031 / 10033** |
 | Console host map (dev) | `CONSOLE_EXTERNAL_PORT` | **10034** |
+| AUTH / ASSET host HTTP (secure) | `HTTP_EXT_PORT_*` | **10035 / 10037** |
+| Host gRPC (secure) | `GRPC_EXT_PORT_*` | **10036 / 10038** |
+| Console host map (secure) | `CONSOLE_EXTERNAL_PORT` | **10039** |
 | Vite | `VITE_PORT` | 5173 |
-| Gateway prefix | Edge `identity.project.yml` | `/nfx-identity` (Fiber still mounts `/auth` `/asset`) |
+| Gateway prefix | Edge `identity.project.yml` | secure `/nfx-identity`, dev `/dev/nfx-identity` (Fiber still mounts `/auth` `/asset`) |
 
-Edge: PathPrefix `/nfx-identity/auth|asset` + StripPrefix `/nfx-identity`; console PathPrefix `/console/nfx-identity` (public Host or LAN IP). `VITE_API_URL=/nfx-identity` (same origin, baked into the console).
+Edge: PathPrefix `/nfx-identity/auth|asset` (dev is `/dev/nfx-identity/...`) plus StripPrefix. Console PathPrefix is `/console/nfx-identity`. The domain stays on HTTPS reverse proxy. LAN `Host(NAS1_IP)` returns 302 to the console port (dev `10034`, secure `10039`); see Chapter 4. Browser variables: dev `VITE_API_URL=/dev/nfx-identity`, `VITE_BASE=/dev/console/nfx-identity/`; secure `VITE_API_URL=/nfx-identity`, `VITE_BASE=/console/nfx-identity/`.
 
 Compose service names: `auth-base` / `asset-base` (containers `NFX-Identity-*-Base-Dev`). Published on `NAS_IP`. No Traefik labels and no shared Docker network.
 
@@ -45,16 +48,17 @@ TOKEN_REFRESH_TTL=168h
 TOKEN_ALGORITHM=HS256
 ```
 
-Edge / News / Storages must copy the same set. **Do not** put real secrets in Git or this handbook. JWT `profile_scope` enum: `forger` | `authority`.
+Edge / News / Storages must copy the same set. **Do not** put real secrets in Git or this handbook. JWT `profile_scope` enum: `community` | `authority`.
 
 ## Deploy
 
 ```bash
 cd /volume1/Projects/NebulaForgeX/NFX-Identity
 cp .example.env .env
+# TOKEN_*, Postgres / Redis / MinIO / SMTP placeholders
 task proto:gen
 task errors:gen-langs
-task atlas:pipeline:run
+task atlas:pipeline:run          # ENV=dev by default; secure: ENV=secure
 task console:i
 sudo docker compose -f docker-compose.dev.yml up --build
 ```
@@ -77,7 +81,7 @@ Schema source of truth: `databases/src/**.sql`. Change SQL first, then Atlas.
 
 ## HTTP: auth `/auth`
 
-Implemented in `modules/auth/interface/http/platform_router.go`.
+Implemented in `modules/auth/interface/http/router.go`.
 
 ### Public
 
@@ -138,7 +142,7 @@ SMTP: `EMAIL_SMTP_*` in `.env`.
 
 ## HTTP: asset `/asset`
 
-`modules/asset/interface/http/server.go`. `kind` ∈ `images` | `files` | `videos` | `audios`. List/upload need a token; `GET /asset/{kind}/{id}/file` is unauthenticated at the router (handler still applies ownership where required).
+Routes: `modules/asset/interface/http/router.go` (mounted from `server.go`). `kind` ∈ `images` | `files` | `videos` | `audios`. List/upload need a token; `GET /asset/{kind}/{id}/file` is unauthenticated at the router (handler still applies ownership where required).
 
 | Method | Path |
 |--------|------|
@@ -167,7 +171,7 @@ Bytes live in Stack **MinIO** (`MINIO_ENDPOINT=minio:9000`, path-style; keys mat
 | `RefreshTokens` | `token_hash` only; `device_id` for same-device revoke; `profile_scope` |
 | Link tables | avatars, backgrounds, settings per profile kind |
 
-Enums: `forger_role` (currently `forger` only), `authority_role`, `profile_scope` (`forger`/`authority`), `account_status`, `signup_platform`, `profile_language`, `identity_provider`.
+Enums: `forger_role` (currently `forger` only), `authority_role` (`auditor` / `administrator` / `owner`), `profile_scope` (`community` / `authority`), `account_status` (`active` / `suspended` / `deleted`), `signup_platform` (default `nfxidentity`, also `nfxnews` / `nfxstorages` / `nfxedge`), `profile_language` (`en` / `zh` / `fr`), `identity_provider` (currently `password` only).
 
 Roles are **array membership**, not a hierarchy: SQL `@>` / `= ANY`, Go `HasRole`.
 
@@ -183,19 +187,33 @@ Databases: `nfxidentity_dev` / `nfxidentity` / shadow `nfxidentity_diff`. Postgr
 2. gRPC Identity AUTH: `EnsureOwnedProfile(account_id, profile_id, profile_scope)`
 3. `HasForgerRole` when a Forger capability is required
 
-Edge/News/Storages `GRPC_HOST_AUTH` points at the Identity auth container, `GRPC_PORT_AUTH=50071`.
+Edge / News / Storages dial Identity with `GRPC_HOST_AUTH` set to the NAS IP and `GRPC_EXT_PORT_AUTH` (dev `10031`, secure `10036`). Identity still listens on `50071` inside its container. Those other repos have no `GRPC_PORT_AUTH`.
 
 ## kafkax (same package in every Go product)
 
-Configured under `[kafka]` in `inputs/*/configuration/dev.toml`. Brokers: `${KAFKA_BROKERS}` = `NAS_IP:10008`. Identity auth today:
+Configured under `[kafka]` in `inputs/*/configuration/dev.toml`. Inside the container `brokers = ["${KAFKA_BROKERS}"]`, and the value is `NAS_IP:10008`. Identity auth today:
 
 ```toml
-[kafka.producer_topics]
-    auth = "nfxidentity.auth"
-    auth_poison = "nfxidentity.auth_poison"
+[kafka]
+    brokers = ["${KAFKA_BROKERS}"]
+    client_id = "nfxidentity-auth-service"
+    [kafka.producer]
+        acks = "all"
+        compression = "snappy"
+        idempotent = true
+    [kafka.consumer]
+        group_id = "nfxidentity-auth"
+    [kafka.producer_topics]
+        auth = "nfxidentity.auth"
+        auth_poison = "nfxidentity.auth_poison"
+    [kafka.consumer_topics]
+        auth = "nfxidentity.auth"
+        auth_poison = "nfxidentity.auth_poison"
+    [kafka.security]
+        enabled = false
 ```
 
-Map **logical keys** to real topic names. Call `cfg.Validate()` before Publisher/Subscriber. Leave `security.enabled=false` when Stack Kafka has no SASL. Other prefixes: Edge `nfxedge.cert`, News `nfxnews.*`, Storages `nfxstorages.s3`. Ignore leftover `nfx-identity-access` / `directory` samples in the package — those modules were removed; **toml in each repo wins**.
+`producer_topics` / `consumer_topics` map a **logical key** (such as `auth`) to the real topic name. Call `cfg.Validate()` before creating a Publisher or Subscriber. Leave `security.enabled=false` when Stack Kafka has no SASL. Other prefixes: Edge `nfxedge.cert`, News `nfxnews.*`, Storages `nfxstorages.s3`. Ignore leftover `nfx-identity-access` / `directory` samples in the package — those modules were removed; **toml in each repo wins**.
 
 Error codes: `var ErrXxx = errx.XXX("CODE")` in `errors/src`, plus a footer block:
 

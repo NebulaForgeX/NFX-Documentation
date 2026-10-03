@@ -1,17 +1,31 @@
 {
   "eyebrow": "TOPOLOGY · LAN",
   "title": "Architecture",
-  "lead": "One block is one Docker Compose. The face shows the name and the host-port range. Edges are labeled with the dial port. Hover a block or a line for the detail.",
+  "lead": "One frame is one Docker Compose. One block inside it is one container. Every line is a dial written in a compose file, a toml, nginx, or a Traefik route. Hover a frame, a block, or a line for the detail.",
   "hint": "Dev comes first. Secure follows the slash. The same port on two NAS machines does not collide, because the IP differs.",
   "gridTitle": "Host port blocks",
   "gridLead": "One block per repo, padded to a port ending in 9. Solid is used, hatched is reserved.",
   "legendTitle": "Links",
   "dialsTitle": "Dial ports",
   "portsTitle": "Host ports",
+  "containersTitle": "Containers",
+  "dialsOut": "Dials",
+  "dialsIn": "Dialed by",
   "clickHint": "Hover for detail, click to pin.",
-  "composeCount": "{{count}} Compose stacks",
+  "layerLabel": "Highlight one kind of link",
+  "layers": {
+    "all": "All",
+    "data": "Data",
+    "grpc": "gRPC",
+    "http": "HTTP",
+    "ingress": "Ingress"
+  },
+  "composeCount": "{{count}} Compose files",
+  "containerCount_one": "{{count}} container",
+  "containerCount_other": "{{count}} containers",
   "linkCount": "{{count}} links",
-  "notDocker": "Not a Compose",
+  "notDocker": "Not a container",
+  "notCompose": "docker run · start.sh",
   "dev": "dev",
   "secure": "secure",
   "used": "Used {{range}}",
@@ -28,6 +42,7 @@
     "ingress": "Ingress",
     "proxy": "Proxy",
     "product": "Products",
+    "identity": "Identity",
     "shared": "Shared"
   },
   "cells": {
@@ -58,66 +73,260 @@
       "note": "Vite 10402–10405 dev only"
     }
   },
-  "blocks": {
-    "internet": {
-      "title": "Internet",
-      "body": "The public network only sees the router.",
-      "listen": ""
-    },
-    "router": {
-      "title": "Router",
-      "body": "Forwards only 80 and 443 to the NAS that runs Traefik.",
-      "listen": ""
-    },
+  "groups": {
     "traefik": {
       "title": "NFX-Edge Traefik",
-      "body": "File routes in dynamic/*.project.yml. No Docker network. 80/443 stays out of the 10000 blocks.",
-      "listen": ""
+      "body": "The reverse proxy on its own Compose file. File routes in dynamic/*.project.yml dial NAS_IP plus the host port. 80/443 stays out of the 10000 blocks."
     },
     "identity": {
       "title": "NFX-Identity",
-      "body": "Login and profiles. auth, asset, and the console.",
-      "listen": "HTTP 8080 · gRPC 50071 / 50072"
+      "body": "Login, profiles, and assets. Every other product dials auth-base over gRPC, and every console proxies to auth and asset."
     },
     "news": {
       "title": "NFX-News",
-      "body": "source, news, crawl, report, notify, mcp. Dials Identity auth gRPC.",
-      "listen": "HTTP 8080 · gRPC 50072–50077"
+      "body": "Six backends and a console. mcp, crawl, and report also dial each other over gRPC."
     },
     "storages": {
       "title": "NFX-Storages",
-      "body": "Order: s3, admin, object, iam, notify. S3 is a Host route.",
-      "listen": "HTTP 8080 · gRPC 50072–50076"
+      "body": "Five backends and a console. Object bytes live on NAS volumes, not in Stack MinIO. s3 is reached by Host route, not through the console."
     },
     "edge": {
-      "title": "NFX-Edge sites",
-      "body": "sites-base owns certificates. ACME still uses Traefik on port 80.",
-      "listen": "HTTP 8080 · gRPC 50071+"
+      "title": "NFX-Edge",
+      "body": "sites-base owns certificates and sites. ACME still goes through Traefik on port 80."
     },
     "documentation": {
       "title": "NFX-Documentation",
-      "body": "Handbook frontend. Browser path /console/nfx-documentation/.",
-      "listen": "HTTP 80"
+      "body": "One frontend container. Browser path /console/nfx-documentation/."
     },
-    "aquaworks": {
-      "title": "AquaWorks",
-      "body": "Static site. The LAN path redirects to this port.",
-      "listen": ""
-    },
-    "timetable": {
-      "title": "TimetableCraft",
-      "body": "Static site. The LAN path redirects to this port.",
-      "listen": ""
+    "static": {
+      "title": "Static sites",
+      "body": "Not a Compose. Each start.sh builds the image and runs one container with docker run."
     },
     "stack": {
       "title": "NFX-Stack",
-      "body": "Shared data plane. Products dial the NAS IP plus these ports. No shared network.",
-      "listen": "each service keeps its own container port"
+      "body": "Shared data plane made of ten Compose files. Products dial NAS_IP plus these host ports. There is no shared Docker network."
+    },
+    "stack-mysql": {
+      "title": "MySQL",
+      "body": "MySQL and phpMyAdmin. The UI reaches the database by its Compose service name."
+    },
+    "stack-mongodb": {
+      "title": "MongoDB",
+      "body": "MongoDB and mongo-express. The UI reaches the database by its Compose service name."
+    },
+    "stack-postgresql": {
+      "title": "PostgreSQL",
+      "body": "Every NFX backend keeps its database here. pgAdmin only depends on it; servers are added by hand."
+    },
+    "stack-redis": {
+      "title": "Redis",
+      "body": "Cache for every NFX backend. RedisInsight only depends on it; the connection is added by hand."
+    },
+    "stack-kafka": {
+      "title": "Kafka",
+      "body": "Event bus for every NFX backend. Products use the EXTERNAL listener; Kafka UI uses kafka:9092."
+    },
+    "stack-rabbitmq": {
+      "title": "RabbitMQ",
+      "body": "AMQP and the management UI in one container. No NFX product dials it today."
+    },
+    "stack-minio": {
+      "title": "MinIO",
+      "body": "S3 API and console in one container. Identity asset-base stores images here, and Traefik serves the public bucket path."
+    },
+    "stack-centrifugo": {
+      "title": "Centrifugo",
+      "body": "Realtime server. No NFX product dials it today."
+    },
+    "stack-otel": {
+      "title": "OpenTelemetry",
+      "body": "The collector takes OTLP from every backend, sends traces to Jaeger and logs to Loki, and exposes metrics for Prometheus. Grafana reads all three."
+    },
+    "stack-opensearch": {
+      "title": "OpenSearch",
+      "body": "OpenSearch and its Dashboards. No NFX product dials it today."
+    }
+  },
+  "containers": {
+    "internet": {
+      "title": "Internet",
+      "body": "The public network only sees the router."
+    },
+    "router": {
+      "title": "Router",
+      "body": "Forwards only 80 and 443 to the NAS that runs Traefik."
     },
     "nas2": {
       "title": "NAS2",
-      "body": "The same Compose files and port numbers. Traefik only swaps the IP in the URL.",
-      "listen": ""
+      "body": "The same Compose files and port numbers. Traefik only swaps the IP in the URL."
+    },
+    "traefik": {
+      "title": "Traefik",
+      "body": "Routes every backend, console, MinIO, and static site by path or host."
+    },
+    "identity-auth": {
+      "title": "Identity auth",
+      "body": "Accounts, sessions, and profiles. Sends mail through SMTP."
+    },
+    "identity-asset": {
+      "title": "Identity asset",
+      "body": "Uploads and images. Stores objects in MinIO and checks tokens with auth."
+    },
+    "identity-console": {
+      "title": "Identity console",
+      "body": "nginx serves the build and proxies /nfx-identity/auth and /nfx-identity/asset."
+    },
+    "news-source": {
+      "title": "News source",
+      "body": "Source catalog and fetch."
+    },
+    "news-news": {
+      "title": "News news",
+      "body": "Items, search, and column preferences."
+    },
+    "news-crawl": {
+      "title": "News crawl",
+      "body": "Crawl sessions. Dials source and report over gRPC."
+    },
+    "news-report": {
+      "title": "News report",
+      "body": "Keyword DSL and snapshots. Dials news over gRPC."
+    },
+    "news-notify": {
+      "title": "News notify",
+      "body": "Feishu, DingTalk, WeCom, and Telegram webhooks. Consumes nfxnews.report from Kafka."
+    },
+    "news-mcp": {
+      "title": "News MCP",
+      "body": "Tool list and calls. Dials news, report, source, and crawl over gRPC."
+    },
+    "news-console": {
+      "title": "News console",
+      "body": "nginx serves the build and proxies the six News backends plus Identity."
+    },
+    "storages-s3": {
+      "title": "Storages S3",
+      "body": "Go S3 on Host s3.nebulaforgex.com. Object bytes live on the NAS volumes, not in Stack MinIO."
+    },
+    "storages-admin": {
+      "title": "Storages admin",
+      "body": "Every browser route under /admin/v3: users, policies, KMS, and more."
+    },
+    "storages-object": {
+      "title": "Storages object",
+      "body": "Object module. Its HTTP routes are empty, so the browser goes through admin."
+    },
+    "storages-iam": {
+      "title": "Storages IAM",
+      "body": "IAM authorize. Its HTTP routes are empty, so the browser goes through admin."
+    },
+    "storages-notify": {
+      "title": "Storages notify",
+      "body": "Event targets. Its HTTP routes are empty, so the browser goes through admin."
+    },
+    "storages-console": {
+      "title": "Storages console",
+      "body": "nginx serves the build and proxies admin, object, iam, notify, and Identity."
+    },
+    "edge-sites": {
+      "title": "Edge sites",
+      "body": "Sites and certificates. Answers ACME challenges behind Traefik."
+    },
+    "edge-console": {
+      "title": "Edge console",
+      "body": "nginx serves the build and proxies sites and Identity."
+    },
+    "documentation-frontend": {
+      "title": "Docs frontend",
+      "body": "This handbook. nginx inside listens on port 80."
+    },
+    "aquaworks": {
+      "title": "AquaWorks",
+      "body": "Static site. The LAN path redirects to this port."
+    },
+    "timetable": {
+      "title": "TimetableCraft",
+      "body": "Static site. The LAN path redirects to this port."
+    },
+    "stack-mysql": {
+      "title": "MySQL",
+      "body": "MySQL server."
+    },
+    "stack-mysql-ui": {
+      "title": "MySQL UI",
+      "body": "phpMyAdmin, PMA_HOST=mysql."
+    },
+    "stack-mongodb": {
+      "title": "MongoDB",
+      "body": "MongoDB server."
+    },
+    "stack-mongodb-ui": {
+      "title": "MongoDB UI",
+      "body": "mongo-express, ME_CONFIG_MONGODB_SERVER=mongodb."
+    },
+    "stack-postgresql": {
+      "title": "PostgreSQL",
+      "body": "One database per product, for example nfxidentity and nfxnews."
+    },
+    "stack-postgresql-ui": {
+      "title": "PostgreSQL UI",
+      "body": "pgAdmin. No server is preconfigured."
+    },
+    "stack-redis": {
+      "title": "Redis",
+      "body": "Redis server."
+    },
+    "stack-redis-ui": {
+      "title": "Redis UI",
+      "body": "RedisInsight. No connection is preconfigured."
+    },
+    "stack-kafka": {
+      "title": "Kafka",
+      "body": "KRaft broker. PLAINTEXT kafka:9092 inside, EXTERNAL on the host port."
+    },
+    "stack-kafka-ui": {
+      "title": "Kafka UI",
+      "body": "Bootstrap server kafka:9092."
+    },
+    "stack-rabbitmq": {
+      "title": "RabbitMQ",
+      "body": "AMQP and the management UI."
+    },
+    "stack-minio": {
+      "title": "MinIO",
+      "body": "S3 API on 9000 and the console on 9001."
+    },
+    "stack-centrifugo": {
+      "title": "Centrifugo",
+      "body": "Realtime server."
+    },
+    "stack-otel-collector": {
+      "title": "Otel Collector",
+      "body": "OTLP in. Traces to Jaeger, logs to Loki, metrics on 8889."
+    },
+    "stack-jaeger": {
+      "title": "Jaeger",
+      "body": "Trace store and UI."
+    },
+    "stack-prometheus": {
+      "title": "Prometheus",
+      "body": "Scrapes otel-collector:8889."
+    },
+    "stack-loki": {
+      "title": "Loki",
+      "body": "Log store, OTLP over HTTP."
+    },
+    "stack-grafana": {
+      "title": "Grafana",
+      "body": "Datasources Prometheus, Loki, and Jaeger."
+    },
+    "stack-opensearch": {
+      "title": "OpenSearch",
+      "body": "Search engine over HTTPS 9200."
+    },
+    "stack-opensearch-dashboards": {
+      "title": "OpenSearch Dashboards",
+      "body": "opensearch.hosts https://opensearch:9200."
     }
   }
 }

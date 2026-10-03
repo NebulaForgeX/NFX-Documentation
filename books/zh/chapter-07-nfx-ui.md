@@ -16,14 +16,14 @@
 
 - `ThemeProvider` / `LanguageProvider` / `DataProvider`
 
-主题跟 preference store，不要给 `ThemeProvider` 传 `defaultTheme` 覆盖用户选择。宿主引入样式：
+主题只读 preference store。`ThemeProvider` 只有 `children` 和 `onAppearanceChange`，没有覆盖主题的参数。宿主引入样式：
 
 ```ts
 import "nfx-ui/themes/index.css";
 import "nfx-ui/themes/fonts";
 ```
 
-壳层用 **`@radix-ui/themes`**（对等依赖 `^3.3.0`）+ 各仓本地 Sidebar。Documentation 站点同样：Radix + lucide，不用卡片墙当整页容器。
+壳层用 **`@radix-ui/themes`**（对等依赖 `^3.3.0`）+ 各仓本地 Sidebar。Documentation 站点同样用 Radix，图标以 `nfx-ui/icons` 为主，并少量使用 `lucide-react`。不用卡片墙当整页容器。
 
 ### navigations
 
@@ -35,13 +35,13 @@ Identity 的 Forger/Authority 分树是 **Identity console** 的 `ScopeRoute`，
 
 Auth（`nfx-ui/hooks`）：
 
-`useAuthQueryScope`、`useCurrentProfile`、`useSendVerificationCode`、`useSignupWithEmail`、`useLoginWithEmail`、`useLoginWithPhone`、`useSelectProfile`、`usePatchProfile`、`useUpdateProfileSettings`、`useUpdatePreference`、`useListProfiles`、`useCreateForgerProfile`、`useCreateAuthorityProfile`、`useDeleteProfile`、`useConfirmProfileAvatar`、`useClearProfileAvatar`、`useConfirmProfileBackgrounds`、`useListEmails` / `useCreateEmail` / `useSendEmailVerificationCode` / `useVerifyEmail` / `useUpdateEmail` / `useSetPrimaryEmail` / `useDeleteEmail`、对应 **phone** 一套、`useSendChangePasswordVerificationCode`、`useChangePassword`、`useSearchForgerProfiles`、`useSearchAuthorityProfiles`、`useGetPublicProfileCard`、`useListOwnerForgerProfiles`、`useListOwnerAuthorityProfiles`、`useUpdateAuthorityProfileRoles`。
+`useAuthQueryScope`、`useCurrentProfile`、`useSendVerificationCode`、`useSignupWithEmail`、`useLoginWithEmail`、`useLoginWithPhone`、`useSelectProfile`、`usePatchProfile`、`useUpdateProfileSettings`、`useUpdatePreference`、`useListProfiles`、`useCreateForgerProfile`、`useCreateAuthorityProfile`、`useDeleteProfile`、`useConfirmProfileAvatar`、`useClearProfileAvatar`、`useConfirmProfileBackgrounds`、`useListEmails` / `useCreateEmail` / `useSendEmailVerificationCode` / `useVerifyEmail` / `useUpdateEmail` / `useSetPrimaryEmail` / `useDeleteEmail`、`useListPhones` / `useCreatePhone` / `useSendPhoneVerificationCode` / `useVerifyPhone` / `useUpdatePhone` / `useSetPrimaryPhone` / `useDeletePhone`、`useSendChangePasswordVerificationCode`、`useChangePassword`、`useSearchForgerProfiles`、`useSearchAuthorityProfiles`、`useGetPublicProfileCard`、`useListOwnerForgerProfiles`、`useListOwnerAuthorityProfiles`、`useUpdateAuthorityProfileRoles`。
 
 Asset：`useAssetFileURL`、`usePrepareUpload`、`useConfirmUpload`、`useDeleteAsset`、`useListAssets`、`usePrepareImageUpload`、`useConfirmImageUpload`、`useDeleteImage`。
 
-其它：`useUnifiedQuery`（factory）、preference（`useResolvedAppearance`、`useApplyPreferenceOnLoad`、`useSyncPreference`）、dom（`useDebouncedValue` 等）。
+其它：`useUnifiedQuery`、`useUnifiedInfiniteQuery`、`useUnifiedSuspenseQuery`、`useUnifiedSuspenseInfiniteQuery`（factory）、preference（`useResolvedAppearance`、`useApplyPreferenceOnLoad`、`useSyncPreference`、`configurePreferenceSync`）、dom（`useDebouncedValue`、`useWheelHorizontalScroll`、`useLockDocumentScrollOnDesktop`）、语言标签（`useLanguageLabel`、`useBaseLabel`、`useLayoutLabel`、`usePreferenceLabel`、`useThemeLabel`）。
 
-列表失效：**只用** `invalidateEventEmitter` + `useInvalidateInv`，页面里不要 `useQueryClient().invalidateQueries`。
+列表失效在**宿主**里：`@/events/invalidate` 的 `invalidateEventEmitter` + `useInvalidateInv`。库内 auth 失效走 `nfx-ui/events` 的 `authEventEmitter`，查询失效走 `queryEventEmitter`。页面里不要 `useQueryClient().invalidateQueries`。
 
 ### 其它子路径
 
@@ -59,7 +59,7 @@ Console CSS 用 Radix 色阶：`--gray-*`、`--accent-*`、`--color-background`�
 
 ## 对等依赖（与 PulsoLink-WEB 对齐，以 `package.json` peerDependencies 为准）
 
-`react` / `react-dom` `^19.2.8`，`react-router` `^8.3.1`，`@radix-ui/themes` `^3.3.0`，`@tanstack/react-query` `^5`，`axios` `^1.20`，`vite` `^8.2.2`。
+`react` / `react-dom` `^19.3.0`，`react-router` `^8.4.0`，`@radix-ui/themes` `^3.3.0`，`@tanstack/react-query` `^5.103.1`，`axios` `^1.20.0`。`vite` 不是 peer，构建用 devDependency `vite` `^8.3.0`。
 
 ## 开发本库
 

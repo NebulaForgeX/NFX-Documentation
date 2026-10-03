@@ -1,6 +1,6 @@
 # Chapter 4: NFX-Edge reverse proxy
 
-[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) is the only HTTP/HTTPS ingress (Traefik v3.7). Docker runs services. Traefik only reverse-proxies. Product Compose has **no** Traefik labels and does **not** join a shared Docker network.
+[NFX-Edge](https://github.com/NebulaForgeX/NFX-Edge) is the only HTTP/HTTPS ingress (Traefik **v3.7.13**, image tag in `docker-compose.traefik.yml`). Docker runs services. Traefik only reverse-proxies. Product Compose has **no** Traefik labels and does **not** join a shared Docker network.
 
 - Owns host **80 / 443** (container `NFX-Edge-Reverse-Proxy`)
 - Static config is `traefik.yml` (file provider, `watch: true`)
@@ -21,6 +21,15 @@ NFX-Edge/
 ├── traefik.yml
 ├── docker-compose.traefik.yml
 ├── dynamic.example/          # committed templates, including example.project.yml
+│   ├── identity.project.yml
+│   ├── news.project.yml
+│   ├── storages.project.yml
+│   ├── edge.project.yml
+│   ├── documentation.project.yml
+│   ├── sites.project.yml
+│   ├── minio.project.yml
+│   ├── dashboard.project.yml
+│   └── tls.yaml
 ├── dynamic/                  # live routes, gitignored
 └── websites/                 # certificates
 ```
@@ -31,11 +40,18 @@ NFX-Edge/
 
 ```bash
 cp .example.env .env
-cp dynamic.example/*.project.yml dynamic/
+# NAS1_IP / NAS2_IP
+cp dynamic.example/*.project.yml dynamic/   # this glob does not copy tls.yaml
 task traefik
 ```
 
-`task traefik` starts the proxy only. It does not create a Docker network.
+The `*.project.yml` glob leaves `tls.yaml` behind. Copy it only after the cert files already exist under `websites/<site>/`:
+
+```bash
+cp dynamic.example/tls.yaml dynamic/tls.yaml
+```
+
+Do not put it in `dynamic/` while those files are missing, or the whole file provider fails to load. `task traefik` starts the proxy only. It does not create a Docker network.
 
 ## How products are reached
 
@@ -50,6 +66,33 @@ Dev (`task run` default):
 Path prefixes are unchanged. `/nfx-identity/auth` strips `/nfx-identity`, so Fiber still sees `/auth`. Storages S3 is Host `s3.nebulaforgex.com` with no strip. ACME `/.well-known/acme-challenge` is in `edge.project.yml` on the `web` entrypoint, so the 80→443 redirect does not swallow it.
 
 Moving a service to the other NAS is a URL change from `NAS1_IP` to `NAS2_IP`.
+
+## LAN console redirects
+
+In `dynamic/*.project.yml` (templates under `dynamic.example/`), the LAN routers `*-console-lan` and `documentation-lan` (`Host(NAS1_IP)`) use a `redirectRegex` middleware with `permanent: false`, so the response is HTTP 302. Opening `https://<NAS1_IP>/console/nfx-*` sends the browser to `http://<NAS1_IP>:<port>/console/nfx-*/`. Different ports keep each console's login state separate.
+
+| Route | Port |
+|-------|------|
+| `/console/nfx-identity` | `10039` |
+| `/console/nfx-edge` | `10115` |
+| `/console/nfx-news` | `10075` |
+| `/console/nfx-storages` | `10101` |
+| `/console/nfx-documentation` | `10120` |
+
+Domain routers (`*-console-host`, `documentation-host`) do not use this middleware and stay on Traefik HTTPS. Documentation's public Host is `identity.nebulaforgex.com`.
+
+## Console nginx (for the LAN port)
+
+After the redirect, APIs no longer go through Traefik. Each product's **secure** console nginx forwards them. Identity, Edge, News, and Storages `console/nginx.conf` add `/nfx-*` proxies that strip the product prefix and forward to the local secure backend.
+
+| Console | Backend after the prefix is stripped |
+|---------|--------------------------------------|
+| Identity | auth `10035`, asset `10037` |
+| Edge | sites `10113`, plus `/nfx-identity/auth` `10035` and `/nfx-identity/asset` `10037` |
+| News | source `10063`, news `10065`, crawl `10067`, report `10069`, notify `10071`, mcp `10073`, plus Identity `10035` / `10037` |
+| Storages | admin `10093`, object `10095`, iam `10097`, notify `10099`, plus Identity `10035` / `10037` |
+
+All four configs set `absolute_redirect off`, `client_max_body_size 0`, WebSocket upgrade headers, and `proxy_read_timeout 600s`. The Dockerfile copies the file to `/etc/nginx/templates/default.conf.template`. Secure compose passes `NAS_IP` and `NGINX_ENVSUBST_FILTER=NAS_IP`, and the official nginx image runs envsubst. Documentation's `servers/frontend/nginx.conf` only adds `absolute_redirect off` and still copies to `/etc/nginx/conf.d/default.conf`. It has no API proxy.
 
 ## Certificates
 

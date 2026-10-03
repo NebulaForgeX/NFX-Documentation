@@ -20,28 +20,29 @@ Older Fastify / TrendRadar / Node `news_server`, `crawl_server`, `mcp_server`, a
 
 ## Ports
 
-`GRPC_PORT_AUTH=50071` is an Identity **client**. This repo listens on:
+This repo has no `GRPC_PORT_AUTH`. It dials Identity at `GRPC_HOST_AUTH:GRPC_EXT_PORT_AUTH` (dev `10031`, secure `10036`). Identity still listens on `50071` inside its container.
 
-| Module | `GRPC_PORT` | `GRPC_EXT` |
-|--------|-------------|------------|
-| SOURCE | 50072 | **10051** |
-| NEWS | 50073 | **10053** |
-| CRAWL | 50074 | **10055** |
-| REPORT | 50075 | **10057** |
-| NOTIFY | 50076 | **10059** |
-| MCP | 50077 | **10061** |
-| Console | — | **10062** |
+| Module | In-container gRPC | dev HTTP | dev gRPC | secure HTTP | secure gRPC |
+|--------|-------------------|----------|----------|-------------|-------------|
+| SOURCE | 50072 | **10050** | **10051** | **10063** | **10064** |
+| NEWS | 50073 | **10052** | **10053** | **10065** | **10066** |
+| CRAWL | 50074 | **10054** | **10055** | **10067** | **10068** |
+| REPORT | 50075 | **10056** | **10057** | **10069** | **10070** |
+| NOTIFY | 50076 | **10058** | **10059** | **10071** | **10072** |
+| MCP | 50077 | **10060** | **10061** | **10073** | **10074** |
+| Console (`CONSOLE_EXTERNAL_PORT`, not gRPC) | — | **10062** | — | **10075** | — |
 
-Vite `VITE_PORT=5174`. Gateway `API_GATEWAY_PREFIX=/nfx-news`. Fiber prefixes: `/source` `/news` `/crawl` `/report` `/notify` `/mcp`. Browser `VITE_API_URL` → Edge `/nfx-news`, `VITE_IDENTITY_API_URL` → `/nfx-identity`. `GRPC_HOST_AUTH` points at the Identity auth container.
+Vite `VITE_PORT=5174`. This repo has no `API_GATEWAY_PREFIX`. Edge PathPrefix: secure `/nfx-news`, dev `/dev/nfx-news`. Fiber prefixes: `/source` `/news` `/crawl` `/report` `/notify` `/mcp`. Browser variables: dev `VITE_API_URL=/dev/nfx-news`, `VITE_BASE=/dev/console/nfx-news/`, `VITE_IDENTITY_API_URL=/dev/nfx-identity`; secure drops the `/dev` prefix.
 
 ## Deploy
 
 ```bash
 cd /volume1/Projects/NebulaForgeX/NFX-News
 cp .example.env .env
+# TOKEN_* matches Identity; Stack Postgres 10004 / Redis 10006 / Kafka `NAS_IP:10008` / OTLP `NAS_IP:10016`
 task proto:gen
 task errors:gen-langs
-task atlas:pipeline:run:sh
+task atlas:pipeline:run
 task console:i
 sudo docker compose -f docker-compose.dev.yml up --build
 ```
@@ -50,9 +51,9 @@ Databases: `nfxnews_dev` / `nfxnews` / `nfxnews_diff`. Stack: Postgres 10004, Re
 
 ## HTTP routes
 
-### source `/source`
+### source `/source` (public list and fetch; i18n is public)
 
-`GET /sources`, `GET /sources/:id`, `POST /sources/:id/fetch`, i18n locales/messages.
+`GET /sources`, `GET /sources/:id`, `POST /sources/:id/fetch`, `GET /locales/:lang`, `GET /messages/:lang`.
 
 ### news `/news`
 

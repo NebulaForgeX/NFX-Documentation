@@ -46,48 +46,18 @@ desktop.ini
 # NFX-Documentation Web 服务相关
 # ============================================
 
-# 前端
-servers/frontend/node_modules/
-servers/frontend/dist/
-servers/frontend/dist-ssr
-servers/frontend/*.local
-servers/frontend/.env.local
-servers/frontend/.env.*.local
-servers/frontend/logs
-servers/frontend/*.log
-servers/frontend/npm-debug.log*
-servers/frontend/yarn-debug.log*
-servers/frontend/yarn-error.log*
-servers/frontend/pnpm-debug.log*
-servers/frontend/lerna-debug.log*
-
-# 后端（预留）
-servers/backend/__pycache__/
-servers/backend/*.py[cod]
-servers/backend/*$py.class
-servers/backend/*.pyo
-servers/backend/*.pyd
-servers/backend/*.so
-servers/backend/.Python
-servers/backend/env/
-servers/backend/venv/
-servers/backend/ENV/
-servers/backend/.venv/
-servers/backend/.env
-servers/backend/.env.local
-servers/backend/.pytest_cache/
-servers/backend/.coverage
-servers/backend/htmlcov/
-servers/backend/dist/
-servers/backend/build/
-servers/backend/*.egg-info/
-
-# IDE
-servers/.vscode/
-servers/.idea/
-servers/*.suo
-servers/*.ntvs*
-servers/*.njsproj
-servers/*.sln
-servers/*.sw?
+# console
+console/node_modules/
+console/dist/
+console/dist-ssr
+console/*.local
+console/.env.local
+console/.env.*.local
+console/logs
+console/*.log
+console/npm-debug.log*
+console/yarn-debug.log*
+console/yarn-error.log*
+console/pnpm-debug.log*
+console/lerna-debug.log*
 

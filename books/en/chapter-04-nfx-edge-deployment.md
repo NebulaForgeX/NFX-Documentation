@@ -92,7 +92,7 @@ After the redirect, APIs no longer go through Traefik. Each product's **secure**
 | News | source `10063`, news `10065`, crawl `10067`, report `10069`, notify `10071`, mcp `10073`, plus Identity `10035` / `10037` |
 | Storages | admin `10093`, object `10095`, iam `10097`, notify `10099`, plus Identity `10035` / `10037` |
 
-All four configs set `absolute_redirect off`, `client_max_body_size 0`, WebSocket upgrade headers, and `proxy_read_timeout 600s`. The Dockerfile copies the file to `/etc/nginx/templates/default.conf.template`. Secure compose passes `NAS_IP` and `NGINX_ENVSUBST_FILTER=NAS_IP`, and the official nginx image runs envsubst. Documentation's `servers/frontend/nginx.conf` only adds `absolute_redirect off` and still copies to `/etc/nginx/conf.d/default.conf`. It has no API proxy.
+All four configs set `absolute_redirect off`, `client_max_body_size 0`, WebSocket upgrade headers, and `proxy_read_timeout 600s`. The Dockerfile copies the file to `/etc/nginx/templates/default.conf.template`. Secure compose passes `NAS_IP` and `NGINX_ENVSUBST_FILTER=NAS_IP`, and the official nginx image runs envsubst. Documentation's `console/nginx.conf` only adds `absolute_redirect off` and still copies to `/etc/nginx/conf.d/default.conf`. It has no API proxy.
 
 ## Certificates
 

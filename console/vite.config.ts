@@ -6,7 +6,7 @@ import type { Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, loadEnv } from "vite";
 
-const booksRoot = path.resolve(__dirname, "../../books");
+const booksRoot = path.resolve(__dirname, "../books");
 
 function contentTypeFor(file: string): string {
   switch (path.extname(file)) {
@@ -96,7 +96,7 @@ function serveBooksPlugin(base: string): Plugin {
 }
 
 export default defineConfig(({ mode }) => {
-  const envDir = path.resolve(__dirname, "../../");
+  const envDir = path.resolve(__dirname, "../");
   const env = loadEnv(mode, envDir, "");
   const port = Number(env.VITE_PORT) || 5173;
   const base = normalizeBase(process.env.VITE_BASE || env.VITE_BASE);

@@ -33,7 +33,7 @@ cp .example.env .env
 `start.sh` runs `sudo docker compose -f docker-compose.yml up -d --build`. The container is `NFX-Documentation-Frontend`. Local dev:
 
 ```bash
-cd servers/frontend
+cd console
 npm install
 npm run dev
 ```

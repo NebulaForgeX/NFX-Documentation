@@ -1,4 +1,5 @@
 import type { Node } from "@xyflow/react";
+import type { ReactNode } from "react";
 import type { Focus, FocusState } from "./focus";
 import type { CheckState, LayerKeyEnum } from "./layout";
 
@@ -24,6 +25,7 @@ import {
   ReactFlowProvider,
   useNodesInitialized,
   useReactFlow,
+  useStore,
 } from "@xyflow/react";
 import { useResolvedAppearance } from "nfx-ui/hooks";
 import { AnimatedIcon, ArrowBackUpIcon } from "nfx-ui/icons";
@@ -49,6 +51,7 @@ import {
 } from "./layout";
 import PortLink from "./PortLink";
 import RangeGrid from "./RangeGrid";
+import { LaneContext, sameLanes, selectLanes } from "./route";
 import ServiceList from "./ServiceList";
 import TierLabel from "./TierLabel";
 import { useFlowTimeline } from "./timeline";
@@ -77,6 +80,11 @@ function Arm({ onArm }: { onArm: () => void }) {
     return () => cancelAnimationFrame(frame);
   }, [ready, onArm]);
   return null;
+}
+
+function LaneProvider({ children }: { children: ReactNode }) {
+  const lanes = useStore(selectLanes, sameLanes);
+  return <LaneContext.Provider value={lanes}>{children}</LaneContext.Provider>;
 }
 
 const miniColor = (node: Node) => (node.type === "frame" ? "transparent" : "var(--accent-a7)");
@@ -141,43 +149,45 @@ function Topology({
   }, [focused, zoomTo]);
 
   return (
-    <ReactFlow
-      defaultNodes={FLOW_NODES}
-      edges={edges}
-      nodeTypes={nodeTypes}
-      edgeTypes={edgeTypes}
-      className={styles.flow}
-      colorMode={appearance === "light" ? "light" : "dark"}
-      onNodeClick={(_, node) => {
-        if (node.type === "block") onToggle([node.id]);
-      }}
-      onNodeDoubleClick={(_, node) => {
-        if (node.type === "tier") return;
-        const frame = node.type === "frame" ? node.id : CONTAINER_BY_ID.get(node.id)?.group;
-        if (frame) onFocus(focused === frame ? null : frame);
-        else zoomTo(node.id);
-      }}
-      onNodeDragStop={onRelayout}
-      nodesConnectable={false}
-      elementsSelectable={false}
-      zoomOnDoubleClick={false}
-      fitView
-      fitViewOptions={{ padding: FIT_PADDING }}
-      minZoom={0.1}
-      maxZoom={1.6}
-    >
-      <Arm onArm={onArm} />
-      <Background variant={BackgroundVariant.Dots} gap={22} size={1.2} />
-      <Controls showInteractive={false} position="bottom-left" />
-      <MiniMap
-        pannable
-        zoomable
-        position="bottom-right"
-        nodeColor={miniColor}
-        nodeStrokeColor={miniStroke}
-        nodeStrokeWidth={8}
-      />
-    </ReactFlow>
+    <LaneProvider>
+      <ReactFlow
+        defaultNodes={FLOW_NODES}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        className={styles.flow}
+        colorMode={appearance === "light" ? "light" : "dark"}
+        onNodeClick={(_, node) => {
+          if (node.type === "block") onToggle([node.id]);
+        }}
+        onNodeDoubleClick={(_, node) => {
+          if (node.type === "tier") return;
+          const frame = node.type === "frame" ? node.id : CONTAINER_BY_ID.get(node.id)?.group;
+          if (frame) onFocus(focused === frame ? null : frame);
+          else zoomTo(node.id);
+        }}
+        onNodeDragStop={onRelayout}
+        nodesConnectable={false}
+        elementsSelectable={false}
+        zoomOnDoubleClick={false}
+        fitView
+        fitViewOptions={{ padding: FIT_PADDING }}
+        minZoom={0.1}
+        maxZoom={1.6}
+      >
+        <Arm onArm={onArm} />
+        <Background variant={BackgroundVariant.Dots} gap={22} size={1.2} />
+        <Controls showInteractive={false} position="bottom-left" />
+        <MiniMap
+          pannable
+          zoomable
+          position="bottom-right"
+          nodeColor={miniColor}
+          nodeStrokeColor={miniStroke}
+          nodeStrokeWidth={8}
+        />
+      </ReactFlow>
+    </LaneProvider>
   );
 }
 

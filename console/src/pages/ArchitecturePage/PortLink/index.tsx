@@ -7,7 +7,7 @@ import type { DrawOrigin } from "../timeline";
 import { memo, useContext, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import { Flex, HoverCard, Separator, Text } from "@radix-ui/themes";
-import { EdgeLabelRenderer, getSmoothStepPath, Position, useInternalNode } from "@xyflow/react";
+import { EdgeLabelRenderer, useInternalNode } from "@xyflow/react";
 import gsap from "gsap";
 import { useTranslation } from "react-i18next";
 
@@ -15,6 +15,7 @@ import { TOPOLOGY_LINKS } from "@/constants";
 
 import { FocusContext, useLinkFocus } from "../focus";
 import { isFrame, isOverview } from "../layout";
+import { anchorOn, curvePath, sideBetween, useLane } from "../route";
 import { drawStrokes, REDUCED, TRACE_SECONDS } from "../timeline";
 import styles from "./s.module.css";
 
@@ -69,33 +70,10 @@ function MemberRows({ link }: { link: OverviewLink }) {
   });
 }
 
-type Rect = { x: number; y: number; width: number; height: number };
-type Anchor = { x: number; y: number; position: Position };
-
-function rectOf(node: InternalNode | undefined): Rect | null {
+function rectOf(node: InternalNode | undefined) {
   if (!node) return null;
   const { x, y } = node.internals.positionAbsolute;
   return { x, y, width: node.measured.width ?? node.width ?? 0, height: node.measured.height ?? node.height ?? 0 };
-}
-
-function anchorOn(rect: Rect, position: Position): Anchor {
-  const cx = rect.x + rect.width / 2;
-  const cy = rect.y + rect.height / 2;
-  if (position === Position.Left) return { x: rect.x, y: cy, position };
-  if (position === Position.Right) return { x: rect.x + rect.width, y: cy, position };
-  if (position === Position.Top) return { x: cx, y: rect.y, position };
-  return { x: cx, y: rect.y + rect.height, position };
-}
-
-function floatingAnchors(a: Rect, b: Rect): [Anchor, Anchor] {
-  const gapX = Math.max(b.x - (a.x + a.width), a.x - (b.x + b.width));
-  const gapY = Math.max(b.y - (a.y + a.height), a.y - (b.y + b.height));
-  if (gapX >= gapY) {
-    const right = b.x + b.width / 2 >= a.x + a.width / 2;
-    return [anchorOn(a, right ? Position.Right : Position.Left), anchorOn(b, right ? Position.Left : Position.Right)];
-  }
-  const down = b.y + b.height / 2 >= a.y + a.height / 2;
-  return [anchorOn(a, down ? Position.Bottom : Position.Top), anchorOn(b, down ? Position.Top : Position.Bottom)];
 }
 
 function useTrace(scope: RefObject<SVGGElement | null>, origin: DrawOrigin | null) {
@@ -135,6 +113,7 @@ const PortLink = memo(
     const { t } = useTranslation("architecture");
     const { hoverLink, selected } = useContext(FocusContext);
     const level = useLinkFocus(id);
+    const lane = useLane(id);
     const scope = useRef<SVGGElement>(null);
     const traced = Boolean(data && !isOverview(data));
     const origin: DrawOrigin | null = !traced
@@ -151,21 +130,15 @@ const PortLink = memo(
     const overview = isOverview(data);
     const [from, to] =
       sourceRect && targetRect
-        ? floatingAnchors(sourceRect, targetRect)
+        ? [
+            anchorOn(sourceRect, sideBetween(sourceRect, targetRect), lane.sourceT),
+            anchorOn(targetRect, sideBetween(targetRect, sourceRect), lane.targetT),
+          ]
         : [
             { x: sourceX, y: sourceY, position: sourcePosition },
             { x: targetX, y: targetY, position: targetPosition },
           ];
-    const [path, labelX, labelY] = getSmoothStepPath({
-      sourceX: from.x,
-      sourceY: from.y,
-      sourcePosition: from.position,
-      targetX: to.x,
-      targetY: to.y,
-      targetPosition: to.position,
-      borderRadius: 0,
-      offset: overview ? 32 : 20,
-    });
+    const [path, labelX, labelY] = curvePath(from, to, lane.bend);
     const unitTitle = (unit: string) => t(isFrame(unit) ? `groups.${unit}.title` : `containers.${unit}.title`);
 
     return (

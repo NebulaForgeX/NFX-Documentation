@@ -33,7 +33,7 @@ cp .example.env .env
 `start.sh` 实际执行 `sudo docker compose -f docker-compose.yml up -d --build`。容器名 `NFX-Documentation-Frontend`。本地开发：
 
 ```bash
-cd servers/frontend
+cd console
 npm install
 npm run dev
 ```

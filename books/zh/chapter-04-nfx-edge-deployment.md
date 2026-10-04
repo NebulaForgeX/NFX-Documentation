@@ -92,7 +92,7 @@ PathPrefix 与以前一致。例如 `/nfx-identity/auth` 去掉 `/nfx-identity`�
 | News | source `10063`、news `10065`、crawl `10067`、report `10069`、notify `10071`、mcp `10073`，并转发 Identity 的 `10035` / `10037` |
 | Storages | admin `10093`、object `10095`、iam `10097`、notify `10099`，并转发 Identity 的 `10035` / `10037` |
 
-四份配置都有 `absolute_redirect off`、`client_max_body_size 0`、WebSocket 升级头、`proxy_read_timeout 600s`。Dockerfile 把该文件放到 `/etc/nginx/templates/default.conf.template`。secure compose 传入 `NAS_IP` 和 `NGINX_ENVSUBST_FILTER=NAS_IP`，由官方 nginx 镜像做 envsubst。Documentation 的 `servers/frontend/nginx.conf` 只加了 `absolute_redirect off`，仍复制到 `/etc/nginx/conf.d/default.conf`，没有接口反代。
+四份配置都有 `absolute_redirect off`、`client_max_body_size 0`、WebSocket 升级头、`proxy_read_timeout 600s`。Dockerfile 把该文件放到 `/etc/nginx/templates/default.conf.template`。secure compose 传入 `NAS_IP` 和 `NGINX_ENVSUBST_FILTER=NAS_IP`，由官方 nginx 镜像做 envsubst。Documentation 的 `console/nginx.conf` 只加了 `absolute_redirect off`，仍复制到 `/etc/nginx/conf.d/default.conf`，没有接口反代。
 
 ## 证书
 

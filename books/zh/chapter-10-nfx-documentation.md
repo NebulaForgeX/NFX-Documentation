@@ -68,7 +68,7 @@ nginx 的 `location /console/nfx-documentation/` 用 `try_files` 回到 `index.h
 ## 本地开发
 
 ```bash
-cd servers/frontend
+cd console
 npm install
 npm run dev
 ```

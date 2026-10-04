@@ -7,7 +7,7 @@ services:
 
   frontend:
     build:
-      context: ./servers/frontend
+      context: ./console
       dockerfile: Dockerfile
       target: secure
       args:

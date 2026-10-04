@@ -68,7 +68,7 @@ nginx `location /console/nfx-documentation/` uses `try_files` back to `index.htm
 ## Local dev
 
 ```bash
-cd servers/frontend
+cd console
 npm install
 npm run dev
 ```

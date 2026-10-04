@@ -228,6 +228,22 @@ const toEdge = (link: TopologyLink | OverviewLink): LinkEdge => ({
 const TOP_UNITS = new Set(UNIT_ORDER);
 
 export const FLOW_NODES = buildNodes();
+
+const PARENT_OF = new Map(FLOW_NODES.map((node) => [node.id, node.parentId]));
+
+function rootOf(id: string): string {
+  let current = id;
+  let parent = PARENT_OF.get(current);
+  while (parent) {
+    current = parent;
+    parent = PARENT_OF.get(current);
+  }
+  return current;
+}
+
+export const REVEAL_UNITS: string[][] = UNIT_ORDER.map((unit) =>
+  FLOW_NODES.filter((node) => rootOf(node.id) === unit).map((node) => node.id),
+);
 export const COMPOSE_EDGES: LinkEdge[] = [
   ...TOPOLOGY_LINKS.filter((link) => TOP_UNITS.has(link.source) && TOP_UNITS.has(link.target)),
   ...OVERVIEW_LINKS,

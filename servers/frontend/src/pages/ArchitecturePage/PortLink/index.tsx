@@ -184,9 +184,9 @@ const PortLink = memo(
           data-overview={overview ? "true" : "false"}
           data-traced={origin ? "true" : "false"}
         >
-          <path d={path} className={styles.track} />
+          <path d={path} className={styles.track} data-stroke />
           <path d={path} className={styles.glow} data-glow />
-          <path d={path} className={styles.line} data-draw />
+          <path d={path} className={styles.line} data-draw data-stroke />
           <circle r={overview ? 4.5 : 3} className={styles.packet} data-packet />
           <path
             d={path}
@@ -201,6 +201,7 @@ const PortLink = memo(
               <button
                 type="button"
                 className={`${styles.label} nodrag nopan`}
+                data-edge-label={id}
                 data-level={level}
                 data-protocol={data.protocol}
                 data-overview={overview ? "true" : "false"}

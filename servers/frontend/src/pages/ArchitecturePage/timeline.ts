@@ -5,11 +5,15 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 
+import { REVEAL_UNITS } from "./grid";
+
 gsap.registerPlugin(useGSAP, MotionPathPlugin);
 
 const PACKET_SPEED = 170;
 export const REDUCED = "(prefers-reduced-motion: no-preference)";
 export const TRACE_SECONDS = 0.9;
+const UNIT_STEP = 0.22;
+const LINES_SECONDS = 1.4;
 
 export function useFlowTimeline(scope: RefObject<HTMLElement | null>, armed: boolean, version: number) {
   const introEnd = useRef(0);
@@ -21,9 +25,10 @@ export function useFlowTimeline(scope: RefObject<HTMLElement | null>, armed: boo
       const media = gsap.matchMedia();
       media.add(REDUCED, () => {
         const tiers = root.querySelectorAll("[data-tier]");
-        const groups = root.querySelectorAll("[data-group]");
-        const blocks = root.querySelectorAll("[data-block]");
-        const lines = Array.from(root.querySelectorAll<SVGPathElement>("[data-draw]"));
+        const units = REVEAL_UNITS.map((ids) =>
+          ids.flatMap((id) => Array.from(root.querySelectorAll(`.react-flow__node[data-id="${CSS.escape(id)}"] > *`))),
+        ).filter((targets) => targets.length);
+        const links = Array.from(root.querySelectorAll<SVGGElement>("[data-link]"));
 
         const tl = gsap.timeline();
         tl.from(tiers, {
@@ -31,52 +36,47 @@ export function useFlowTimeline(scope: RefObject<HTMLElement | null>, armed: boo
           y: -10,
           duration: 0.4,
           ease: "power2.out",
-          stagger: 0.08,
+          stagger: 0.06,
           clearProps: "opacity,visibility,transform",
         });
-        tl.from(
-          groups,
-          {
-            autoAlpha: 0,
-            scale: 0.98,
-            duration: 0.5,
-            ease: "power2.out",
-            stagger: { amount: 0.5 },
-            clearProps: "opacity,visibility,transform",
-          },
-          "<0.1",
-        );
-        tl.from(
-          blocks,
-          {
-            autoAlpha: 0,
-            y: 14,
-            scale: 0.96,
-            duration: 0.45,
-            ease: "power3.out",
-            stagger: { amount: 0.9 },
-            clearProps: "opacity,visibility,transform",
-          },
-          "-=0.4",
-        );
-
-        lines.forEach((line) => {
-          const length = line.getTotalLength();
-          gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
-        });
-        tl.to(
-          lines,
-          {
-            strokeDashoffset: 0,
-            duration: 0.9,
-            ease: "power2.inOut",
-            stagger: { amount: 1.2 },
-            onComplete: () => {
-              gsap.set(lines, { clearProps: "strokeDasharray,strokeDashoffset" });
+        units.forEach((targets, index) => {
+          tl.from(
+            targets,
+            {
+              autoAlpha: 0,
+              y: 16,
+              scale: 0.97,
+              duration: 0.45,
+              ease: "power3.out",
+              stagger: 0.03,
+              clearProps: "opacity,visibility,transform",
             },
-          },
-          "-=0.3",
-        );
+            index === 0 ? "-=0.2" : `<${UNIT_STEP}`,
+          );
+        });
+
+        const linesAt = tl.duration() + 0.15;
+        const each = Math.min(0.06, LINES_SECONDS / Math.max(links.length, 1));
+        links.forEach((link, index) => {
+          const at = linesAt + index * each;
+          const strokes = Array.from(link.querySelectorAll<SVGPathElement>("[data-stroke]"));
+          strokes.forEach((stroke) => {
+            const length = stroke.getTotalLength();
+            gsap.set(stroke, { strokeDasharray: length, strokeDashoffset: length });
+          });
+          tl.to(
+            strokes,
+            {
+              strokeDashoffset: 0,
+              duration: 0.8,
+              ease: "power2.inOut",
+              clearProps: "strokeDasharray,strokeDashoffset",
+            },
+            at,
+          );
+          const label = root.querySelector(`[data-edge-label="${CSS.escape(link.dataset.link ?? "")}"]`);
+          if (label) tl.from(label, { autoAlpha: 0, duration: 0.3, clearProps: "opacity,visibility" }, at + 0.6);
+        });
         introEnd.current = tl.duration();
       });
       return () => media.revert();

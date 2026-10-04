@@ -13,6 +13,23 @@ const PACKET_SPEED = 170;
 export const REDUCED = "(prefers-reduced-motion: no-preference)";
 export const TRACE_SECONDS = 0.9;
 const UNIT_STEP = 0.22;
+
+export type DrawOrigin = "source" | "target";
+
+export function drawStrokes(strokes: SVGPathElement[], origin: DrawOrigin, vars: gsap.TweenVars): gsap.core.Tween {
+  return gsap.fromTo(
+    strokes,
+    { attr: { pathLength: 1 }, strokeDasharray: "1 2", strokeDashoffset: origin === "source" ? 1 : -1 },
+    {
+      ...vars,
+      strokeDashoffset: 0,
+      onComplete: () => {
+        strokes.forEach((stroke) => stroke.removeAttribute("pathLength"));
+        gsap.set(strokes, { clearProps: "strokeDasharray,strokeDashoffset" });
+      },
+    },
+  );
+}
 const LINES_SECONDS = 1.4;
 
 export function useFlowTimeline(scope: RefObject<HTMLElement | null>, armed: boolean, version: number) {
@@ -60,20 +77,7 @@ export function useFlowTimeline(scope: RefObject<HTMLElement | null>, armed: boo
         links.forEach((link, index) => {
           const at = linesAt + index * each;
           const strokes = Array.from(link.querySelectorAll<SVGPathElement>("[data-stroke]"));
-          strokes.forEach((stroke) => {
-            const length = stroke.getTotalLength();
-            gsap.set(stroke, { strokeDasharray: length, strokeDashoffset: length });
-          });
-          tl.to(
-            strokes,
-            {
-              strokeDashoffset: 0,
-              duration: 0.8,
-              ease: "power2.inOut",
-              clearProps: "strokeDasharray,strokeDashoffset",
-            },
-            at,
-          );
+          tl.add(drawStrokes(strokes, "source", { duration: 0.8, ease: "power2.inOut" }), at);
           const label = root.querySelector(`[data-edge-label="${CSS.escape(link.dataset.link ?? "")}"]`);
           if (label) tl.from(label, { autoAlpha: 0, duration: 0.3, clearProps: "opacity,visibility" }, at + 0.6);
         });

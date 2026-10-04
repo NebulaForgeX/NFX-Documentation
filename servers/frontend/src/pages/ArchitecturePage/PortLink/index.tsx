@@ -2,6 +2,7 @@ import type { EdgeProps, InternalNode } from "@xyflow/react";
 import type { RefObject } from "react";
 import type { Dial, OverviewLink, TopologyLink } from "@/constants";
 import type { LinkEdge } from "../layout";
+import type { DrawOrigin } from "../timeline";
 
 import { memo, useContext, useRef } from "react";
 import { useGSAP } from "@gsap/react";
@@ -14,7 +15,7 @@ import { TOPOLOGY_LINKS } from "@/constants";
 
 import { FocusContext, useLinkFocus } from "../focus";
 import { isFrame, isOverview } from "../layout";
-import { REDUCED, TRACE_SECONDS } from "../timeline";
+import { drawStrokes, REDUCED, TRACE_SECONDS } from "../timeline";
 import styles from "./s.module.css";
 
 const LINK_BY_ID = new Map(TOPOLOGY_LINKS.map((link) => [link.id, link]));
@@ -97,9 +98,7 @@ function floatingAnchors(a: Rect, b: Rect): [Anchor, Anchor] {
   return [anchorOn(a, down ? Position.Bottom : Position.Top), anchorOn(b, down ? Position.Top : Position.Bottom)];
 }
 
-type Origin = "source" | "target" | null;
-
-function useTrace(scope: RefObject<SVGGElement | null>, origin: Origin) {
+function useTrace(scope: RefObject<SVGGElement | null>, origin: DrawOrigin | null) {
   useGSAP(
     () => {
       const group = scope.current;
@@ -108,20 +107,10 @@ function useTrace(scope: RefObject<SVGGElement | null>, origin: Origin) {
       if (!origin || !line || !glow) return;
       const media = gsap.matchMedia();
       media.add(REDUCED, () => {
-        const length = line.getTotalLength();
         gsap
           .timeline()
           .set(glow, { opacity: 1 })
-          .fromTo(
-            [line, glow],
-            { strokeDasharray: length, strokeDashoffset: origin === "source" ? length : -length },
-            {
-              strokeDashoffset: 0,
-              duration: TRACE_SECONDS,
-              ease: "power2.out",
-              clearProps: "strokeDasharray,strokeDashoffset",
-            },
-          )
+          .add(drawStrokes([line, glow], origin, { duration: TRACE_SECONDS, ease: "power2.out" }))
           .to(glow, { opacity: 0.3, duration: 0.6, ease: "power1.out", clearProps: "opacity" });
       });
       return () => media.revert();
@@ -148,7 +137,13 @@ const PortLink = memo(
     const level = useLinkFocus(id);
     const scope = useRef<SVGGElement>(null);
     const traced = Boolean(data && !isOverview(data));
-    const origin: Origin = !traced ? null : selected.has(source) ? "source" : selected.has(target) ? "target" : null;
+    const origin: DrawOrigin | null = !traced
+      ? null
+      : selected.has(source)
+        ? "source"
+        : selected.has(target)
+          ? "target"
+          : null;
     useTrace(scope, origin);
     const sourceRect = rectOf(useInternalNode(source));
     const targetRect = rectOf(useInternalNode(target));

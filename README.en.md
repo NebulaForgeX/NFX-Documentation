@@ -17,7 +17,8 @@ The browser, Vite `base`, React `basename`, and nginx `location` are all `/conso
 | Who opens it | What happens |
 |--------------|----------------|
 | `https://<NAS_IP>/console/nfx-documentation/...` | Edge `documentation-lan` returns 302 to `http://<NAS_IP>:10120/console/nfx-documentation/...`. The browser then talks to that port directly |
-| `https://identity.nebulaforgex.com/console/nfx-documentation/...` | `documentation-host` (priority 200) does not redirect. HTTPS is reverse-proxied unchanged to `NAS_IP:10120` |
+| `https://docs.nebulaforgex.com/` | `documentation-root` (priority 210) returns 301 to `/console/nfx-documentation/` |
+| `https://docs.nebulaforgex.com/console/nfx-documentation/...` | `documentation-host` (priority 200) does not redirect. HTTPS is reverse-proxied unchanged to `NAS_IP:10120` |
 | On disk | `/usr/share/nginx/html/console/nfx-documentation/` |
 
 The host port is `HTTP_EXT_PORT_FRONTEND`, default **10120**, mapped to container 80. A missing trailing slash is a nginx 301. `absolute_redirect off` keeps that Location relative. `try_files` serves `index.html` when the file is missing. Chapter text is `/console/nfx-documentation/books/<lang>/<slug>.md`. Compose mounts `./books` read-only at that directory, so a markdown edit does not need an image rebuild. nginx has **no** API proxy. The Dockerfile copies `nginx.conf` to `/etc/nginx/conf.d/default.conf`. It is not an envsubst template.

@@ -79,7 +79,7 @@ In `dynamic/*.project.yml` (templates under `dynamic.example/`), the LAN routers
 | `/console/nfx-storages` | `10101` |
 | `/console/nfx-documentation` | `10120` |
 
-Domain routers (`*-console-host`, `documentation-host`) do not use this middleware and stay on Traefik HTTPS. Documentation's public Host is `identity.nebulaforgex.com`.
+Domain routers (`*-console-host`, `documentation-host`) do not use this middleware and stay on Traefik HTTPS. Documentation's public Host is `docs.nebulaforgex.com`.
 
 ## Console nginx (for the LAN port)
 

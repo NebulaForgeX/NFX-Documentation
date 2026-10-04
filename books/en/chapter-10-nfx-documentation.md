@@ -28,7 +28,7 @@ The browser, Vite `base`, React `basename`, and the nginx `location` are all `/c
 | Who sees it | Path |
 |-------------|------|
 | `http://<NAS1_IP>:10120/console/nfx-documentation/` | Final LAN URL (after the Traefik 302) |
-| `https://identity.nebulaforgex.com/console/nfx-documentation/` | Public host (HTTPS, path forwarded unchanged) |
+| `https://docs.nebulaforgex.com/console/nfx-documentation/` | Public host (HTTPS, path forwarded unchanged; `/` returns 301 here) |
 | On disk | `/usr/share/nginx/html/console/nfx-documentation/` |
 
 One request (LAN):
@@ -41,7 +41,7 @@ One request (LAN):
 
 One request (public host):
 
-1. `GET https://identity.nebulaforgex.com/console/nfx-documentation/...` matches `documentation-host`. There is no port-redirect middleware, and the path is forwarded unchanged to `NAS1_IP:10120`.
+1. `GET https://docs.nebulaforgex.com/console/nfx-documentation/...` matches `documentation-host`. There is no port-redirect middleware, and the path is forwarded unchanged to `NAS1_IP:10120`.
 2. Steps 2–5 then match the LAN flow.
 
 Do not set `DOCS_HOST`. Do not publish host ports 80/443 from this repo.
@@ -60,7 +60,8 @@ cd /volume1/Projects/NebulaForgeX/NFX-Documentation
 | Router | Rule | Middleware | priority |
 |--------|------|------------|----------|
 | `documentation-lan` | `Host(NAS1_IP)` and `PathPrefix(/console/nfx-documentation)` | `documentation-lan-to-port` (302 → `http://NAS1_IP:10120/...`) | 25 |
-| `documentation-host` | `Host(identity.nebulaforgex.com)` and the same path | none | 200 |
+| `documentation-host` | `Host(docs.nebulaforgex.com)` and the same path | none | 200 |
+| `documentation-root` | `Host(docs.nebulaforgex.com)` and `Path(/)` | `documentation-root` (301 → `/console/nfx-documentation/`) | 210 |
 
 nginx `location /console/nfx-documentation/` uses `try_files` back to `index.html`. The books volume is mounted at `books/` under that directory. `absolute_redirect off` keeps the trailing-slash 301 Location hostless. The docs site does not call product APIs, so nginx has **no** API proxy. The Dockerfile still copies `nginx.conf` to `/etc/nginx/conf.d/default.conf`. It is not an envsubst template.
 

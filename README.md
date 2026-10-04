@@ -17,7 +17,8 @@ Stack 和 Identity **不是**本站运行时依赖。必须先有 [NFX-Edge](htt
 | 谁访问 | 结果 |
 |--------|------|
 | `https://<NAS_IP>/console/nfx-documentation/...` | Edge `documentation-lan` 302 到 `http://<NAS_IP>:10120/console/nfx-documentation/...`，浏览器随后直连这个端口 |
-| `https://identity.nebulaforgex.com/console/nfx-documentation/...` | `documentation-host`（priority 200）不跳端口，HTTPS 原样反代到 `NAS_IP:10120` |
+| `https://docs.nebulaforgex.com/` | `documentation-root`（priority 210）301 到 `/console/nfx-documentation/` |
+| `https://docs.nebulaforgex.com/console/nfx-documentation/...` | `documentation-host`（priority 200）不跳端口，HTTPS 原样反代到 `NAS_IP:10120` |
 | 磁盘 | `/usr/share/nginx/html/console/nfx-documentation/` |
 
 宿主机端口是 `HTTP_EXT_PORT_FRONTEND`，默认 **10120**，映射容器 80。缺尾斜杠时 nginx 301，`absolute_redirect off` 让 Location 保持相对路径。`try_files` 找不到文件就回 `index.html`。章节正文是 `/console/nfx-documentation/books/<lang>/<slug>.md`，compose 把 `./books` 只读挂到这个目录，所以改 markdown 不用重建镜像。nginx **没有**接口反代。Dockerfile 把 `nginx.conf` 复制到 `/etc/nginx/conf.d/default.conf`，不是 envsubst 模板。

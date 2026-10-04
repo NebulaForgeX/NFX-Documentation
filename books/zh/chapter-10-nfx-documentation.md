@@ -28,7 +28,7 @@ cp .example.env .env
 | 谁看见 | 路径 |
 |--------|------|
 | `http://<NAS1_IP>:10120/console/nfx-documentation/` | 局域网最终地址（经 Traefik 302） |
-| `https://identity.nebulaforgex.com/console/nfx-documentation/` | 公网域名（HTTPS，路径原样反代） |
+| `https://docs.nebulaforgex.com/console/nfx-documentation/` | 公网域名（HTTPS，路径原样反代；`/` 301 到这里） |
 | 磁盘 | `/usr/share/nginx/html/console/nfx-documentation/` |
 
 一次请求（局域网）：
@@ -41,7 +41,7 @@ cp .example.env .env
 
 一次请求（公网域名）：
 
-1. `GET https://identity.nebulaforgex.com/console/nfx-documentation/...` 命中 `documentation-host`，没有端口跳转中间件，路径原样转到 `NAS1_IP:10120`。
+1. `GET https://docs.nebulaforgex.com/console/nfx-documentation/...` 命中 `documentation-host`，没有端口跳转中间件，路径原样转到 `NAS1_IP:10120`。
 2. 其后同局域网步骤 2–5。
 
 不要再配 `DOCS_HOST`。不要给本仓映射主机 80/443。
@@ -60,7 +60,8 @@ cd /volume1/Projects/NebulaForgeX/NFX-Documentation
 | 路由 | 规则 | 中间件 | priority |
 |------|------|--------|----------|
 | `documentation-lan` | `Host(NAS1_IP)` 且 `PathPrefix(/console/nfx-documentation)` | `documentation-lan-to-port`（302 → `http://NAS1_IP:10120/...`） | 25 |
-| `documentation-host` | `Host(identity.nebulaforgex.com)` 且同一路径 | 无 | 200 |
+| `documentation-host` | `Host(docs.nebulaforgex.com)` 且同一路径 | 无 | 200 |
+| `documentation-root` | `Host(docs.nebulaforgex.com)` 且 `Path(/)` | `documentation-root`（301 → `/console/nfx-documentation/`） | 210 |
 
 nginx 的 `location /console/nfx-documentation/` 用 `try_files` 回到 `index.html`。正文卷挂在这个目录下的 `books/`。`absolute_redirect off`，缺斜杠时的 301 Location 不带主机名。文档站不调业务 API，nginx **没有**接口反代。Dockerfile 仍是 `COPY nginx.conf /etc/nginx/conf.d/default.conf`，不是 envsubst 模板。
 

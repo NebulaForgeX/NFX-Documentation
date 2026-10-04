@@ -79,7 +79,7 @@ PathPrefix 与以前一致。例如 `/nfx-identity/auth` 去掉 `/nfx-identity`�
 | `/console/nfx-storages` | `10101` |
 | `/console/nfx-documentation` | `10120` |
 
-域名路由（`*-console-host`、`documentation-host`）不挂这个中间件，仍然经 Traefik 走 HTTPS。文档站的公网 Host 是 `identity.nebulaforgex.com`。
+域名路由（`*-console-host`、`documentation-host`）不挂这个中间件，仍然经 Traefik 走 HTTPS。文档站的公网 Host 是 `docs.nebulaforgex.com`。
 
 ## Console nginx（局域网直连端口用）
 
